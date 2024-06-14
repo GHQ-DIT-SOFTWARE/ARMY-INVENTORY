@@ -18,18 +18,18 @@ class DashboardController extends Controller
         $total_roles = count(Role::select('id')->get());
         $total_users = count(User::select('id')->get());
         $total_nonelectronic = count(NonElectronicItem::select('id')->get());
-        $total_electronic = count(Electronic_Gadget::select('id')->get());
+        // $total_electronic = count(Electronic_Gadget::select('id')->get());
         $total_sevnon = count(NonElectronicItem::select('id')->where('status', '1')->get());
         $total_unsernon = count(NonElectronicItem::select('id')->where('status', '0')->get());
-        $total_ser = count(Electronic_Gadget::select('id')->where('status', '1')->get());
-        $total_unser = count(Electronic_Gadget::select('id')->where('status', '0')->get());
+        // $total_ser = count(Electronic_Gadget::select('id')->where('status', '1')->get());
+        // $total_unser = count(Electronic_Gadget::select('id')->where('status', '0')->get());
         $total_item_returned = count(RetElectronicItem::select('id')->where('state', '1')->get());
         $total_item_loaned = count(inventoryrecord::select('id')->where('state', '0')->get());
         $total_category = count(Category::select('id')->get());
 
         return view('homedash', compact('total_roles', 'total_users', 'total_nonelectronic',
-            'total_electronic', 'total_category', 'total_sevnon', 'total_unsernon',
-            'total_ser', 'total_unser', 'total_item_returned', 'total_item_loaned'));
+           'total_category', 'total_sevnon', 'total_unsernon',
+             'total_item_returned', 'total_item_loaned'));
     }
 
     public function Historytable()

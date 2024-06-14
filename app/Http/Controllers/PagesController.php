@@ -35,7 +35,6 @@ class PagesController extends Controller
         }
         if (Auth::attempt(['email' => $email, 'password' => $password])) {
             $user = Auth::user();
-
             $dt = Carbon::now();
             $todayDate = $dt->toDayDateTimeString();
             $activityLog = [
