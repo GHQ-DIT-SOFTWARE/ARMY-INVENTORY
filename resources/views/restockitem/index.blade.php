@@ -1,5 +1,6 @@
 @extends('admin.admin_master')
 @section('admin')
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <div class="page-header">
         <div class="page-block">
             <div class="row align-items-center">
@@ -16,10 +17,7 @@
             </div>
         </div>
     </div>
-    <!-- [ breadcrumb ] end -->
-    <!-- [ Main Content ] start -->
     <div class="row">
-        <!-- customar project  start -->
         <div class="col-xl-12">
             <div class="card">
                 <div class="card-body">
@@ -27,57 +25,129 @@
                         <div class="col-sm-6">
                         </div>
                         <div class="col-sm-6 text-right">
-                            <a href="{{ route('addpurchase') }}" class="btn btn-success btn-sm btn-round has-ripple"
+                            <a href="{{ route('addpurchase') }}" class="btn btn-primary btn-sm btn-round has-ripple"
                                 data-target="#modal-report"><i class="feather icon-plus"></i> New Purchase</a>
                         </div>
                     </div>
                     <br>
                     <div class="table-responsive">
-                        <table id="example" class="table mb-0">
+                        <table id="restocks" class="table mb-0">
                             <thead class="thead-light">
                                 <tr>
                                     <th>SL</th>
-                                    <th>Product</th>
+                                    <th>Item Name</th>
                                     <th>Supplier</th>
+                                    <th>Category</th>
+                                    <th>Sub Category</th>
                                     <th>Quantity</th>
-                                    <th>Date Purchased</th>
+                                    <th>Restock Date</th>
+                                    <th>Size</th>
+                                    {{-- <th>Remarks</th> --}}
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @foreach ($purchases as  $key=> $newpurchase)
-                                    <tr>
-                                        <td>{{$key+1}}</td>
-                                        <td class="align-middle">
-                                            {{$newpurchase['product']['name']}}
-                                        </td>
-
-                                        <td class="align-middle">
-                                            {{$newpurchase['supplier']['name']}}
-                                        </td>
-
-                                        <td class="align-middle">
-                                            <span class="badge badge-success mr-1 "> {{$newpurchase->quantity}}</span>
-
-                                        </td>
-                                        <td class="align-middle">
-                                            {{ date('d F, Y', strtotime($newpurchase->purchase_date)) }}
-
-                                        </td>
-                                        <td class="table-action">
-                                            <a href="{{route('editpurchase',$newpurchase->id)}}" class="btn btn-primary btn-sm"><i class="feather icon-edit">
-                                                </i></a>
-                                            <a href="{{route('deletepurchase',$newpurchase->id)}}" class="btn btn-danger btn-sm" title="Delete Data"
-                                                id="delete"><i class="feather icon-trash-2"></i></a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-
-                            </tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#restocks').DataTable({
+                dom: "<'row'<'col-sm-2'l><'col'B><'col-sm-2'f>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-6'i><'col-sm-6'p>>",
+                buttons: [
+                    'colvis',
+                    {
+                        extend: 'copy',
+                        text: 'Copy to clipboard'
+                    },
+                    'excel',
+                ],
+                scrollY: 960,
+                scrollCollapse: true,
+                processing: true,
+                serverSide: true,
+                lengthMenu: [
+                    [15, 25, 50, 100, 200, -1],
+                    [15, 25, 50, 100, 200, 'All'],
+                ],
+                ajax: {
+                    url: "{{ route('api-restocks-items') }}",
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: function(d) {
+                        var formData = $('#items').serializeArray();
+                        $.each(formData, function(index, item) {
+                            d[item.name] = item.value;
+                        });
+                    },
+                },
+                columns: [{
+                        data: null,
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, full, meta) {
+                            return meta.row + 1;
+                        }
+                    },
+
+                    {
+                        data: 'item_name',
+                        name: 'item_name'
+                    },
+                    {
+                        data: 'company_name',
+                        name: 'company_name'
+                    },
+
+                    {
+                        data: 'category_name',
+                        name: 'category_name'
+                    },
+                    {
+                        data: 'sub_name',
+                        name: 'sub_name'
+                    },
+                    {
+                        data: 'qty',
+                        name: 'qty'
+                    },
+                    {
+                        data: 'restock_date',
+                        name: 'restock_date'
+                    },
+                    {
+                        data: 'sizes',
+                        name: 'sizes'
+                    },
+                   
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
+                    },
+                ],
+
+            });
+        });
+    </script>
 @endsection

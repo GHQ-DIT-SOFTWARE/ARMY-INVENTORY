@@ -30,7 +30,7 @@
                 <div class="row" style="background-color: #fff; margin:15px 0 15px 0">
                     <div class="col-md-12 border-right">
                         <div class="card-body">
-                            <form action="" method="POST" id="myForm">
+                            <form action="{{ route('storepurchase') }}" method="POST" id="myForm">
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-4">

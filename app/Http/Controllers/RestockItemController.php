@@ -9,7 +9,7 @@ use App\Models\Supplier;
 use Auth;
 use DB;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Carbon;
 class RestockItemController extends Controller
 {
     public function purchase_index()
@@ -32,7 +32,6 @@ class RestockItemController extends Controller
             'supplier_id' => 'required|exists:suppliers,id',
             'qty' => 'required|integer|min:1',
             'sizes' => 'required',
-            'restock_date' => 'required|date',
         ]);
         $existingItem = Item::where('id', $request->item_id)
             ->where('sizes', $request->sizes)
@@ -68,45 +67,43 @@ class RestockItemController extends Controller
         ];
         return redirect()->route('viewpurchase')->with($notification);
     }
-
-    // public function purchase_store(Request $request)
-    // {
-    //     if ($request->item_id == null) {
-    //         $notification = array(
-    //             'message' => 'Sorry You do not select any item',
-    //             'alert-type' => 'error',
-    //         );
-    //         return redirect()->back()->with($notification);
-    //     } else {
-    //         $invoice = new Restock();
-    //         $invoice->item_id = $request->item_id;
-    //         $invoice->supplier_id = $request->supplier_id;
-    //         $invoice->qty = $request->qty;
-    //         $invoice->restock_date = $request->restock_date;
-    //         $invoice->created_by = Auth::user()->id;
-    //         DB::transaction(function () use ($request, $invoice) {
-    //             if ($invoice->save()) {
-    //                 $productupdateqty = Item::findOrFail($request->item_id);
-    //                 $productupdateqty->qty += $request->qty;
-    //                 $productupdateqty->save();
-    //             }
-    //         });
-    //     }
-    //     $notification = array(
-    //         'message' => 'Inserted Successfully',
-    //         'alert-type' => 'success',
-    //     );
-    //     return redirect()->route('viewpurchase')->with($notification);
-    // }
-  
-    public function purchase_delete($id)
+    public function purchase_delete($uuid)
     {
-        Restock::findOrFail($id)->delete();
+        // Find the restock record by UUID
+        $restock = Restock::where('uuid', $uuid)->first();
+        if (!$restock) {
+            abort(404);
+        }
+        // Start a transaction
+        DB::transaction(function () use ($restock) {
+            // Find the related item
+            $item = Item::find($restock->item_id);
+            if ($item) {
+                // Subtract the restocked quantity from the item's stock
+                $item->qty -= $restock->qty;
+                $item->save();
+            }
+            // Delete the restock record
+            $restock->delete();
+        });
+        // Return with a success notification
         $notification = array(
             'message' => 'Deleted Successfully',
             'alert-type' => 'success',
         );
         return redirect()->back()->with($notification);
     }
-
+    // public function purchase_delete($uuid)
+    // {
+    //     $products = Restock::where('uuid', $uuid)->first();
+    //     if (!$products) {
+    //         abort(404);
+    //     }
+    //     $products->delete();
+    //     $notification = array(
+    //         'message' => 'Deleted Successfully',
+    //         'alert-type' => 'success',
+    //     );
+    //     return redirect()->back()->with($notification);
+    // }
 }

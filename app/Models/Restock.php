@@ -20,17 +20,33 @@ class Restock extends Model implements Auditable
      * @var array<int, string>
      */
     protected $fillable = [
-      'item_id',
-      'supplier_id',
-      'category_id',
-      'sub_category',
-       'qty',
-       'sizes',
-       'remarks',
-       'restock_date',
-       'created_by',
-       'updated_by',
+        'item_id',
+        'supplier_id',
+        'category_id',
+        'sub_category',
+        'qty',
+        'sizes',
+        'remarks',
+        'restock_date',
+        'created_by',
+        'updated_by',
     ];
+    public function subcategory()
+    {
+        return $this->belongsTo(SubCategory::class, 'sub_category', 'id');
+    }
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id', 'id');
+    }
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class, 'supplier_id', 'id');
+    }
+    public function stocks()
+    {
+        return $this->belongsTo(Item::class, 'item_id', 'id');
+    }
 
     /**
      * The attributes that should be cast.

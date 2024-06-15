@@ -64,12 +64,10 @@ Route::prefix('superadmindashboard')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::prefix('inventory')->group(function () {
 
-        Route::prefix('NewProductsPurchase')->group(function () {
+        Route::prefix('Restock-items')->group(function () {
             Route::get('/view', [RestockItemController::class, 'purchase_index'])->name('viewpurchase');
             Route::get('/add', [RestockItemController::class, 'purchase_create'])->name('addpurchase');
             Route::post('/store', [RestockItemController::class, 'purchase_store'])->name('storepurchase');
-            Route::get('/edit/{uuid}', [RestockItemController::class, 'purchase_edit'])->name('editpurchase');
-            Route::post('/update/{id}', [RestockItemController::class, 'purchase_update'])->name('updatepurchase');
             Route::get('/delete/{uuid}', [RestockItemController::class, 'purchase_delete'])->name('deletepurchase');
         });
         Route::prefix('category')->group(function () {
