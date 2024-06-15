@@ -156,8 +156,8 @@
                         }
                     },
                     {
-                        data: 'image',
-                        name: 'image',
+                        data: 'item_image',
+                        name: 'item_image',
                         render: function(data, type, full, meta) {
                             var imageUrl = data ? '{{ asset('') }}' + data :
                                 '{{ asset('uploadimages/no_image.jpg') }}';

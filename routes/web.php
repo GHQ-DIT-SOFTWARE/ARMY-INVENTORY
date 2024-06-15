@@ -12,6 +12,7 @@ use App\Http\Controllers\PagesController;
 use App\Http\Controllers\personnelController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\rankController;
+use App\Http\Controllers\RestockItemController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\SupplierController;
@@ -60,62 +61,72 @@ Route::prefix('superadmindashboard')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'View'])->name('home.dash');
     Route::get('/history', [DashboardController::class, 'Historytable'])->name('history.dash');
 });
+Route::middleware(['auth'])->group(function () {
+    Route::prefix('inventory')->group(function () {
 
-Route::prefix('inventory')->group(function () {
-
-    Route::prefix('category')->group(function () {
-        Route::get('/', [CategoryController::class, 'View'])->name('view-index');
-        Route::get('/add', [CategoryController::class, 'AddCate'])->name('create');
-        Route::post('/store', [CategoryController::class, 'Store'])->name('store-category');
-        Route::get('/edit/{uuid}', [CategoryController::class, 'Edit'])->name('edit-category');
-        Route::post('/update', [CategoryController::class, 'Update'])->name('update-category');
-        Route::get('/{uuid}', [CategoryController::class, 'Delete'])->name('delete-category');
-    });
-    Route::prefix('sub-category')->group(function () {
-        Route::get('/', [SubCategoryController::class, 'View'])->name('view-subcategory');
-        Route::get('/mech', [SubCategoryController::class, 'Add'])->name('mech-subcategory');
-        Route::post('/store', [SubCategoryController::class, 'Store'])->name('store-subcategory');
-        Route::get('/edit/{uuid}', [SubCategoryController::class, 'Edit'])->name('edit-subcategory');
-        Route::post('/update{uuid}', [SubCategoryController::class, 'Update'])->name('update-subcategory');
-        Route::get('/delete{uuid}', [SubCategoryController::class, 'Delete'])->name('delete-subcategory');
-        Route::post('/view-sub-caregory', [SubCategoryController::class, 'index'])->name('view-sub-caregory');
-    });
-
-    Route::prefix('Supplier')->group(function () {
-        Route::get('/view', [SupplierController::class, 'Index'])->name('viewsupp');
-        Route::get('/add', [SupplierController::class, 'create'])->name('supadd');
-        Route::post('/store', [SupplierController::class, 'store'])->name('supstore');
-        Route::get('/edit{uuid}', [SupplierController::class, 'Edit'])->name('supedit');
-        Route::post('/update', [SupplierController::class, 'update'])->name('supupa');
-        Route::get('/delete{uuid}', [SupplierController::class, 'delete'])->name('supdel');
-    });
-    Route::prefix('item')->group(function () {
-        Route::prefix('sub-category')->group(function () {
-            Route::get('/get-subcategory/{categoryId}', [DefaultInventoryController::class, 'fetchSubCategory'])->name('get-subcategory');
-            Route::get('/fetch-category-and-subcategory/{itemId}', [DefaultInventoryController::class, 'fetchCategoryAndSubcategory'])
-                ->name('fetch-category-and-subcategory');
+        Route::prefix('NewProductsPurchase')->group(function () {
+            Route::get('/view', [RestockItemController::class, 'purchase_index'])->name('viewpurchase');
+            Route::get('/add', [RestockItemController::class, 'purchase_create'])->name('addpurchase');
+            Route::post('/store', [RestockItemController::class, 'purchase_store'])->name('storepurchase');
+            Route::get('/edit/{uuid}', [RestockItemController::class, 'purchase_edit'])->name('editpurchase');
+            Route::post('/update/{id}', [RestockItemController::class, 'purchase_update'])->name('updatepurchase');
+            Route::get('/delete/{uuid}', [RestockItemController::class, 'purchase_delete'])->name('deletepurchase');
         });
-        Route::get('/', [ItemsController::class, 'View'])->name('view-item');
-        Route::get('/item-manager', [ItemsController::class, 'manage_item'])->name('manage_item');
-        Route::get('/add', [ItemsController::class, 'Add'])->name('add-item');
-        Route::post('/store', [ItemsController::class, 'Store'])->name('store-item');
-        Route::get('/edit/{uuid}', [ItemsController::class, 'Edit'])->name('edit-item');
-        Route::post('/update', [ItemsController::class, 'Update'])->name('update-item');
-        Route::get('/delete/{uuid}', [ItemsController::class, 'Delete'])->name('delete-item');
-        //Status
-        Route::get('/approving{id}', [ItemsController::class, 'Approve'])->name('item.approve');
-        Route::get('/electronicser{id}', [ItemsController::class, 'Rescheduled'])->name('item.reschudel');
-        Route::get('/serviceable-items', [ItemsController::class, 'Serviceable'])->name('serviceable-item');
-        Route::get('/un-serviceable-items', [ItemsController::class, 'Un_Serviceable'])->name('un-serviceable-item');
-        Route::get('/un-serviceable{id}', [ItemsController::class, 'Unser'])->name('item.unserv');
-        //End Status
-        Route::get('/totalviewqty', [ItemsController::class, 'eletronicallqty']);
-        Route::get('/item-total', [ItemsController::class, 'alleachqt'])->name('items-total');
-        Route::get('/totalserunserv', [ItemsController::class, 'serveandunser'])->name('total.serveandunser');
-        Route::get('/totalgeneralserunserv', [ItemsController::class, 'serveandunsernon'])->name('total.general.serveandunser');
-        // Route::get('/category/{id}/items', [ItemsController::class, 'itemsByCategory'])->name('category.items');
-        Route::get('/category/{uuid}/items', [ItemsController::class, 'itemsByCategory'])->name('category.items');
+        Route::prefix('category')->group(function () {
+            Route::get('/', [CategoryController::class, 'View'])->name('view-index');
+            Route::get('/add', [CategoryController::class, 'AddCate'])->name('create');
+            Route::post('/store', [CategoryController::class, 'Store'])->name('store-category');
+            Route::get('/edit/{uuid}', [CategoryController::class, 'Edit'])->name('edit-category');
+            Route::post('/update', [CategoryController::class, 'Update'])->name('update-category');
+            Route::get('/{uuid}', [CategoryController::class, 'Delete'])->name('delete-category');
+        });
+        Route::prefix('sub-category')->group(function () {
+            Route::get('/', [SubCategoryController::class, 'View'])->name('view-subcategory');
+            Route::get('/mech', [SubCategoryController::class, 'Add'])->name('mech-subcategory');
+            Route::post('/store', [SubCategoryController::class, 'Store'])->name('store-subcategory');
+            Route::get('/edit/{uuid}', [SubCategoryController::class, 'Edit'])->name('edit-subcategory');
+            Route::post('/update{uuid}', [SubCategoryController::class, 'Update'])->name('update-subcategory');
+            Route::get('/delete{uuid}', [SubCategoryController::class, 'Delete'])->name('delete-subcategory');
+            Route::post('/view-sub-caregory', [SubCategoryController::class, 'index'])->name('view-sub-caregory');
+        });
 
+        Route::prefix('Supplier')->group(function () {
+            Route::get('/view', [SupplierController::class, 'Index'])->name('viewsupp');
+            Route::get('/add', [SupplierController::class, 'create'])->name('supadd');
+            Route::post('/store', [SupplierController::class, 'store'])->name('supstore');
+            Route::get('/edit{uuid}', [SupplierController::class, 'Edit'])->name('supedit');
+            Route::post('/update', [SupplierController::class, 'update'])->name('supupa');
+            Route::get('/delete{uuid}', [SupplierController::class, 'delete'])->name('supdel');
+        });
+
+        Route::prefix('item')->group(function () {
+            Route::prefix('sub-category')->group(function () {
+                Route::get('/get-subcategory/{categoryId}', [DefaultInventoryController::class, 'fetchSubCategory'])->name('get-subcategory');
+                Route::get('/fetch-category-and-subcategory/{itemId}', [DefaultInventoryController::class, 'fetchCategoryAndSubcategory'])
+                    ->name('fetch-category-and-subcategory');
+            });
+            Route::get('/', [ItemsController::class, 'View'])->name('view-item');
+            Route::get('/item-manager', [ItemsController::class, 'manage_item'])->name('manage_item');
+            Route::get('/add', [ItemsController::class, 'Add'])->name('add-item');
+            Route::post('/store', [ItemsController::class, 'Store'])->name('store-item');
+            Route::get('/edit/{uuid}', [ItemsController::class, 'Edit'])->name('edit-item');
+            Route::post('/update/{uuid}', [ItemsController::class, 'Update'])->name('update-item');
+            Route::get('/delete/{uuid}', [ItemsController::class, 'Delete'])->name('delete-item');
+            //Status
+            Route::get('/approving{id}', [ItemsController::class, 'Approve'])->name('item.approve');
+            Route::get('/electronicser{id}', [ItemsController::class, 'Rescheduled'])->name('item.reschudel');
+            Route::get('/serviceable-items', [ItemsController::class, 'Serviceable'])->name('serviceable-item');
+            Route::get('/un-serviceable-items', [ItemsController::class, 'Un_Serviceable'])->name('un-serviceable-item');
+            Route::get('/un-serviceable{id}', [ItemsController::class, 'Unser'])->name('item.unserv');
+            //End Status
+            Route::get('/totalviewqty', [ItemsController::class, 'eletronicallqty']);
+            Route::get('/item-total', [ItemsController::class, 'alleachqt'])->name('items-total');
+            Route::get('/totalserunserv', [ItemsController::class, 'serveandunser'])->name('total.serveandunser');
+            Route::get('/totalgeneralserunserv', [ItemsController::class, 'serveandunsernon'])->name('total.general.serveandunser');
+            // Route::get('/category/{id}/items', [ItemsController::class, 'itemsByCategory'])->name('category.items');
+            Route::get('/category/{uuid}/items', [ItemsController::class, 'itemsByCategory'])->name('category.items');
+
+        });
     });
 });
 Route::prefix('ranks')->group(function () {

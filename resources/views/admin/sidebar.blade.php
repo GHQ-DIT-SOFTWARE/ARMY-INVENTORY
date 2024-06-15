@@ -57,9 +57,7 @@
                     <a href="#!" class="nav-link"><span class="pcoded-micon"><i
                                 class="feather icon-grid"></i></span><b><span class="pcoded-mtext">Instock
                                 Items</span></b></a>
-                    <ul class="pcoded-submenu"
-                        {{ Route::is('roles.create') || Route::is('roles.index') || Route::is('roles.edit') || Route::is('roles.show') ? 'in' : '' }}>
-
+                    <ul class="pcoded-submenu">
                         <li class="nav-item pcoded-hasmenu">
                             <a href="{{ route('view-index') }}" class="nav-link "><span
                                     class="pcoded-mtext">Category</span></a>
@@ -75,10 +73,10 @@
                                     Item</span></a>
 
                         <li class="nav-item pcoded-hasmenu">
-                            <a href="{{ route('view-subcategory') }}" class="nav-link "><span
+                            <a href="{{ route('viewpurchase') }}" class="nav-link "><span
                                     class="pcoded-mtext">Restock Item</span></a>
                         <li class="nav-item pcoded-hasmenu">
-                            <a href="{{ route('view-subcategory') }}" class="nav-link "><span
+                            <a href="{{ route('viewsupp') }}" class="nav-link "><span
                                     class="pcoded-mtext">Supplier</span></a>
                         </li>
                     </ul>
@@ -90,50 +88,45 @@
                                 class="feather icon-settings"></i></span><b><span class="pcoded-mtext">
                                 Setting</span></b></a>
                     <ul class="pcoded-submenu"
-                        {{ Route::is('roles.create') || Route::is('roles.index') || Route::is('roles.edit') || Route::is('roles.show') ? 'in' : '' }}>
+                      >
                         <li class="nav-item pcoded-hasmenu">
                             <a href="#!" class="nav-link "><span class="pcoded-mtext">Roles and
                                     Permission</span></a>
                             <ul class="pcoded-submenu"
-                                {{ Route::is('roles.create') || Route::is('roles.index') || Route::is('roles.edit') || Route::is('roles.show') ? 'in' : '' }}>
-                                @if ($usr->can('superadmin.view'))
-                                    <li
-                                        class="{{ Route::is('roles.index') || Route::is('roles.edit') || Route::is('roles.create') || Route::is('roles.show') ? 'active' : '' }}">
+                               >
+
+                                    <li>
                                         <a href="{{ route('roles.index') }}">All Roles</a>
-                                    </li>
-                                @endif
-                                @if ($usr->can('superadmin.view'))
+                            </li>
                                     <li class="{{ Route::is('roles.create') ? 'active' : '' }}"><a
                                             href="{{ route('roles.create') }}">Add Role</a></li>
-                                @endif
                             </ul>
                         </li>
                         <li class="nav-item pcoded-hasmenu">
                             <a href="#!" class="nav-link "><b><span class="pcoded-mtext">Manage
                                         Profile</span></b></a>
                             <ul class="pcoded-submenu"
-                                {{ Route::is('roles.create') || Route::is('roles.index') || Route::is('roles.edit') || Route::is('roles.show') ? 'in' : '' }}>
+                               >
                                 <li><a href="{{ route('profileview') }}">Profile</a></li>
-                                @if ($usr->can('superadmin.view'))
+
                                     <li><a href="{{ route('password.view') }}">Password Setting</a></li>
-                                @endif
+
                             </ul>
                         </li>
                         <li class="nav-item pcoded-hasmenu">
                             <a href="#!" class="nav-link "><b><span class="pcoded-mtext">Manage
                                         Users</span></b></a>
                             <ul class="pcoded-submenu"
-                                {{ Route::is('roles.create') || Route::is('roles.index') || Route::is('roles.edit') || Route::is('roles.show') ? 'in' : '' }}>
-                                @if ($usr->can('superadmin.view'))
+                               >
+
                                     <li
-                                        class="{{ Route::is('users.index') || Route::is('users.edit') || Route::is('users.create') || Route::is('users.show') ? 'active' : '' }}">
+                                        >
                                         <a href="{{ route('users.index') }}">User List</a>
                                     </li>
-                                @endif
-                                @if ($usr->can('superadmin.create'))
-                                    <li class="{{ Route::is('users.create') ? 'active' : '' }}"><a
+
+                                    <li ><a
                                             href="{{ route('users.create') }}">Add User</a></li>
-                                @endif
+
                             </ul>
                         </li>
                         <li>

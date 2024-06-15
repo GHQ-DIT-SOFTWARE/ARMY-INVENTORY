@@ -1,20 +1,19 @@
 @extends('admin.admin_master')
 @section('title')
-    Edit-Item
+    Restock-Item
 @endsection
 @section('admin')
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- [ breadcrumb ] start -->
     <div class="page-header">
         <div class="page-block">
             <div class="row align-items-center">
                 <div class="col-md-12">
                     <div class="page-header-title">
-                        <h5 class="m-b-10">Equipment</h5>
+                        <h5 class="m-b-10">Items</h5>
                     </div>
                     <ul class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
-                        <li class="breadcrumb-item"><a href="#!">Edit Item</a></li>
+                        <li class="breadcrumb-item"><a href="#!">Restock-Item</a></li>
                         <li class="breadcrumb-item"><a href="#!">Dashboard</a></li>
                     </ul>
                 </div>
@@ -26,13 +25,12 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <h5>Edit Item</h5>
+                    <h5>Restock Item</h5>
                 </div>
                 <div class="row" style="background-color: #fff; margin:15px 0 15px 0">
-                    <div class="col-md-10 border-right">
+                    <div class="col-md-12 border-right">
                         <div class="card-body">
-                            <form action="{{ route('update-item', $items->uuid) }}" method="POST" id="myForm"
-                                enctype="multipart/form-data">
+                            <form action="" method="POST" id="myForm">
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-4">
@@ -42,9 +40,8 @@
                                                 <select id="category_id" name="category_id" class="form-control select2">
                                                     <option selected="">Open this select menu</option>
                                                     @foreach ($category as $cat)
-                                                        <option value="{{ $cat->id }}"
-                                                            {{ $cat->id == $items->category_id ? 'selected' : '' }}>
-                                                            {{ $cat->category_name }}</option>
+                                                        <option value="{{ $cat->id }}">{{ $cat->category_name }}
+                                                        </option>
                                                     @endforeach
                                                     @error('category_id')
                                                         <span class="text-danger">{{ $message }}</span>
@@ -64,12 +61,21 @@
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="col-md-4">
                                         <div class="form-group row">
                                             <label for="name" class="col-sm-4 col-form-label">Item Name</label>
                                             <div class="col-sm-8">
-                                                <input type="text" class="form-control" name="item_name"
-                                                    value="{{ $items->item_name }}" placeholder="Item Name">
+                                                <select name="item_id" class="form-control select2">
+                                                    <option selected="">Open this select menu</option>
+                                                    @foreach ($products as $pro)
+                                                        <option value="{{ $pro->id }}">{{ $pro->item_name }}</option>
+                                                    @endforeach
+
+                                                    @error('item_id')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </select>
                                                 @error('item_name')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -80,8 +86,7 @@
                                         <div class="form-group row">
                                             <label for="actual_qty" class="col-sm-4 col-form-label">Quantity</label>
                                             <div class="col-sm-8">
-                                                <input type="text" class="form-control" name="qty"
-                                                    value="{{ $items->qty }}" placeholder="Qty">
+                                                <input type="text" class="form-control" name="qty" placeholder="Qty">
                                                 @error('actual_qty')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -103,54 +108,55 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group row">
+                                            <label for="name" class="col-sm-3 col-form-label">Supplier`s Name</label>
+                                            <div class="col-sm-9">
+                                                <select name="supplier_id" class="form-control select2">
+                                                    <option selected="">Open this select menu</option>
+                                                    @foreach ($suppliers as $supplier)
+                                                        <option value="{{ $supplier->id }}">{{ $supplier->company_name }}
+                                                        </option>
+                                                    @endforeach
+                                                    @error('supplier_id')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="form-group row">
                                             <label for="remarks" class="col-sm-4 col-form-label">Remarks</label>
                                             <div class="col-sm-8">
                                                 <input type="text" class="form-control" name="remarks"
-                                                    value="{{ $items->remarks }}" placeholder="Remarks">
+                                                    placeholder="Remarks">
                                                 @error('remarks')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
                                 <hr>
-                                <div class="col-md-6" style="float:right;">
+                                <div class="col-md-6">
                                     <div class="form-group row">
                                         <div class="col-sm-10">
-                                            <button type="submit" class="btn btn-primary">Update Item</button>
+                                            <button type="submit" class="btn  btn-primary">Save</button>
                                         </div>
                                     </div>
                                 </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-2 border-right">
-                        <div class="d-flex flex-column align-items-center text-center p-3 py-5" style="margin-top: -40px">
-                            <div class="form-group row">
-                                <div class="col-sm-10">
-                                    <img id="showImage" class="rounded avatar-lg"
-                                        src="{{ !empty($items->item_image) ? url($items->item_image) : url('uploadimage/no_image.jpg') }}"
-                                        alt="IMAGE" style="width: 150px; border: 1px solid #000000;">
-                                </div>
-                                <div class="">
-                                    <input name="item_image" class="form-control" type="file" id="image">
-                                    @error('item_image')
-                                        <span class="badge badge-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
-                </form>
+
             </div>
         </div>
     </div>
     <script>
         $(document).ready(function() {
-            function loadSubCategoriesAndSizes() {
-                var categoryId = $('#category_id').val();
+            $('#category_id').on('change', function() {
+                var categoryId = $(this).val();
                 var sizeOptions = [];
                 if (categoryId) {
                     $.ajax({
@@ -168,8 +174,10 @@
                         }
                     });
 
+                    // Update size options based on category
                     @foreach ($category as $cat)
-                        if (categoryId == '{{ $cat->id }}' && '{{ $cat->category_name }}' == 'BOOT') {
+                        if (categoryId == '{{ $cat->id }}' && '{{ $cat->category_name }}' ==
+                            'BOOT') {
                             sizeOptions = [39, 40, 41, 42, 43, 44, 45, 46];
                         } else if (categoryId == '{{ $cat->id }}' && '{{ $cat->category_name }}' ==
                             'BERET') {
@@ -183,24 +191,12 @@
                     $.each(sizeOptions, function(index, size) {
                         $('#size').append('<option value="' + size + '">' + size + '</option>');
                     });
-                    $('#size').val('{{ $items->sizes }}');
                 } else {
                     $('#sub_category').empty();
                     $('#size').empty();
                     $('#size').append('<option selected="">Select Size</option>');
                 }
-            }
-
-            $('#category_id').on('change', loadSubCategoriesAndSizes);
-            $('#image').change(function(e) {
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    $('#showImage').attr('src', e.target.result);
-                }
-                reader.readAsDataURL(e.target.files['0']);
             });
-
-            loadSubCategoriesAndSizes(); // Load subcategories and sizes on page load
         });
     </script>
 @endsection

@@ -8,7 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Image;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 // use Milon\Barcode\Facades\DNS1DFacade as DNS1D;
 
@@ -53,13 +54,12 @@ class ItemsController extends Controller
     public function Store(Request $request)
     {
         $request->validate([
-            'serial_no' => 'required|unique:items',
             'item_name' => 'required',
             'category_id' => 'required',
             'sub_category' => 'required',
             'qty' => 'required|integer',
             'sizes' => 'required',
-            'image' => 'nullable|image',
+            'item_image' => 'nullable|image',
         ]);
         // Check if an item with the same category, sub-category, item name, and size already exists
         $existingItem = Item::where('category_id', $request->category_id)
@@ -71,10 +71,10 @@ class ItemsController extends Controller
             return redirect()->back()->withErrors(['sizes' => 'An item with the same size already exists.']);
         }
 
-        if ($request->file('image')) {
+        if ($request->file('item_image')) {
             $manager = new ImageManager(new Driver());
-            $name_gen = hexdec(uniqid()) . '.' . $request->file('image')->getClientOriginalExtension();
-            $img = $manager->read($request->file('image'));
+            $name_gen = hexdec(uniqid()) . '.' . $request->file('item_image')->getClientOriginalExtension();
+            $img = $manager->read($request->file('item_image'));
             $img = $img->resize(200, 200);
             $img->save(public_path('uploadimage/Item_images/' . $name_gen));
             $save_url = 'uploadimage/Item_images/' . $name_gen;
@@ -89,7 +89,7 @@ class ItemsController extends Controller
             'sizes' => $request->sizes,
             'added_date' => Carbon::now(),
             'remarks' => $request->remarks,
-            'image' => $save_url,
+            'item_image' => $save_url,
             'created_by' => Auth::user()->id,
             'created_at' => Carbon::now(),
         ]);
@@ -103,90 +103,141 @@ class ItemsController extends Controller
     public function Edit($uuid)
     {
         $category = Category::all();
-        $product = Item::where('uuid', $uuid)->first();
-        if (!$product) {
+        $items = Item::where('uuid', $uuid)->first();
+        if (!$items) {
             abort(404);
         }
-        return view('items.edit', compact('product', 'category'));
+        return view('items.edit', compact('items', 'category'));
     }
 
-    public function Update(Request $request)
+    public function Update(Request $request, $uuid)
     {
-        $product_id = $request->uuid;
-        if ($request->file('item_image')) {
-            $image = $request->file('item_image');
-            $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
-            Image::make($image)->resize(200, 200)->save('uploadimage/Item_images/' . $name_gen);
-            $save_url = 'uploadimage/Item_images/' . $name_gen;
-            $product = Item::where('uuid', $product_id)->first();
-            $product->update([
-                'serial_no' => $request->serial_no,
-                'type_own' => $request->type_own,
-                'sub_category' => $request->sub_category,
-                'item_name' => $request->item_name,
-                'item_description' => $request->item_description,
-                'weight' => $request->weight,
-                'location' => $request->location,
-                'item_value' => $request->item_value,
-                'mission_id' => $request->mission_id,
-                'initial_cost' => $request->initial_cost,
-                'brand' => $request->brand,
-                'un_no' => $request->un_no,
-                'engine_no' => $request->engine_no,
-                'date_of_manufacture' => $request->date_of_manufacture,
-                'un_shelf_life' => $request->un_shelf_life,
-                'color' => $request->color,
-                'date_of_manufacture' => $request->date_of_manufacture,
-                'added_date' => date('Y-m-d', strtotime($request->added_date)),
-                'un_shelf_life' => $request->un_shelf_life,
-                'cause_of_unsvc' => $request->cause_of_unsvc,
-                'date_of_unserviceable' => $request->date_of_unserviceable,
-                'status' => $request->status,
-                'state' => $request->state,
-                'item_image' => $save_url,
-                'category_id' => $request->category_id,
-                'updated_by' => Auth::user()->id,
-            ]);
-            $notification = [
-                'message' => 'Item Updated Successfully',
-                'alert-type' => 'success',
-            ];
-            return redirect()->route('view-item')->with($notification);
-        } else {
-            $product = Item::where('uuid', $product_id)->first();
-            $product->update([
-                'serial_no' => $request->serial_no,
-                'type_own' => $request->type_own,
-                'sub_category' => $request->sub_category,
-                'item_name' => $request->item_name,
-                'item_description' => $request->item_description,
-                'weight' => $request->weight,
-                'location' => $request->location,
-                'item_value' => $request->item_value,
-                'mission_id' => $request->mission_id,
-                'initial_cost' => $request->initial_cost,
-                'brand' => $request->brand,
-                'un_no' => $request->un_no,
-                'engine_no' => $request->engine_no,
-                'date_of_manufacture' => $request->date_of_manufacture,
-                'color' => $request->color,
-                'date_of_manufacture' => $request->date_of_manufacture,
-                'added_date' => date('Y-m-d', strtotime($request->added_date)),
-                'un_shelf_life' => $request->un_shelf_life,
-                'cause_of_unsvc' => $request->cause_of_unsvc,
-                'date_of_unserviceable' => $request->date_of_unserviceable,
-                'status' => $request->status,
-                'state' => $request->state,
-                'category_id' => $request->category_id,
-                'updated_by' => Auth::user()->id,
-            ]);
-            $notification = [
-                'message' => 'Item Updated Successfully',
-                'alert-type' => 'success',
-            ];
-            return redirect()->route('view-item')->with($notification);
+        $request->validate([
+            'item_name' => 'required',
+            'category_id' => 'required',
+            'sub_category' => 'required',
+            'qty' => 'required|integer',
+            'sizes' => 'required',
+            'item_image' => 'nullable|image',
+        ]);
+
+        $items = Item::where('uuid', $uuid)->first();
+        if (!$items) {
+            abort(404);
         }
+
+        if ($request->file('item_image')) {
+            // Delete old image if it exists
+            if (!empty($items->item_image) && file_exists(public_path($items->item_image))) {
+                unlink(public_path($item->item_image));
+            }
+
+            $manager = new ImageManager(new Driver());
+            $name_gen = hexdec(uniqid()) . '.' . $request->file('item_image')->getClientOriginalExtension();
+            $img = $manager->read($request->file('item_image'));
+            $img = $img->resize(200, 200);
+            $img->save(public_path('uploadimage/Item_images/' . $name_gen));
+            $save_url = 'uploadimage/Item_images/' . $name_gen;
+        } else {
+            $save_url = $items->item_image;
+        }
+        $items->update([
+            'sub_category' => $request->sub_category,
+            'category_id' => $request->category_id,
+            'item_name' => $request->item_name,
+            'qty' => $request->qty,
+            'sizes' => $request->sizes,
+            'added_date' => Carbon::now(),
+            'remarks' => $request->remarks,
+            'item_image' => $save_url,
+            'updated_by' => Auth::user()->id,
+        ]);
+
+        $notification = [
+            'message' => 'Item Updated Successfully',
+            'alert-type' => 'success',
+        ];
+
+        return redirect()->route('view-item')->with($notification);
     }
+
+    // public function Update(Request $request)
+    // {
+    //     $items_id = $request->uuid;
+    //     if ($request->file('item_image')) {
+    //         $image = $request->file('item_image');
+    //         $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
+    //         Image::make($image)->resize(200, 200)->save('uploadimage/Item_images/' . $name_gen);
+    //         $save_url = 'uploadimage/Item_images/' . $name_gen;
+    //         $items = Item::where('uuid', $items_id)->first();
+    //         $items->update([
+    //             'serial_no' => $request->serial_no,
+    //             'type_own' => $request->type_own,
+    //             'sub_category' => $request->sub_category,
+    //             'item_name' => $request->item_name,
+    //             'item_description' => $request->item_description,
+    //             'weight' => $request->weight,
+    //             'location' => $request->location,
+    //             'item_value' => $request->item_value,
+    //             'mission_id' => $request->mission_id,
+    //             'initial_cost' => $request->initial_cost,
+    //             'brand' => $request->brand,
+    //             'un_no' => $request->un_no,
+    //             'engine_no' => $request->engine_no,
+    //             'date_of_manufacture' => $request->date_of_manufacture,
+    //             'un_shelf_life' => $request->un_shelf_life,
+    //             'color' => $request->color,
+    //             'date_of_manufacture' => $request->date_of_manufacture,
+    //             'added_date' => date('Y-m-d', strtotime($request->added_date)),
+    //             'un_shelf_life' => $request->un_shelf_life,
+    //             'cause_of_unsvc' => $request->cause_of_unsvc,
+    //             'date_of_unserviceable' => $request->date_of_unserviceable,
+    //             'status' => $request->status,
+    //             'state' => $request->state,
+    //             'item_image' => $save_url,
+    //             'category_id' => $request->category_id,
+    //             'updated_by' => Auth::user()->id,
+    //         ]);
+    //         $notification = [
+    //             'message' => 'Item Updated Successfully',
+    //             'alert-type' => 'success',
+    //         ];
+    //         return redirect()->route('view-item')->with($notification);
+    //     } else {
+    //         $items = Item::where('uuid', $items_id)->first();
+    //         $items->update([
+    //             'serial_no' => $request->serial_no,
+    //             'type_own' => $request->type_own,
+    //             'sub_category' => $request->sub_category,
+    //             'item_name' => $request->item_name,
+    //             'item_description' => $request->item_description,
+    //             'weight' => $request->weight,
+    //             'location' => $request->location,
+    //             'item_value' => $request->item_value,
+    //             'mission_id' => $request->mission_id,
+    //             'initial_cost' => $request->initial_cost,
+    //             'brand' => $request->brand,
+    //             'un_no' => $request->un_no,
+    //             'engine_no' => $request->engine_no,
+    //             'date_of_manufacture' => $request->date_of_manufacture,
+    //             'color' => $request->color,
+    //             'date_of_manufacture' => $request->date_of_manufacture,
+    //             'added_date' => date('Y-m-d', strtotime($request->added_date)),
+    //             'un_shelf_life' => $request->un_shelf_life,
+    //             'cause_of_unsvc' => $request->cause_of_unsvc,
+    //             'date_of_unserviceable' => $request->date_of_unserviceable,
+    //             'status' => $request->status,
+    //             'state' => $request->state,
+    //             'category_id' => $request->category_id,
+    //             'updated_by' => Auth::user()->id,
+    //         ]);
+    //         $notification = [
+    //             'message' => 'Item Updated Successfully',
+    //             'alert-type' => 'success',
+    //         ];
+    //         return redirect()->route('view-item')->with($notification);
+    //     }
+    // }
 
     public function Delete($uuid)
     {

@@ -69,10 +69,10 @@ class LogisticsController extends Controller
 
     public function index()
     {
-        $items = Item::with(['category', 'items', 'subcategory', 'item_mission'])->get();
+        $items = Item::with(['category', 'subcategory'])->get();
         return DataTables::of($items)
             ->addColumn('action', function ($items) {
-                return '<a class="btn btn-info btn-sm" href="' . route('items-total') . '"><i class="fa fa-eye"></i></a>
+                return '
             <a class="btn btn-primary btn-sm" href="' . route('edit-item', $items->uuid) . '"><i class="feather icon-edit"></i></a>
                     <a class="btn btn-danger btn-sm" href="' . route('delete-item', $items->uuid) . '"id="delete"><i class="feather icon-trash-2"></i></a>';
             })

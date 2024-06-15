@@ -1,6 +1,6 @@
 @extends('admin.admin_master')
 @section('title')
-    Add Item
+    Add-Item
 @endsection
 @section('admin')
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -10,7 +10,7 @@
             <div class="row align-items-center">
                 <div class="col-md-12">
                     <div class="page-header-title">
-                        <h5 class="m-b-10">Equipment </h5>
+                        <h5 class="m-b-10">Items</h5>
                     </div>
                     <ul class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
@@ -80,8 +80,7 @@
                                         <div class="form-group row">
                                             <label for="actual_qty" class="col-sm-4 col-form-label">Quantity</label>
                                             <div class="col-sm-8">
-                                                <input type="text" class="form-control" name="qty"
-                                                    placeholder="Qty">
+                                                <input type="text" class="form-control" name="qty" placeholder="Qty">
                                                 @error('actual_qty')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -92,10 +91,10 @@
                                         <div class="form-group row">
                                             <label for="size" class="col-sm-4 col-form-label">Sizes</label>
                                             <div class="col-sm-8">
-                                                <select id="size" name="size" class="form-control select2">
+                                                <select id="size" name="sizes" class="form-control select2">
                                                     <option selected="">Select Size</option>
                                                 </select>
-                                                @error('size')
+                                                @error('sizes')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </div>
@@ -135,6 +134,9 @@
                                 </div>
                                 <div class="">
                                     <input name="item_image" class="form-control" type="file" id="image">
+                                    @error('item_image')
+                                        <span class="badge badge-dander">{{ $message }}</span>
+                                    @enderror
                                 </div>
                             </div>
                         </div>

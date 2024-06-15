@@ -2,69 +2,93 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Supplier;
-use Illuminate\Validation\Rule;
-use Auth;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
+
 class SupplierController extends Controller
 {
-    public function Index(){
-        // $suppliers = Supplier::all();
-        $suppliers = Supplier::latest()->get();
-        return view('supplier.index',compact('suppliers'));
+    public $user;
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->user = Auth::guard('web')->user();
+            return $next($request);
+        });
     }
-    public function create(){
-        // $suppliers = Supplier::all();
+    public function Index()
+    {
+        $suppliers = Supplier::latest()->get();
+        return view('supplier.index', compact('suppliers'));
+    }
+    public function create()
+    {
         return view('supplier.create');
     }
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $request->validate([
-            'supplier_name' => ['required', Rule::unique('suppliers')],
+            'company_name' => ['required', Rule::unique('suppliers')],
             'mobile_no' => ['required', Rule::unique('suppliers')],
             'email' => ['required', Rule::unique('suppliers')],
-            'address' => ['required', Rule::unique('suppliers')]
+            'address' => ['required', Rule::unique('suppliers')],
         ]);
-        Supplier::insert([
-            'supplier_name' => $request->supplier_name,
+        Supplier::create([
+            'company_name' => $request->company_name,
             'mobile_no' => $request->mobile_no,
             'email' => $request->email,
             'address' => $request->address,
             'created_by' => Auth::user()->id,
             'created_at' => Carbon::now(),
         ]);
-         $notification = array(
+        $notification = array(
             'message' => 'Supplier Inserted Successfully',
-            'alert-type' => 'success'
+            'alert-type' => 'success',
         );
         return redirect()->route('viewsupp')->with($notification);
     }
-    public function Edit($id){
-        $supplier = Supplier::findOrFail($id);
-        return view('supplier.Edit',compact('supplier'));
+    public function Edit($uuid)
+    {
+        $supplier = Supplier::where('uuid', $uuid)->first();
+        if (!$supplier) {
+            abort(404);
+        }
+        return view('supplier.Edit', compact('supplier'));
     }
-    public function update(Request $request){
-        $sullier_id = $request->id;
-        Supplier::findOrFail($sullier_id)->update([
-            'supplier_name' => $request->supplier_name,
+    public function update(Request $request)
+    {
+        $sullier_id = $request->uuid;
+        $supplier = Supplier::where('uuid', $sullier_id)->first();
+        if (!$supplier) {
+            abort(404);
+        }
+        $supplier->update([
+            'company_name' => $request->company_name,
             'mobile_no' => $request->mobile_no,
             'email' => $request->email,
             'address' => $request->address,
             'updated_by' => Auth::user()->id,
             'updated_at' => Carbon::now(),
         ]);
-         $notification = array(
+        $notification = array(
             'message' => 'Supplier Updated Successfully',
-            'alert-type' => 'success'
+            'alert-type' => 'success',
         );
         return redirect()->route('viewsupp')->with($notification);
     }
-    public function delete($id){
-        Supplier::findOrFail($id)->delete();
+    public function delete($uuid)
+    {
+        $supplier = Supplier::where('uuid', $uuid)->first();
+        if (!$supplier) {
+            abort(404);
+        }
+        $supplier->delete();
         $notification = array(
-             'message' => 'Supplier Deleted Successfully',
-             'alert-type' => 'success'
-         );
-         return redirect()->back()->with($notification);
-     } // End Method
+            'message' => 'Supplier Deleted Successfully',
+            'alert-type' => 'success',
+        );
+        return redirect()->back()->with($notification);
+    }
 }
