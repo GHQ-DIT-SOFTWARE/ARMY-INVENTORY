@@ -25,19 +25,14 @@
 
                 <li class="nav-item pcoded-hasmenu">
                     <a href="#" class="nav-link"><span class="pcoded-micon"><i
-                                class=" feather icon-align-center"></i></span><b><span class="pcoded-mtext">Outgoing
-                                Item</span></b></a>
+                                class=" feather icon-align-center"></i></span><b><span class="pcoded-mtext">Issue Item
+                                Out</span></b></a>
                     <ul class="pcoded-submenu">
                         <li class="nav-item pcoded-hasmenu">
-                            <!--
-                                <a href="{{ route('item.issue.routing.view') }}" class="nav-link "><span
-                                        class="pcoded-mtext">Issued</span></a>
-                                -->
+                            <a href="{{ route('Issue-out') }}" class="nav-link "><span class="pcoded-mtext">Issue
+                                    Out</span></a>
                         </li>
-                        <li class="nav-item pcoded-hasmenu">
-                            <a href="{{ route('item.issue.electronic.view') }}" class="nav-link "><span
-                                    class="pcoded-mtext">Eletronic Items-Issuing</span></a>
-                        </li>
+                        {{--
                         <li class="nav-item pcoded-hasmenu">
                             <a href="{{ route('item.issue.general.view') }}" class="nav-link "><span
                                     class="pcoded-mtext">General Item-Issuing</span></a>
@@ -49,7 +44,7 @@
                         <li class="nav-item pcoded-hasmenu">
                             <a href="{{ route('history.dash') }}" class="nav-link "><span class="pcoded-mtext">Item
                                     History</span></a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </li>
 
@@ -68,13 +63,12 @@
                         </li>
 
                         <li class="nav-item pcoded-hasmenu">
-                            <a href="{{route('view-item')}}" class="nav-link "><span
-                                    class="pcoded-mtext">Stock
+                            <a href="{{ route('view-item') }}" class="nav-link "><span class="pcoded-mtext">Stock
                                     Item</span></a>
 
                         <li class="nav-item pcoded-hasmenu">
-                            <a href="{{ route('viewpurchase') }}" class="nav-link "><span
-                                    class="pcoded-mtext">Restock Item</span></a>
+                            <a href="{{ route('viewpurchase') }}" class="nav-link "><span class="pcoded-mtext">Restock
+                                    Item</span></a>
                         <li class="nav-item pcoded-hasmenu">
                             <a href="{{ route('viewsupp') }}" class="nav-link "><span
                                     class="pcoded-mtext">Supplier</span></a>
@@ -87,46 +81,43 @@
                     <a href="#!" class="nav-link"><span class="pcoded-micon"><i
                                 class="feather icon-settings"></i></span><b><span class="pcoded-mtext">
                                 Setting</span></b></a>
-                    <ul class="pcoded-submenu"
-                      >
+                    <ul class="pcoded-submenu">
+                        <li class="nav-item pcoded-hasmenu">
+                            <a href="#!" class="nav-link "><span class="pcoded-mtext">Unit</span></a>
+                            <ul class="pcoded-submenu">
+                                <li>
+                                    <a href="{{ route('view-unit') }}">Unit Datatable</a>
+                                </li>
+                                <li><a href="{{ route('add-unit') }}">Add Unit</a></li>
+                            </ul>
+                        </li>
                         <li class="nav-item pcoded-hasmenu">
                             <a href="#!" class="nav-link "><span class="pcoded-mtext">Roles and
                                     Permission</span></a>
-                            <ul class="pcoded-submenu"
-                               >
-
-                                    <li>
-                                        <a href="{{ route('roles.index') }}">All Roles</a>
-                            </li>
-                                    <li class="{{ Route::is('roles.create') ? 'active' : '' }}"><a
-                                            href="{{ route('roles.create') }}">Add Role</a></li>
+                            <ul class="pcoded-submenu">
+                                <li>
+                                    <a href="{{ route('roles.index') }}">All Roles</a>
+                                </li>
+                                <li class="{{ Route::is('roles.create') ? 'active' : '' }}"><a
+                                        href="{{ route('roles.create') }}">Add Role</a></li>
                             </ul>
                         </li>
                         <li class="nav-item pcoded-hasmenu">
                             <a href="#!" class="nav-link "><b><span class="pcoded-mtext">Manage
                                         Profile</span></b></a>
-                            <ul class="pcoded-submenu"
-                               >
+                            <ul class="pcoded-submenu">
                                 <li><a href="{{ route('profileview') }}">Profile</a></li>
-
-                                    <li><a href="{{ route('password.view') }}">Password Setting</a></li>
-
+                                <li><a href="{{ route('password.view') }}">Password Setting</a></li>
                             </ul>
                         </li>
                         <li class="nav-item pcoded-hasmenu">
                             <a href="#!" class="nav-link "><b><span class="pcoded-mtext">Manage
                                         Users</span></b></a>
-                            <ul class="pcoded-submenu"
-                               >
-
-                                    <li
-                                        >
-                                        <a href="{{ route('users.index') }}">User List</a>
-                                    </li>
-
-                                    <li ><a
-                                            href="{{ route('users.create') }}">Add User</a></li>
-
+                            <ul class="pcoded-submenu">
+                                <li>
+                                    <a href="{{ route('users.index') }}">User List</a>
+                                </li>
+                                <li><a href="{{ route('users.create') }}">Add User</a></li>
                             </ul>
                         </li>
                         <li>

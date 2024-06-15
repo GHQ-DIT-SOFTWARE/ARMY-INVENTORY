@@ -2,7 +2,7 @@
 declare (strict_types = 1);
 namespace App\Http\Controllers;
 
-use App\Models\ItemsWithQuantity;
+use App\Models\Items;
 use App\Models\SubCategory;
 
 class DefaultInventoryController extends Controller
@@ -16,7 +16,7 @@ class DefaultInventoryController extends Controller
     public function fetchCategoryAndSubcategory($itemId)
     {
         // Fetch the item with its related category and subcategory
-        $item = ItemsWithQuantity::with('category', 'subcategory')->find($itemId);
+        $item = Items::with('category', 'subcategory')->find($itemId);
         // Check if the item exists
         if ($item) {
             // Return the category and subcategory data as arrays

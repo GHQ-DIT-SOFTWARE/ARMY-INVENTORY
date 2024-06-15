@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Item;
+use App\Models\SubCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -161,84 +162,6 @@ class ItemsController extends Controller
         return redirect()->route('view-item')->with($notification);
     }
 
-    // public function Update(Request $request)
-    // {
-    //     $items_id = $request->uuid;
-    //     if ($request->file('item_image')) {
-    //         $image = $request->file('item_image');
-    //         $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
-    //         Image::make($image)->resize(200, 200)->save('uploadimage/Item_images/' . $name_gen);
-    //         $save_url = 'uploadimage/Item_images/' . $name_gen;
-    //         $items = Item::where('uuid', $items_id)->first();
-    //         $items->update([
-    //             'serial_no' => $request->serial_no,
-    //             'type_own' => $request->type_own,
-    //             'sub_category' => $request->sub_category,
-    //             'item_name' => $request->item_name,
-    //             'item_description' => $request->item_description,
-    //             'weight' => $request->weight,
-    //             'location' => $request->location,
-    //             'item_value' => $request->item_value,
-    //             'mission_id' => $request->mission_id,
-    //             'initial_cost' => $request->initial_cost,
-    //             'brand' => $request->brand,
-    //             'un_no' => $request->un_no,
-    //             'engine_no' => $request->engine_no,
-    //             'date_of_manufacture' => $request->date_of_manufacture,
-    //             'un_shelf_life' => $request->un_shelf_life,
-    //             'color' => $request->color,
-    //             'date_of_manufacture' => $request->date_of_manufacture,
-    //             'added_date' => date('Y-m-d', strtotime($request->added_date)),
-    //             'un_shelf_life' => $request->un_shelf_life,
-    //             'cause_of_unsvc' => $request->cause_of_unsvc,
-    //             'date_of_unserviceable' => $request->date_of_unserviceable,
-    //             'status' => $request->status,
-    //             'state' => $request->state,
-    //             'item_image' => $save_url,
-    //             'category_id' => $request->category_id,
-    //             'updated_by' => Auth::user()->id,
-    //         ]);
-    //         $notification = [
-    //             'message' => 'Item Updated Successfully',
-    //             'alert-type' => 'success',
-    //         ];
-    //         return redirect()->route('view-item')->with($notification);
-    //     } else {
-    //         $items = Item::where('uuid', $items_id)->first();
-    //         $items->update([
-    //             'serial_no' => $request->serial_no,
-    //             'type_own' => $request->type_own,
-    //             'sub_category' => $request->sub_category,
-    //             'item_name' => $request->item_name,
-    //             'item_description' => $request->item_description,
-    //             'weight' => $request->weight,
-    //             'location' => $request->location,
-    //             'item_value' => $request->item_value,
-    //             'mission_id' => $request->mission_id,
-    //             'initial_cost' => $request->initial_cost,
-    //             'brand' => $request->brand,
-    //             'un_no' => $request->un_no,
-    //             'engine_no' => $request->engine_no,
-    //             'date_of_manufacture' => $request->date_of_manufacture,
-    //             'color' => $request->color,
-    //             'date_of_manufacture' => $request->date_of_manufacture,
-    //             'added_date' => date('Y-m-d', strtotime($request->added_date)),
-    //             'un_shelf_life' => $request->un_shelf_life,
-    //             'cause_of_unsvc' => $request->cause_of_unsvc,
-    //             'date_of_unserviceable' => $request->date_of_unserviceable,
-    //             'status' => $request->status,
-    //             'state' => $request->state,
-    //             'category_id' => $request->category_id,
-    //             'updated_by' => Auth::user()->id,
-    //         ]);
-    //         $notification = [
-    //             'message' => 'Item Updated Successfully',
-    //             'alert-type' => 'success',
-    //         ];
-    //         return redirect()->route('view-item')->with($notification);
-    //     }
-    // }
-
     public function Delete($uuid)
     {
         if (is_null($this->user) || !$this->user->can('logistic.delete')) {
@@ -256,16 +179,40 @@ class ItemsController extends Controller
         return redirect()->back()->with($notification);
     }
 
-    // public function serelec()
-    // {
-    //     $allData = Item::orderBy('id', 'desc')->where('status', '1')->get();
-    //     return view('inventory.items.ser', compact('allData'));
-    // }
+    public function getSubCategory($categoryId)
+    {
+        $subCategories = SubCategory::where('category_id', $categoryId)->pluck('sub_name', 'id');
+        return response()->json($subCategories);
+    }
 
-    // public function sernonelectronic()
+    public function getItems($subCategoryId)
+    {
+        $items = Item::where('sub_category', $subCategoryId)->pluck('item_name', 'id');
+        return response()->json($items);
+    }
+
+    public function getSizes($itemId)
+    {
+        $item = Item::findOrFail($itemId);
+        // Assuming 'size' is a field in your Item model containing the size as a string
+        $sizeOptions = [$item->sizes];
+        // Return as JSON response
+        return response()->json($sizeOptions);
+    }
+    public function getQuantity($sizeId)
+    {
+        // Example: Fetch quantity from the Item model based on the selected size ID
+        $item = Item::where('sizes', $sizeId)->first();
+        $quantity = $item ? $item->qty : 0;
+        return response()->json(['qty' => $quantity]);
+    }
+
+    // public function getQuantity($sizeId)
     // {
-    //     $allData = Item::orderBy('id', 'desc')->where('status', '0')->get();
-    //     return view('inventory.items.unser', compact('allData'));
+    //     // Implement logic to fetch quantity based on $sizeId
+    //     $quantity = 10; // Example: Fetch quantity from database based on $sizeId
+
+    //     return response()->json(['quantity' => $quantity]);
     // }
 
     public function Serviceable()

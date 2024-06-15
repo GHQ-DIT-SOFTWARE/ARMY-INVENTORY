@@ -4,9 +4,9 @@ use App\Http\Controllers\AuditController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DefaultInventoryController;
+use App\Http\Controllers\IssueItemOutController;
 use App\Http\Controllers\ItemIssuingController;
 use App\Http\Controllers\ItemsController;
-use App\Http\Controllers\ItemWithQuantityController;
 use App\Http\Controllers\LogactivityController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\personnelController;
@@ -16,6 +16,7 @@ use App\Http\Controllers\RestockItemController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -57,14 +58,31 @@ Route::prefix('Profile')->group(function () {
     Route::get('/password/view', [ProfileController::class, 'PasswordView'])->name('password.view');
     Route::post('/password/update', [ProfileController::class, 'PasswordUpdate'])->name('password.update');
 });
-Route::prefix('superadmindashboard')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'View'])->name('home.dash');
+Route::prefix('dashboard')->group(function () {
+    Route::get('/', [DashboardController::class, 'View'])->name('home.dash');
     Route::get('/history', [DashboardController::class, 'Historytable'])->name('history.dash');
 });
 Route::middleware(['auth'])->group(function () {
-    Route::prefix('inventory')->group(function () {
 
-        Route::prefix('Restock-items')->group(function () {
+    Route::prefix('issue-item-out')->group(function () {
+        Route::get('/issue-out', [IssueItemOutController::class, 'issueout'])->name('Issue-out');
+        // Route::get('/add', [UnitController::class, 'Add'])->name('add-unit');
+        // Route::post('/store', [UnitController::class, 'Store'])->name('store-unit');
+        // Route::get('/edit/{uuid}', [UnitController::class, 'Edit'])->name('edit-unit');
+        // Route::post('/update/{uuid}', [UnitController::class, 'Update'])->name('update-unit');
+        // Route::get('/delete{uuid}', [UnitController::class, 'Delete'])->name('delete-unit');
+    });
+
+    Route::prefix('unit')->group(function () {
+        Route::get('/view', [UnitController::class, 'View'])->name('view-unit');
+        Route::get('/add', [UnitController::class, 'Add'])->name('add-unit');
+        Route::post('/store', [UnitController::class, 'Store'])->name('store-unit');
+        Route::get('/edit/{uuid}', [UnitController::class, 'Edit'])->name('edit-unit');
+        Route::post('/update/{uuid}', [UnitController::class, 'Update'])->name('update-unit');
+        Route::get('/delete{uuid}', [UnitController::class, 'Delete'])->name('delete-unit');
+    });
+    Route::prefix('inventory')->group(function () {
+        Route::prefix('restock-items')->group(function () {
             Route::get('/view', [RestockItemController::class, 'purchase_index'])->name('viewpurchase');
             Route::get('/add', [RestockItemController::class, 'purchase_create'])->name('addpurchase');
             Route::post('/store', [RestockItemController::class, 'purchase_store'])->name('storepurchase');
@@ -100,8 +118,7 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('item')->group(function () {
             Route::prefix('sub-category')->group(function () {
                 Route::get('/get-subcategory/{categoryId}', [DefaultInventoryController::class, 'fetchSubCategory'])->name('get-subcategory');
-                Route::get('/fetch-category-and-subcategory/{itemId}', [DefaultInventoryController::class, 'fetchCategoryAndSubcategory'])
-                    ->name('fetch-category-and-subcategory');
+                Route::get('/fetch-category-and-subcategory/{itemId}', [DefaultInventoryController::class, 'fetchCategoryAndSubcategory'])->name('fetch-category-and-subcategory');
             });
             Route::get('/', [ItemsController::class, 'View'])->name('view-item');
             Route::get('/item-manager', [ItemsController::class, 'manage_item'])->name('manage_item');
@@ -110,6 +127,11 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/edit/{uuid}', [ItemsController::class, 'Edit'])->name('edit-item');
             Route::post('/update/{uuid}', [ItemsController::class, 'Update'])->name('update-item');
             Route::get('/delete/{uuid}', [ItemsController::class, 'Delete'])->name('delete-item');
+
+            Route::get('/get-issue-subcategory/{categoryId}', [ItemsController::class, 'getSubCategory'])->name('get-issue-subcategory');
+            Route::get('/get-items/{subCategoryId}', [ItemsController::class, 'getItems'])->name('get-items');
+            Route::get('/get-sizes/{itemId}', [ItemsController::class, 'getSizes'])->name('get-sizes');
+            Route::get('/get-quantity/{sizeId}', [ItemsController::class, 'getQuantity'])->name('get-quantity');
             //Status
             Route::get('/approving{id}', [ItemsController::class, 'Approve'])->name('item.approve');
             Route::get('/electronicser{id}', [ItemsController::class, 'Rescheduled'])->name('item.reschudel');
