@@ -29,7 +29,6 @@ Route::middleware([
     config('jetstream.auth_session'),
 ])->group(function () {
     // ... your other routes
-
     Route::get('/dashboard', function () {
         return view('admin.index');
     })->name('dashboard');
@@ -39,38 +38,35 @@ Route::post('login', [PagesController::class, 'Log_in'])->name('login.dashboard'
 Route::get('logout', [PagesController::class, 'Logout'])->name('logout');
 Route::post('passwaord/reset', [PagesController::class, 'Resetpassword'])->name('password.update.reset');
 //approving status on General
-Route::get('/generalinactive{id}', [PagesController::class, 'Inactive'])->name('user.inactive');
-Route::get('/generalactive{id}', [PagesController::class, 'Active'])->name('user.active');
 
-Route::get('/login_activities', [LogactivityController::class, 'login_and_logout_activities'])->name('login_and_logout');
-Route::prefix('AuditTrail')->group(function () {
-    Route::get('/audittrail', [AuditController::class, 'ViewAudit'])->name('audit.trail');
-});
-Route::group(['prefix' => 'admin'], function () {
-    Route::resource('roles', RoleController::class, ['names' => 'roles']);
-    Route::resource('users', UserController::class, ['names' => 'users']);
-});
-
-Route::prefix('Profile')->group(function () {
-    Route::get('/view', [ProfileController::class, 'ProfileView'])->name('profileview');
-    Route::get('/edit', [ProfileController::class, 'ProfileEdit'])->name('profile.edit');
-    Route::post('/store', [ProfileController::class, 'ProfileStore'])->name('profile.store');
-    Route::get('/password/view', [ProfileController::class, 'PasswordView'])->name('password.view');
-    Route::post('/password/update', [ProfileController::class, 'PasswordUpdate'])->name('password.update');
-});
-Route::prefix('dashboard')->group(function () {
-    Route::get('/', [DashboardController::class, 'View'])->name('home.dash');
-    Route::get('/history', [DashboardController::class, 'Historytable'])->name('history.dash');
-});
 Route::middleware(['auth'])->group(function () {
+    Route::get('/generalinactive{id}', [PagesController::class, 'Inactive'])->name('user.inactive');
+    Route::get('/generalactive{id}', [PagesController::class, 'Active'])->name('user.active');
+    Route::get('/items-info', [DashboardController::class, 'View'])->name('home.dash');
+    Route::get('/history', [DashboardController::class, 'Historytable'])->name('history.dash');
+    Route::get('/login_activities', [LogactivityController::class, 'login_and_logout_activities'])->name('login_and_logout');
+    Route::prefix('AuditTrail')->group(function () {
+        Route::get('/audittrail', [AuditController::class, 'ViewAudit'])->name('audit.trail');
+    });
+    Route::group(['prefix' => 'admin'], function () {
+        Route::resource('roles', RoleController::class, ['names' => 'roles']);
+        Route::resource('users', UserController::class, ['names' => 'users']);
+    });
+
+    Route::prefix('Profile')->group(function () {
+        Route::get('/view', [ProfileController::class, 'ProfileView'])->name('profileview');
+        Route::get('/edit', [ProfileController::class, 'ProfileEdit'])->name('profile.edit');
+        Route::post('/store', [ProfileController::class, 'ProfileStore'])->name('profile.store');
+        Route::get('/password/view', [ProfileController::class, 'PasswordView'])->name('password.view');
+        Route::post('/password/update', [ProfileController::class, 'PasswordUpdate'])->name('password.update');
+    });
 
     Route::prefix('issue-item-out')->group(function () {
+        Route::get('/item-issued-out', [IssueItemOutController::class, 'index'])->name('item-issued-out');
         Route::get('/issue-out', [IssueItemOutController::class, 'issueout'])->name('Issue-out');
         // Route::get('/add', [UnitController::class, 'Add'])->name('add-unit');
-        // Route::post('/store', [UnitController::class, 'Store'])->name('store-unit');
-        // Route::get('/edit/{uuid}', [UnitController::class, 'Edit'])->name('edit-unit');
-        // Route::post('/update/{uuid}', [UnitController::class, 'Update'])->name('update-unit');
-        // Route::get('/delete{uuid}', [UnitController::class, 'Delete'])->name('delete-unit');
+        Route::post('/store', [IssueItemOutController::class, 'store'])->name('store-items-issued-out');
+        Route::get('/delete/{uuid}', [IssueItemOutController::class, 'item_issued_out_delete'])->name('delete-item-issued-out');
     });
 
     Route::prefix('unit')->group(function () {
@@ -164,34 +160,4 @@ Route::prefix('Personnel_details')->group(function () {
     Route::get('/edit{id}', [personnelController::class, 'edit'])->name('peredit');
     Route::post('/update', [personnelController::class, 'update'])->name('perupdate');
     Route::get('/delete{id}', [personnelController::class, 'delete'])->name('perdelete');
-});
-Route::prefix('items-with-quantites')->group(function () {
-    Route::get('/', [ItemWithQuantityController::class, 'index'])->name('view-items-quantities');
-    Route::get('/add', [ItemWithQuantityController::class, 'add'])->name('create-items-quantities');
-    Route::post('/store', [ItemWithQuantityController::class, 'store'])->name('store-items-quantities');
-    Route::get('/edit/{uuid}', [ItemWithQuantityController::class, 'edit'])->name('edit-items-quantities');
-    Route::post('/update{uuid}', [ItemWithQuantityController::class, 'update'])->name('update-items-quantities');
-    Route::get('/delete{uuid}', [ItemWithQuantityController::class, 'delete'])->name('delete-items-quantities');
-});
-Route::prefix('Items_Issuing_out')->group(function () {
-    Route::get('/routeview', [ItemIssuingController::class, 'RouteIssue'])->name('item.issue.routing.view');
-    Route::get('/routereceive', [ItemIssuingController::class, 'ReceiveIssue'])->name('item.issue.receiving.view');
-    Route::get('/view', [ItemIssuingController::class, 'index'])->name('item.issue.electronic.view');
-    Route::get('/add', [ItemIssuingController::class, 'create'])->name('item.issue.electronic.create');
-    Route::post('/store', [ItemIssuingController::class, 'StoreElectronic'])->name('item.issue.electronic.store');
-    //Issuing General Item Out
-    Route::get('/generalviewing', [ItemIssuingController::class, 'GeneralItemView'])->name('item.issue.general.view');
-    Route::get('/generaliussing', [ItemIssuingController::class, 'CreateGeneralItem'])->name('item.issue.general.create');
-    Route::post('/generaliussing', [ItemIssuingController::class, 'GeneralItemStore'])->name('item.issue.general.store');
-    Route::get('/delete{id}', [ItemIssuingController::class, 'delete'])->name('item.issue.electronic.delete');
-    //approving status on Electrnoic
-    Route::get('/eletronicretun{id}', [ItemIssuingController::class, 'ElecreturnBtn'])->name('item.eletronic.returned');
-    Route::get('/eletronicloaned{id}', [ItemIssuingController::class, 'ElecLoanBtn'])->name('item.eletronic.loaned');
-    //approving status on General
-    Route::get('/generalretuned{id}', [ItemIssuingController::class, 'GeneralReturn'])->name('item.general.returned');
-    Route::get('/generalloan{id}', [ItemIssuingController::class, 'GeneralonLoan'])->name('item.general.loaned');
-    //Receiving Items Electronic
-    Route::get('/itemreceiveview', [ItemIssuingController::class, 'RecieveEletronicItem'])->name('item.receive.electronic.view');
-    Route::get('/itemreceivecreate', [ItemIssuingController::class, 'RecieveEletronicCreate'])->name('item.receive.electronic.create');
-    Route::post('/itemreceivestore', [ItemIssuingController::class, 'RecieveEletronicStore'])->name('item.receive.electronic.store');
 });

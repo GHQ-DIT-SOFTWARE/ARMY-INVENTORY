@@ -60,7 +60,6 @@ class RestockItemController extends Controller
             $invoice->created_by = Auth::user()->id;
             $invoice->save();
         });
-
         $notification = [
             'message' => 'Inserted Successfully',
             'alert-type' => 'success',

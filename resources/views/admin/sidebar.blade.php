@@ -11,7 +11,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="{{ url('/dashboard') }}" class="nav-link "><span class="pcoded-micon"><i
+                    <a href="{{ route('dashboard') }}" class="nav-link "><span class="pcoded-micon"><i
                                 class="feather icon-home"></i></span><b><span
                                 class="pcoded-mtext">Dashboard</span></b></a>
                 </li>
@@ -29,22 +29,12 @@
                                 Out</span></b></a>
                     <ul class="pcoded-submenu">
                         <li class="nav-item pcoded-hasmenu">
+                            <a href="{{ route('item-issued-out') }}" class="nav-link "><span class="pcoded-mtext">Issued </span></a>
+                        </li>
+                        <li class="nav-item pcoded-hasmenu">
                             <a href="{{ route('Issue-out') }}" class="nav-link "><span class="pcoded-mtext">Issue
                                     Out</span></a>
                         </li>
-                        {{--
-                        <li class="nav-item pcoded-hasmenu">
-                            <a href="{{ route('item.issue.general.view') }}" class="nav-link "><span
-                                    class="pcoded-mtext">General Item-Issuing</span></a>
-                        </li>
-                        <li class="nav-item pcoded-hasmenu">
-                            <a href="{{ route('item.receive.electronic.view') }}" class="nav-link "><span
-                                    class="pcoded-mtext">Items Returned</span></a>
-                        </li>
-                        <li class="nav-item pcoded-hasmenu">
-                            <a href="{{ route('history.dash') }}" class="nav-link "><span class="pcoded-mtext">Item
-                                    History</span></a>
-                        </li> --}}
                     </ul>
                 </li>
 

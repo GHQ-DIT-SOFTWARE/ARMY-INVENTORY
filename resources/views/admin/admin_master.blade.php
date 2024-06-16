@@ -88,7 +88,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <p id="copy">&copy; {{ date('Y') }} GAF-Peacekeeping Management System | All Rights
+                    <p id="copy">&copy; {{ date('Y') }} GAF-LOGISTICS MANAGEMENT SYSTEM| All Rights
                         Reserved | Powered by (GHQ-DIT)</p>
                 </div>
             </div>
@@ -96,7 +96,8 @@
     </div>
     <script>
         document.getElementById('copy').innerHTML = 'Copyright &copy; ' + (new Date().getFullYear()) +
-            ' GAF-Peacekeeping Management System | All Rights Reserved.'
+            'GAF-LOGISTICS MANAGEMENT SYSTEM| All Rights
+                        Reserved | Powered by (GHQ-DIT).'
     </script>
     </div>
     </div>

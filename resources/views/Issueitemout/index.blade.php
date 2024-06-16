@@ -6,11 +6,11 @@
             <div class="row align-items-center">
                 <div class="col-md-12">
                     <div class="page-header-title">
-                        <h5 class="m-b-10">Product</h5>
+                        <h5 class="m-b-10">Issued Out Item</h5>
                     </div>
                     <ul class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
-                        <li class="breadcrumb-item"><a href="#!">New Product Purchase</a></li>
+                        <li class="breadcrumb-item"><a href="#!">Issued out Items</a></li>
                         <li class="breadcrumb-item"><a href="#!">Dashboard</a></li>
                     </ul>
                 </div>
@@ -25,23 +25,24 @@
                         <div class="col-sm-6">
                         </div>
                         <div class="col-sm-6 text-right">
-                            <a href="{{ route('addpurchase') }}" class="btn btn-primary btn-sm btn-round has-ripple"
-                                data-target="#modal-report"><i class="feather icon-plus"></i> New Purchase</a>
+                            <a href="{{ route('Issue-out') }}" class="btn btn-primary btn-sm btn-round has-ripple"
+                                data-target="#modal-report"><i class="feather icon-plus"></i>Issue Item Out</a>
                         </div>
                     </div>
                     <br>
                     <div class="table-responsive">
-                        <table id="restocks" class="table mb-0">
+                        <table id="itemissued" class="table mb-0">
                             <thead class="thead-light">
                                 <tr>
                                     <th>SL</th>
+                                    <th>Invoice Number</th>
                                     <th>Item Name</th>
-                                    <th>Supplier</th>
                                     <th>Category</th>
                                     <th>Sub Category</th>
                                     <th>Quantity</th>
-                                    <th>Restock Date</th>
                                     <th>Size</th>
+                                    <th>Issued Date</th>
+                                    <th>Issued TO(UNIT)</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -66,7 +67,7 @@
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('#restocks').DataTable({
+            $('#itemissued').DataTable({
                 dom: "<'row'<'col-sm-2'l><'col'B><'col-sm-2'f>>" +
                     "<'row'<'col-sm-12'tr>>" +
                     "<'row'<'col-sm-6'i><'col-sm-6'p>>",
@@ -87,7 +88,7 @@
                     [15, 25, 50, 100, 200, 'All'],
                 ],
                 ajax: {
-                    url: "{{ route('api-restocks-items') }}",
+                    url: "{{ route('api-issued-out') }}",
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -107,37 +108,42 @@
                             return meta.row + 1;
                         }
                     },
+                    {
+                        data: 'invoice_no',
+                        name: 'invoice_no'
+                    },
 
                     {
                         data: 'item_name',
                         name: 'item_name'
                     },
-                    {
-                        data: 'company_name',
-                        name: 'company_name'
-                    },
+
 
                     {
-                        data: 'category_name',
-                        name: 'category_name'
+                        data: 'category_id',
+                        name: 'category_id'
                     },
                     {
-                        data: 'sub_name',
-                        name: 'sub_name'
+                        data: 'sub_category',
+                        name: 'sub_category'
                     },
                     {
                         data: 'qty',
                         name: 'qty'
                     },
-                    {
-                        data: 'restock_date',
-                        name: 'restock_date'
-                    },
+
                     {
                         data: 'sizes',
                         name: 'sizes'
                     },
-                   
+                    {
+                        data: 'date',
+                        name: 'date'
+                    },
+                    {
+                        data: 'unit_id',
+                        name: 'unit_id'
+                    },
                     {
                         data: 'action',
                         name: 'action',
