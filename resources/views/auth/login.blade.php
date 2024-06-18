@@ -19,13 +19,6 @@
     <!-- [ signin-img ] start -->
     <div class="auth-wrapper align-items-stretch aut-bg-img">
         <div class="flex-grow-1">
-            {{-- <div class="h-100 d-md-flex align-items-center auth-side-img">
-                <div class="col-sm-10 auth-content w-auto">
-                    <img src="{{ asset('assets/images/auth/GAF logo corrected.png') }}" alt="LOGO" class="img-fluid"
-                        width="750px">
-                    <h1 class="text-white my-4">DIT-INVENTORY-MANAGEMENT SYSTEM.</h1>
-                </div>
-            </div> --}}
             <div class="auth-side-form">
                 <div class=" auth-content">
                     @if ($errors->any())
@@ -45,8 +38,6 @@
                     @endif
                     <form method="POST" action="{{ route('login.dashboard') }}">
                         @csrf
-                        {{-- <img src="{{ asset('assets/images/auth/auth-logo-dark.png') }}" alt=""
-                            class="img-fluid mb-4 d-block d-xl-none d-lg-none"> --}}
                         <h3 class="mb-4 f-w-400">Sign in</h3>
                         <div class="form-group mb-3">
                             <label class="floating-label" for="Email">Email address</label>
