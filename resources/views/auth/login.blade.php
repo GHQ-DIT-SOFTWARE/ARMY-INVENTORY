@@ -59,7 +59,6 @@
                         </div>
                         <button class="btn btn-block btn-dark mb-4">Login</button>
                         <div class="text-center">
-                            <div class="saprator my-4"><span>OR</span></div>
                             <p class="mb-2 mt-4 text-muted">Forgot password? <a href="{{ route('password.request') }}"
                                     class="f-w-400">Reset</a></p>
 
