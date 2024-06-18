@@ -2,8 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Login | DIT-IMS</title>
-    <!-- Meta -->
+    <title>Login|{{ config('app.name') }}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -20,13 +19,13 @@
     <!-- [ signin-img ] start -->
     <div class="auth-wrapper align-items-stretch aut-bg-img">
         <div class="flex-grow-1">
-            <div class="h-100 d-md-flex align-items-center auth-side-img">
+            {{-- <div class="h-100 d-md-flex align-items-center auth-side-img">
                 <div class="col-sm-10 auth-content w-auto">
                     <img src="{{ asset('assets/images/auth/GAF logo corrected.png') }}" alt="LOGO" class="img-fluid"
                         width="750px">
                     <h1 class="text-white my-4">DIT-INVENTORY-MANAGEMENT SYSTEM.</h1>
                 </div>
-            </div>
+            </div> --}}
             <div class="auth-side-form">
                 <div class=" auth-content">
                     @if ($errors->any())
@@ -46,16 +45,8 @@
                     @endif
                     <form method="POST" action="{{ route('login.dashboard') }}">
                         @csrf
-                        @if (session('success'))
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                <strong>{{ session('success') }}</strong>
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                        @endif
-                        <img src="{{ asset('assets/images/auth/auth-logo-dark.png') }}" alt=""
-                            class="img-fluid mb-4 d-block d-xl-none d-lg-none">
+                        {{-- <img src="{{ asset('assets/images/auth/auth-logo-dark.png') }}" alt=""
+                            class="img-fluid mb-4 d-block d-xl-none d-lg-none"> --}}
                         <h3 class="mb-4 f-w-400">Sign in</h3>
                         <div class="form-group mb-3">
                             <label class="floating-label" for="Email">Email address</label>
@@ -87,9 +78,7 @@
             </div>
         </div>
     </div>
-    <!-- [ signin-img ] end -->
 
-    <!-- Required Js -->
     <script src="{{ asset('assets/js/vendor-all.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/bootstrap.min.js') }}"></script>
     <script src="{{ asset('assets/js/ripple.js') }}"></script>

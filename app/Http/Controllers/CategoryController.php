@@ -1,8 +1,8 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\Electronic_Gadget;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -10,16 +10,21 @@ use Illuminate\Validation\Rule;
 
 class CategoryController extends Controller
 {
-   
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function View()
     {
-        $categoris = Category::orderBy('category_name', 'desc')->get();
-        return view('Category.index', compact('categoris'));
+        $category = Category::latest()->get();
+
+        return view('category.index', compact('category'));
     }
 
     public function AddCate()
     {
-        return view('Category.create');
+        return view('category.create');
     }
 
     public function Store(Request $request)
@@ -27,52 +32,59 @@ class CategoryController extends Controller
         $request->validate([
             'category_name' => ['required', Rule::unique('categories')],
         ]);
-        Category::insert([
+        Category::create([
             'category_name' => $request->category_name,
-            'created_by' => Auth::user()->id,
-            'created_at' => Carbon::now(),
-
         ]);
-        $notification = array(
+        $notification = [
             'message' => 'Category Inserted Successfully',
             'alert-type' => 'success',
-        );
+        ];
 
-        return redirect()->route('viewindex')->with($notification);
+        return redirect()->route('view-index')->with($notification);
     }
 
-    public function Edit($id)
+    public function Edit($uuid)
     {
+        $category = Category::where('uuid', $uuid)->first();
+        if (!$category) {
+            abort(404);
+        }
 
-        $category = Category::findOrFail($id);
-        return view('Category.edit', compact('category'));
+        return view('category.edit', compact('category'));
     }
+
     public function Update(Request $request)
     {
-        $category_id = $request->id;
-        Category::findOrFail($category_id)->update([
+        $category_id = $request->uuid;
+        $category = Category::where('uuid', $category_id)->first();
+        if (!$category) {
+            abort(404);
+        }
+        $category->update([
             'category_name' => $request->category_name,
             'updated_by' => Auth::user()->id,
             'updated_at' => Carbon::now(),
-
         ]);
-        $notification = array(
+        $notification = [
             'message' => 'Category Updated Successfully',
             'alert-type' => 'success',
-        );
-        return redirect()->route('viewindex')->with($notification);
+        ];
+
+        return redirect()->route('view-index')->with($notification);
     }
 
-    public function Delete($id)
+    public function Delete($uuid)
     {
-        Category::findOrFail($id)->delete();
-        $notification = array(
+        $category = Category::where('uuid', $uuid)->first();
+        if (!$category) {
+            abort(404);
+        }
+        $category->delete();
+        $notification = [
             'message' => 'Category Deleted Successfully',
             'alert-type' => 'success',
-        );
+        ];
 
         return redirect()->back()->with($notification);
     }
-
-
 }
