@@ -2,37 +2,62 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Traits\SaveToUpper;
+use App\Models\Traits\UuidTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
-use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Traits\HasRoles;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements MustVerifyEmail, Auditable
+class User extends Authenticatable implements Auditable
 {
     use HasApiTokens;
     use HasFactory;
     use HasProfilePhoto;
+    use HasRoles;
     use HasTeams;
     use Notifiable;
-    use TwoFactorAuthenticatable;
-    use HasRoles;
     use \OwenIt\Auditing\Auditable;
+    use SaveToUpper;
+    use TwoFactorAuthenticatable;
+    use UuidTrait;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var string[]
      */
+    public function generateAndSendOTP()
+    {
+        $otp = rand(100000, 999999);
+        $this->otp_code = $otp;
+        $this->save();
+        // Send OTP via SMS
+        $this->sendOTPViaSMS();
+        return $otp; // Return the generated OTP
+    }
+
+    protected function sendOTPViaSMS()
+    {
+        // Implement SMS sending logic here using your chosen provider
+        $message = "Your OTP code is: " . $this->otp_code;
+        // Example with Twilio
+        // \Twilio::message($this->phone_number, $message);
+    }
     protected $fillable = [
-        'name', 'email', 'password',
+        'name',
+        'email',
+        'email_verified_at',
+        'password',
+        'current_team_id',
+        'profile_photo_path',
+        'status',
     ];
 
     /**
@@ -64,12 +89,14 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
     protected $appends = [
         'profile_photo_url',
     ];
+
     public static function getpermissionGroups()
     {
         $permission_groups = DB::table('permissions')
             ->select('group_name as name')
             ->groupBy('group_name')
             ->get();
+
         return $permission_groups;
     }
 
@@ -79,6 +106,7 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
             ->select('name', 'id')
             ->where('group_name', $group_name)
             ->get();
+
         return $permissions;
     }
 
@@ -88,9 +116,11 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
         foreach ($permissions as $permission) {
             if (!$role->hasPermissionTo($permission->name)) {
                 $hasPermission = false;
+
                 return $hasPermission;
             }
         }
+
         return $hasPermission;
     }
 }

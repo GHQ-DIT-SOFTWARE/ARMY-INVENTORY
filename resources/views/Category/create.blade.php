@@ -7,7 +7,7 @@
             <div class="row align-items-center">
                 <div class="col-md-12">
                     <div class="page-header-title">
-                        <h5 class="m-b-10">Create Category</h5>
+                        <h5 class="m-b-10">Category</h5>
                     </div>
                     <ul class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
@@ -22,10 +22,10 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <h5>Add Category.</h5>
+                    <h5>Mech Category.</h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('storecat') }}" method="POST" id="myForm">
+                    <form action="{{ route('store-category') }}" method="POST" id="myForm">
                         @csrf
                         <div class="row">
                             <div class="col-md-6">
@@ -33,7 +33,7 @@
                                     <label for="name" class="col-sm-3 col-form-label">Category Name</label>
                                     <div class="col-sm-9">
                                         <input type="text" class="form-control" name="category_name"
-                                            placeholder="Enter Category">
+                                            placeholder="Category">
                                         @error('category_name')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
@@ -45,7 +45,7 @@
                 <div class="col-md-6">
                     <div class="form-group row">
                         <div class="col-sm-10">
-                            <button type="submit" class="btn  btn-success">Add Category</button>
+                            <button type="submit" class="btn  btn-primary">Save</button>
                         </div>
                     </div>
                 </div>
