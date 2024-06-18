@@ -96,8 +96,7 @@
     </div>
     <script>
         document.getElementById('copy').innerHTML = 'Copyright &copy; ' + (new Date().getFullYear()) +
-            'GAF-LOGISTICS MANAGEMENT SYSTEM| All Rights
-                        Reserved | Powered by (GHQ-DIT).'
+            'GAF-LOGISTICS MANAGEMENT SYSTEM| All Rights Reserved | Powered by (GHQ-DIT).
     </script>
     </div>
     </div>
