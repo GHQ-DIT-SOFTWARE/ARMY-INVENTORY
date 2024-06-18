@@ -101,7 +101,6 @@
                                             <th>PERSONAL NAME</th>
                                             <th>SERVICE OF ARM</th>
                                             <th>SERVICE CATEGORY</th>
-                                            {{-- <th>UNIT</th> --}}
                                             <th>EMAIL</th>
                                             <th>GENDER</th>
                                             <th>MOBILE NO</th>
