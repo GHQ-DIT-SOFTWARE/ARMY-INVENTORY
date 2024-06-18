@@ -6,7 +6,7 @@
             <div class="row align-items-center">
                 <div class="col-md-12">
                     <div class="page-header-title">
-                        <h5 class="m-b-10">Equipment Quantities</h5>
+                        <h5 class="m-b-10">Item</h5>
                     </div>
                     <ul class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
@@ -26,7 +26,7 @@
         </div>
     </div>
 
-    <div class="row align-items-center">
+    {{-- <div class="row align-items-center">
         <div class="col-lg-6 col-md-6">
             <div class="card">
                 <a href="{{ route('add-item') }}">
@@ -61,7 +61,7 @@
             </div>
         </div>
 
-    </div>
+    </div> --}}
 
     <div class="row">
         <div class="col-xl-12">
@@ -71,8 +71,8 @@
                         <div class="col-sm-6">
                         </div>
                         <div class="col-sm-6 text-right">
-                            {{-- <a href="{{ route('add-item') }}" class="btn btn-primary btn-sm btn-round has-ripple"
-                                data-target="#modal-report"><i class="feather icon-plus"></i> Add New Item</a> --}}
+                            <a href="{{ route('add-item') }}" class="btn btn-primary btn-sm btn-round has-ripple"
+                                data-target="#modal-report"><i class="feather icon-plus"></i> Add New Item</a>
                         </div>
                     </div>
                     <br>
@@ -111,7 +111,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
-    {{-- scrollY: 'calc(100vh - 200px)', --}}
     <script>
         $(document).ready(function() {
             $('#items').DataTable({
