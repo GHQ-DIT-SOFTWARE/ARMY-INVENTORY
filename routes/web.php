@@ -5,7 +5,6 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DefaultInventoryController;
 use App\Http\Controllers\IssueItemOutController;
-use App\Http\Controllers\ItemIssuingController;
 use App\Http\Controllers\ItemsController;
 use App\Http\Controllers\LogactivityController;
 use App\Http\Controllers\PagesController;
@@ -14,9 +13,11 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\rankController;
 use App\Http\Controllers\RestockItemController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\RolesAndPermissionController;
 use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UnitController;
+use App\Http\Controllers\UserAccountController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -48,11 +49,27 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('AuditTrail')->group(function () {
         Route::get('/audittrail', [AuditController::class, 'ViewAudit'])->name('audit.trail');
     });
-    Route::group(['prefix' => 'admin'], function () {
-        Route::resource('roles', RoleController::class, ['names' => 'roles']);
-        Route::resource('users', UserController::class, ['names' => 'users']);
+    // Route::group(['prefix' => 'admin'], function () {
+    //     Route::resource('roles', RoleController::class, ['names' => 'roles']);
+    //     Route::resource('users', UserController::class, ['names' => 'users']);
+    // });
+    Route::prefix('roles')->group(function () {
+        Route::get('/', [RolesAndPermissionController::class, 'index'])->name('index-roles');
+        Route::get('/add', [RolesAndPermissionController::class, 'create_role'])->name('create-roles');
+        Route::post('/store', [RolesAndPermissionController::class, 'store'])->name('store-roles');
+        Route::get('/edit/{uuid}', [RolesAndPermissionController::class, 'edit'])->name('edit-roles');
+        Route::post('/update', [RolesAndPermissionController::class, 'update'])->name('update-roles');
+        Route::get('/delete{uuid}', [RolesAndPermissionController::class, 'destroy'])->name('destroy-roles');
     });
 
+    Route::prefix('user')->group(function () {
+        Route::get('/', [UserAccountController::class, 'index'])->name('index-user');
+        Route::get('/add', [UserAccountController::class, 'create'])->name('create-user');
+        Route::post('/store', [UserAccountController::class, 'store'])->name('store-user');
+        Route::get('/edit/{uuid}', [UserAccountController::class, 'edit'])->name('edit-user');
+        Route::post('/update', [UserAccountController::class, 'update'])->name('update-user');
+        Route::get('/delete{uuid}', [UserAccountController::class, 'destroy'])->name('destroy-user');
+    });
     Route::prefix('Profile')->group(function () {
         Route::get('/view', [ProfileController::class, 'ProfileView'])->name('profileview');
         Route::get('/edit', [ProfileController::class, 'ProfileEdit'])->name('profile.edit');

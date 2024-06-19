@@ -6,7 +6,6 @@
             text-transform: capitalize;
         }
     </style>
-    <!-- [ breadcrumb ] start -->
     <div class="page-header">
         <div class="page-block">
             <div class="row align-items-center">
@@ -28,9 +27,8 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="header-title">Create New Role</h4>
-                    @include('users.part.message')
-
-                    <form action="{{ route('users.store') }}" method="POST">
+                    @include('systemsetting.users.part.message')
+                    <form action="{{ route('store-user') }}" method="POST">
                         @csrf
                         <div class="form-row">
                             <div class="form-group col-md-6 col-sm-12">
@@ -40,12 +38,17 @@
                             </div>
                             <div class="form-group col-md-6 col-sm-12">
                                 <label for="email">User Email</label>
-                                <input type="text" class="form-control" id="email" name="email"
+                                <input type="email" class="form-control" id="email" name="email"
                                     placeholder="Enter Email">
                             </div>
                         </div>
-
                         <div class="form-row">
+                            <div class="form-group col-md-6 col-sm-12">
+                                <label for="phone_number">Phone Number</label>
+                                <input type="text" class="form-control" id="phone_number" name="phone_number"
+                                    placeholder="Enter Phone Number" pattern="\d{10}" minlength="10" maxlength="10"
+                                    required>
+                            </div>
                             <div class="form-group col-md-6 col-sm-12">
                                 <label for="password">Assign Roles</label>
                                 <select name="roles[]" id="roles" class="form-control select2" multiple>
@@ -55,20 +58,18 @@
                                 </select>
                             </div>
                         </div>
-
                         <button type="submit" class="btn btn-primary mt-4 pr-4 pl-4">Save User</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-    </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $('.select2').select2();
-        })
+        document.addEventListener('DOMContentLoaded', function() {
+            $('#roles').select2({
+                placeholder: "Select roles",
+                allowClear: true
+            });
+        });
     </script>
 @endsection

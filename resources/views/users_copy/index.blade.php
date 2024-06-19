@@ -17,21 +17,21 @@
         </div>
     </div>
     <!-- [ Main Content ] start -->
-    @if (session()->has('alert'))
-        <div class="alert alert-danger alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
-            {{ session('alert') }}
-        </div>
-    @endif
+    @if(session()->has('alert'))
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ session('alert') }}
+    </div>
+@endif
     <div class="row">
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
                     <h4 class="header-title float-left">Users List</h4>
                     <p class="float-right mb-2">
-
-                            <a class="btn btn-info text-white rounded" href="{{ route('create-user') }}">Create New User</a>
-                       
+                        @if (Auth::guard('web')->user()->can('role.create'))
+                            <a class="btn btn-primary text-white" href="{{ route('users.create') }}">Create New User</a>
+                        @endif
                     </p>
                     <div class="clearfix"></div>
                     <div class="data-tables">
@@ -43,7 +43,6 @@
                                     <th width="10%">Name</th>
                                     <th width="10%">Email</th>
                                     <th width="10%">Code</th>
-                                    <th width="10%">Phone Number</th>
                                     <th width="10%">Status</th>
                                     <th width="15%">Roles</th>
                                     <th width="15%">Action</th>
@@ -55,17 +54,18 @@
                                         <td>{{ $loop->index + 1 }}</td>
                                         <td>{{ $user->name }}</td>
                                         <td>{{ $user->email }}</td>
+
                                         <td>{{ $user->code }}</td>
-                                        <td>{{ $user->phone_number }}</td>
                                         <td>
                                             @if ($user->status == 0)
-                                                <a href="{{ route('user.inactive', $user->uuid) }}"
+                                                <a href="{{ route('user.inactive', $user->id) }}"
                                                     class="badge badge-danger sm" title="Inactive"
                                                     id="InactiveBtn">-Inactive</a>
-                                            @elseif ($user->status == 1)
-                                                <a href="{{ route('user.active', $user->uuid) }}"
+                                                    @elseif ($user->status == 1)
+                                                <a href="{{ route('user.active', $user->id) }}"
                                                     class="badge badge-success sm" title="Active" id="ActiveBtn">
-                                                    - Active</a>
+                                                  - Active</a>
+
                                             @endif
                                         </td>
                                         <td>
@@ -77,17 +77,33 @@
                                         </td>
 
                                         <td>
+                                            @if (Auth::guard('web')->user()->can('superadmin.edit'))
+                                                <a class="btn btn-success text-white"
+                                                    href="{{ route('users.edit', $user->id) }}">Edit</a>
+                                            @endif
 
-                                                <a class="badge badge-success text-white"
-                                                    href="{{ route('edit-user', $user->uuid) }}">Edit</a>
 
-
-
-                                                <a class="badge badge-danger text-white" id="delete"
-                                                    href="{{ route('destroy-user', $user->uuid) }}">
+                                            @if (Auth::guard('web')->user()->can('superadmin.delete'))
+                                                <a class="btn btn-danger text-white"
+                                                    href="{{ route('users.destroy', $user->id) }}"
+                                                    onclick="event.preventDefault(); confirmDelete('{{ $user->id }}');">
                                                     Delete
                                                 </a>
+                                                <form id="delete-form-{{ $user->id }}"
+                                                    action="{{ route('users.destroy', $user->id) }}" method="POST"
+                                                    style="display: none;">
+                                                    @method('DELETE')
+                                                    @csrf
+                                                </form>
 
+                                                <script>
+                                                    function confirmDelete(userId) {
+                                                        if (confirm("Are you sure you want to delete this user?")) {
+                                                            document.getElementById('delete-form-' + userId).submit();
+                                                        }
+                                                    }
+                                                </script>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -115,6 +131,9 @@
     <script src="https://cdn.datatables.net/responsive/2.2.3/js/responsive.bootstrap.min.js"></script>
 
     <script>
+        /*================================
+                    datatable active
+                    ==================================*/
         if ($('#dataTable').length) {
             $('#dataTable').DataTable({
                 responsive: true
