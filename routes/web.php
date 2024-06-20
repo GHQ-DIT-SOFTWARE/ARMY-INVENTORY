@@ -91,6 +91,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/edit/{uuid}', [UnitController::class, 'Edit'])->name('edit-unit');
         Route::post('/update/{uuid}', [UnitController::class, 'Update'])->name('update-unit');
         Route::get('/delete{uuid}', [UnitController::class, 'Delete'])->name('delete-unit');
+        Route::post('/import/units', [UnitController::class,'import'])->name('import-units');
     });
     Route::prefix('inventory')->group(function () {
         Route::prefix('restock-items')->group(function () {
