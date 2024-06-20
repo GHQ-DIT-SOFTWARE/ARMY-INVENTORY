@@ -29,7 +29,8 @@
                                 Out</span></b></a>
                     <ul class="pcoded-submenu">
                         <li class="nav-item pcoded-hasmenu">
-                            <a href="{{ route('item-issued-out') }}" class="nav-link "><span class="pcoded-mtext">Issued </span></a>
+                            <a href="{{ route('item-issued-out') }}" class="nav-link "><span class="pcoded-mtext">Issued
+                                </span></a>
                         </li>
                         <li class="nav-item pcoded-hasmenu">
                             <a href="{{ route('Issue-out') }}" class="nav-link "><span class="pcoded-mtext">Issue
@@ -86,40 +87,31 @@
                                     Permission</span></a>
                             <ul class="pcoded-submenu">
                                 <li>
-                                    <a href="{{ route('roles.index') }}">All Roles</a>
+                                    <a href="{{ route('index-roles') }}">All Roles</a>
                                 </li>
-                                <li class="{{ Route::is('roles.create') ? 'active' : '' }}"><a
-                                        href="{{ route('roles.create') }}">Add Role</a></li>
+                                <li><a href="{{ route('create-roles') }}">Add Role</a></li>
                             </ul>
                         </li>
-                        <li class="nav-item pcoded-hasmenu">
-                            <a href="#!" class="nav-link "><b><span class="pcoded-mtext">Manage
-                                        Profile</span></b></a>
-                            <ul class="pcoded-submenu">
-                                <li><a href="{{ route('profileview') }}">Profile</a></li>
-                                <li><a href="{{ route('password.view') }}">Password Setting</a></li>
-                            </ul>
-                        </li>
+
                         <li class="nav-item pcoded-hasmenu">
                             <a href="#!" class="nav-link "><b><span class="pcoded-mtext">Manage
                                         Users</span></b></a>
                             <ul class="pcoded-submenu">
                                 <li>
-                                    <a href="{{ route('users.index') }}">User List</a>
+                                    <a href="{{ route('index-user') }}">User List</a>
                                 </li>
-                                <li><a href="{{ route('users.create') }}">Add User</a></li>
+                                <li><a href="{{ route('create-user') }}">Add User</a></li>
+                                <li>
+                                    <a href="{{ route('audit.trail') }}">Audit
+                                        Trail</a>
+                                </li>
+                                <li class="nav-item pcoded">
+                                    <a href="{{ route('login_and_logout') }}">User Logs
+                                        Activies</a>
+                                </li>
                             </ul>
                         </li>
-                        <li>
-                            <a href="{{ route('audit.trail') }}" class="nav-link"><span
-                                    class="pcoded-micon"></span><b><span class="pcoded-mtext">Audit
-                                        Trail</span></b></a>
-                        </li>
-                        <li class="nav-item pcoded">
-                            <a href="{{ route('login_and_logout') }}" class="nav-link"><span
-                                    class="pcoded-micon"></span><b><span class="pcoded-mtext">User Logs
-                                        Activies</span></b></a>
-                        </li>
+
                     </ul>
 
 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>@yield('title') | {{ config('app.name') }}</title>
     <meta charset="utf-8">
@@ -17,7 +18,8 @@
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/daterangepicker.css') }}">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" type="text/css"href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css">
+    <link rel="stylesheet"
+        type="text/css"href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css" />
@@ -66,6 +68,8 @@
                             <ul class="pro-body">
                                 <li><a href="{{ route('profileview') }}" class="dropdown-item"><i
                                             class="feather icon-user"></i> Profile</a></li>
+                                <li><a href="{{ route('password.view') }}" class="dropdown-item"><i
+                                            class="feather icon-user"></i>Change Password</a></li>
                                 <li><a href="{{ route('logout') }}" class="dropdown-item"><i
                                             class="feather icon-lock"></i>Logout</a></li>
                             </ul>

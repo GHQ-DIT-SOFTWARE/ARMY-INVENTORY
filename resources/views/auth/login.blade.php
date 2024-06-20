@@ -9,14 +9,11 @@
     <meta name="description" content="" />
     <meta name="keywords" content="">
     <meta name="author" content="Phoenixcoded" />
-    <!-- Favicon icon -->
     <link rel="icon" href="{{ asset('assets/images/LOGO-ICON.PNG ') }}" type="image/x-icon">
-    <!-- vendor css -->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
 </head>
 
 <body>
-    <!-- [ signin-img ] start -->
     <div class="auth-wrapper align-items-stretch aut-bg-img">
         <div class="flex-grow-1">
             <div class="auth-side-form">
@@ -68,7 +65,6 @@
             </div>
         </div>
     </div>
-
     <script src="{{ asset('assets/js/vendor-all.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/bootstrap.min.js') }}"></script>
     <script src="{{ asset('assets/js/ripple.js') }}"></script>

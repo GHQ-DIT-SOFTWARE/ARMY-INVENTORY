@@ -2,16 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\UnitsImport;
 use App\Models\Unit;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UnitController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth');
+    }
+
+    public function import(Request $request)
+    {
+        Excel::import(new UnitsImport, $request->file('file'));
+        $notification = [
+            'message' => 'Imported Successfully',
+            'alert-type' => 'success',
+        ];
+        return redirect()->back()->with($notification);
     }
 
     public function View()
