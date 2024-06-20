@@ -94,27 +94,46 @@ class PagesController extends Controller
     public function Logout()
     {
         $user = Auth::user();
-
-        if ($user) {
-            // $user->is_logged_in = 0;
-            $user->save();
-            $name = $user->name;
-            $email = $user->email;
-            $dt = Carbon::now();
-            $todayDate = $dt->toDayDateTimeString();
-            $activityLog = [
-                'name' => $name,
-                'email' => $email,
-                'description' => 'has logged out',
-                'date_time' => $todayDate,
-            ];
-
-            DB::table('activity_logs')->insert($activityLog);
-        }
+        $name = $user->name;
+        $email = $user->email;
+        $dt = Carbon::now();
+        $todayDate = $dt->toDateTimeString();
+        $activityLog = [
+            'uuid' => Str::uuid(),
+            'name' => $name,
+            'email' => $email,
+            'description' => 'has logged out',
+            'date_time' => $todayDate,
+        ];
+        DB::table('activity_logs')->insert($activityLog);
         Auth::logout();
-        Session::forget('user_id');
-        return redirect()->route('login.dashboard')->with('success', 'User Logout Successfully');
+        session()->forget('otp_verified');
+        return redirect()->route('login')->with('success', 'User Logout Successfully');
     }
+
+    // public function Logout()
+    // {
+    //     $user = Auth::user();
+
+    //     if ($user) {
+    //         $user->save();
+    //         $name = $user->name;
+    //         $email = $user->email;
+    //         $dt = Carbon::now();
+    //         $todayDate = $dt->toDayDateTimeString();
+    //         $activityLog = [
+    //             'name' => $name,
+    //             'email' => $email,
+    //             'description' => 'has logged out',
+    //             'date_time' => $todayDate,
+    //         ];
+
+    //         DB::table('activity_logs')->insert($activityLog);
+    //     }
+    //     Auth::logout();
+    //     Session::forget('user_id');
+    //     return redirect()->route('login.dashboard')->with('success', 'User Logout Successfully');
+    // }
     private function isUserLoggedIn($userId)
     {
         // Retrieve the user from the database
