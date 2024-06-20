@@ -26,43 +26,6 @@
         </div>
     </div>
 
-    {{-- <div class="row align-items-center">
-        <div class="col-lg-6 col-md-6">
-            <div class="card">
-                <a href="{{ route('add-item') }}">
-                    <div class="card-body" style="height: 160px;">
-                        <div class="media align-items-center p-0">
-                            <div class="text-center">
-                                <img src="{{ asset('assets/images/dashicons/add-item.png') }}" alt=""
-                                    style="width: 22%;float:center;">
-                                <h4 class="m-0 text-bold">Add Item</h4>
-                            </div>
-                            <div>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-        </div>
-
-        <div class="col-lg-6 col-md-6 element-item operation sponsored" data-category="operation">
-            <div class="card">
-                <a href="{{ route('view-item') }}">
-                    <div class="card-body" style="height: 160px;">
-                        <div class="media align-items-center p-0">
-                            <div class="text-center">
-                                <img src="{{ asset('assets/images/dashicons/edit.png') }}" alt=""
-                                    style="width:20%; float:center;">
-                                <h4 class="m-0 text-bold">Update Item</h4>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-        </div>
-
-    </div> --}}
-
     <div class="row">
         <div class="col-xl-12">
             <div class="card">
