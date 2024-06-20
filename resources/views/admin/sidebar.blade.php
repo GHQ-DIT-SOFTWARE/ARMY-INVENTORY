@@ -15,8 +15,6 @@
                                 class="feather icon-home"></i></span><b><span
                                 class="pcoded-mtext">Dashboard</span></b></a>
                 </li>
-
-
                 <li class="nav-item">
                     <a href="{{ route('home.dash') }}" class="nav-link "><span class="pcoded-micon"><i
                                 class="feather icon-home"></i></span>
@@ -29,12 +27,13 @@
                                 Out</span></b></a>
                     <ul class="pcoded-submenu">
                         <li class="nav-item pcoded-hasmenu">
-                            <a href="{{ route('item-issued-out') }}" class="nav-link "><span class="pcoded-mtext">Issued
+                            <a href="{{ route('item-issued-out') }}" class="nav-link "><span
+                                    class="pcoded-mtext">Request Request
                                 </span></a>
                         </li>
                         <li class="nav-item pcoded-hasmenu">
-                            <a href="{{ route('Issue-out') }}" class="nav-link "><span class="pcoded-mtext">Issue
-                                    Out</span></a>
+                            <a href="{{ route('Issue-out') }}" class="nav-link "><span class="pcoded-mtext">Initial
+                                    Request</span></a>
                         </li>
                     </ul>
                 </li>

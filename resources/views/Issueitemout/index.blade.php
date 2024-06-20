@@ -43,6 +43,7 @@
                                     <th>Size</th>
                                     <th>Issued Date</th>
                                     <th>Issued TO(UNIT)</th>
+                                    <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -143,6 +144,10 @@
                     {
                         data: 'unit_id',
                         name: 'unit_id'
+                    },
+                    {
+                        data: 'status',
+                        name: 'status'
                     },
                     {
                         data: 'action',
