@@ -7,18 +7,18 @@ use App\Http\Controllers\DefaultInventoryController;
 use App\Http\Controllers\IssueItemOutController;
 use App\Http\Controllers\ItemsController;
 use App\Http\Controllers\LogactivityController;
+use App\Http\Controllers\ManageUserAccountController;
+use App\Http\Controllers\OTPController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\personnelController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\rankController;
 use App\Http\Controllers\RestockItemController;
-use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RolesAndPermissionController;
 use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserAccountController;
-use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -27,9 +27,8 @@ Route::get('/', function () {
 
 Route::middleware([
     'auth:sanctum',
-    config('jetstream.auth_session'),
+    config('jetstream.auth_session'), 'verified', 'otp.verify', 'force.password.change',
 ])->group(function () {
-    // ... your other routes
     Route::get('/dashboard', function () {
         return view('admin.index');
     })->name('dashboard');
@@ -38,9 +37,12 @@ Route::middleware([
 Route::post('login', [PagesController::class, 'Log_in'])->name('login.dashboard');
 Route::get('logout', [PagesController::class, 'Logout'])->name('logout');
 Route::post('passwaord/reset', [PagesController::class, 'Resetpassword'])->name('password.update.reset');
-//approving status on General
+Route::get('/verify/otp', [OTPController::class, 'showVerifyOtpForm'])->name('verify.otp');
+Route::post('/verify/otp', [OTPController::class, 'verifyOtp'])->name('otp.verify');
 
 Route::middleware(['auth'])->group(function () {
+    Route::post('/password-changed', [ManageUserAccountController::class, 'changePassword'])->name('changed-password');
+    Route::get('/change-password', [PagesController::class, 'verifyaccount'])->name('verify-password');
     Route::get('/generalinactive{id}', [PagesController::class, 'Inactive'])->name('user.inactive');
     Route::get('/generalactive{id}', [PagesController::class, 'Active'])->name('user.active');
     Route::get('/items-info', [DashboardController::class, 'View'])->name('home.dash');
@@ -49,10 +51,6 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('AuditTrail')->group(function () {
         Route::get('/audittrail', [AuditController::class, 'ViewAudit'])->name('audit.trail');
     });
-    // Route::group(['prefix' => 'admin'], function () {
-    //     Route::resource('roles', RoleController::class, ['names' => 'roles']);
-    //     Route::resource('users', UserController::class, ['names' => 'users']);
-    // });
     Route::prefix('roles')->group(function () {
         Route::get('/', [RolesAndPermissionController::class, 'index'])->name('index-roles');
         Route::get('/add', [RolesAndPermissionController::class, 'create_role'])->name('create-roles');

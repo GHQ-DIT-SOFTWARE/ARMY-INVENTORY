@@ -92,14 +92,7 @@
                                 <li><a href="{{ route('create-roles') }}">Add Role</a></li>
                             </ul>
                         </li>
-                        <li class="nav-item pcoded-hasmenu">
-                            <a href="#!" class="nav-link "><b><span class="pcoded-mtext">Manage
-                                        Profile</span></b></a>
-                            <ul class="pcoded-submenu">
-                                <li><a href="{{ route('profileview') }}">Profile</a></li>
-                                <li><a href="{{ route('password.view') }}">Password Setting</a></li>
-                            </ul>
-                        </li>
+
                         <li class="nav-item pcoded-hasmenu">
                             <a href="#!" class="nav-link "><b><span class="pcoded-mtext">Manage
                                         Users</span></b></a>
@@ -108,18 +101,17 @@
                                     <a href="{{ route('index-user') }}">User List</a>
                                 </li>
                                 <li><a href="{{ route('create-user') }}">Add User</a></li>
+                                <li>
+                                    <a href="{{ route('audit.trail') }}">Audit
+                                        Trail</a>
+                                </li>
+                                <li class="nav-item pcoded">
+                                    <a href="{{ route('login_and_logout') }}">User Logs
+                                        Activies</a>
+                                </li>
                             </ul>
                         </li>
-                        <li>
-                            <a href="{{ route('audit.trail') }}" class="nav-link"><span
-                                    class="pcoded-micon"></span><b><span class="pcoded-mtext">Audit
-                                        Trail</span></b></a>
-                        </li>
-                        <li class="nav-item pcoded">
-                            <a href="{{ route('login_and_logout') }}" class="nav-link"><span
-                                    class="pcoded-micon"></span><b><span class="pcoded-mtext">User Logs
-                                        Activies</span></b></a>
-                        </li>
+
                     </ul>
 
 

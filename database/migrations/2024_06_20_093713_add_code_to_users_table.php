@@ -14,11 +14,11 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('gender')->nullable()->after('password');
-            $table->string('password_expiry')->nullable()->after('status');
-            $table->string('otp_code')->nullable()->after('profile_photo_path');
-            $table->string('code')->nullable()->after('email_verified_at');
-            $table->string('phone_number')->nullable()->after('status');
+            $table->date('password_changed_at')->nullable()->after('password');
+            $table->date('password_expiry')->nullable()->after('status');
+            // $table->string('otp_code')->nullable()->after('profile_photo_path');
+            // $table->string('code')->nullable()->after('email_verified_at');
+            // $table->string('phone_number')->nullable()->after('status');
         });
     }
 
@@ -30,11 +30,11 @@ return new class extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('otp_code');
+            $table->dropColumn('password_changed_at');
             $table->dropColumn('password_expiry');
-            $table->dropColumn('gender');
-            $table->dropColumn('code');
-            $table->dropColumn('phone_number');
+            // $table->dropColumn('gender');
+            // $table->dropColumn('code');
+            // $table->dropColumn('phone_number');
         });
     }
 };
