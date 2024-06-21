@@ -29,13 +29,47 @@
                 </div>
                 <div class="card-body">
                     <div class="row align-items-center m-l-0">
-                        <div class="col-sm-6 text-right">
-                            <div class="btn-group mb-2 mr-2" style="display: inline-block;">
-                                <a href="{{ route('add-unit') }}" class="btn  btn-primary " type="button"
-                                    aria-haspopup="true" aria-expanded="false"><i class="feather icon-plus"></i>Add
-                                    Units</a>
+                        <div class="col-sm-6 text-left">
 
-                            </div>
+                            <nav class="navbar justify-content-between p-0 align-items-center">
+                                <div class="col-sm-6 text-left"><br />
+                                    <p>Perform these Actions on Personal.</p>
+                                </div>
+                                <div class="input-group" style="width: auto;">
+                                    <div class="col-auto">
+                                        <div class="btn-group">
+                                            <form action="{{ route('import-units') }}" method="POST"
+                                                enctype="multipart/form-data">
+                                                @csrf
+                                                <div class="row">
+                                                    <div class="input_container">
+                                                        <input type="file" name="file" id="fileUpload"
+                                                            accept=".xlsx, .csv">
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <button class="btn btn-info">Import Excel File</button>
+                                                    </div>
+                                                </div>
+                                                @error('file')
+                                                    <div class="alert alert-danger mt-2">
+                                                        {{ $message }} Please upload a valid file (xlsx, csv).
+                                                    </div>
+                                                @enderror
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="col text-right">
+                                        <div class="btn-group mb-2 mr-2" style="display: inline-block;">
+                                            <a href="{{ route('add-unit') }}" class="btn  btn-primary " type="button"
+                                                aria-haspopup="true" aria-expanded="false"><i
+                                                    class="feather icon-plus"></i>Add
+                                                Units</a>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </nav>
                         </div>
                         <div class="dt-responsive table-responsive">
                             <div class="dt-responsive table-responsive">

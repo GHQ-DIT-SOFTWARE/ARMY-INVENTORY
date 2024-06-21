@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('activity_logs', function (Blueprint $table) {
             $table->id();
+            $table->uuid()->index();
             $table->string('name')->nullable();
             $table->string('email')->nullable();
             $table->string('description')->nullable();
