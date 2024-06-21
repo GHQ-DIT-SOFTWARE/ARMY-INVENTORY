@@ -25,9 +25,6 @@ return new class extends Migration
             $table->string('unit_id')->nullable();
             $table->string('category_id')->nullable();
             $table->string('sub_category')->nullable();
-
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             // $table->unsignedBigInteger('category_id')->nullable();
             // $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             // $table->unsignedBigInteger('sub_category')->nullable();
@@ -37,8 +34,8 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->integer('confirm_qty')->nullable();
             $table->string('remarks')->nullable();
-            $table->integer('created_by')->nullable();
-            $table->integer('updated_by')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
