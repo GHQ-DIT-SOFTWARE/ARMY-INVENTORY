@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Logistics\AggregatedIssueItemController;
 use App\Http\Controllers\Api\Logistics\IssuedOutItemController;
 use App\Http\Controllers\Api\Logistics\LogisticsController;
 use App\Http\Controllers\Api\Logistics\RestockItemController;
@@ -25,4 +26,6 @@ Route::prefix('logistics')->group(function () {
     Route::post('/filter-items', [LogisticsController::class, 'filter_item'])->name('filter-items');
     Route::post('/restocks-items', [RestockItemController::class, 'index'])->name('api-restocks-items');
     Route::post('/issued-out-items', [IssuedOutItemController::class, 'index'])->name('api-issued-out');
+    Route::post('/aggregated-issue-items', [AggregatedIssueItemController::class, 'index'])->name('aggregated-issue-items');
+    Route::post('/items-issued-aggregated', [AggregatedIssueItemController::class, 'item_issued'])->name('items-issued-aggregated');
 });

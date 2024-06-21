@@ -20,7 +20,7 @@ class IssueItemOut extends Model implements Auditable
      * @var array<int, string>
      */
     protected $fillable = [
-        'category_id', 'sub_category', 'item_id', 'sizes', 'qty', 'unit_id', 'description', 'invoice_no',
+        'category_id', 'sub_category', 'item_id', 'sizes', 'qty', 'unit_id', 'description', 'invoice_no', 'confirm_qty', 'remarks',
     ];
     public function issuedoutitem()
     {

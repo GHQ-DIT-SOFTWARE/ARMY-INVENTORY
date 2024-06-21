@@ -22,14 +22,25 @@ class AggregatedIssueItem extends Model implements Auditable
     protected $fillable = [
         'invoice_no',
         'items',
+        'status',
     ];
 
+    public function setItemsAttribute($value)
+    {
+        $this->attributes['items'] = json_encode($value);
+    }
+
+    // Accessor to decode items from JSON when getting
+    public function getItemsAttribute($value)
+    {
+        return json_decode($value, true);
+    }
     /**
      * The attributes that should be cast.
      *
      * @var array<string, string>
      */
     protected $casts = [
-
+        'items' => 'array',
     ];
 }

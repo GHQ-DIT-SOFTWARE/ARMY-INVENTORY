@@ -27,17 +27,26 @@
                                 Out</span></b></a>
                     <ul class="pcoded-submenu">
                         <li class="nav-item pcoded-hasmenu">
-                            <a href="{{ route('item-issued-out') }}" class="nav-link "><span
-                                    class="pcoded-mtext">Request Request
-                                </span></a>
-                        </li>
-                        <li class="nav-item pcoded-hasmenu">
                             <a href="{{ route('Issue-out') }}" class="nav-link "><span class="pcoded-mtext">Initial
                                     Request</span></a>
                         </li>
+                        <li class="nav-item pcoded-hasmenu">
+                            <a href="{{ route('item-issued-out') }}" class="nav-link "><span
+                                    class="pcoded-mtext">Authorized Request
+                                </span></a>
+                        </li>
+                        <li class="nav-item pcoded-hasmenu">
+                            <a href="{{ route('aggregated-item') }}" class="nav-link "><span
+                                    class="pcoded-mtext">Pending Issurance
+                                </span></a>
+                        </li>
+                        <li class="nav-item pcoded-hasmenu">
+                            <a href="{{ route('all-items-confirmed-issued') }}" class="nav-link "><span
+                                    class="pcoded-mtext">Issued Issurance
+                                </span></a>
+                        </li>
                     </ul>
                 </li>
-
                 <li class="nav-item pcoded-hasmenu">
                     <a href="#!" class="nav-link"><span class="pcoded-micon"><i
                                 class="feather icon-grid"></i></span><b><span class="pcoded-mtext">Instock
@@ -51,11 +60,9 @@
                             <a href="{{ route('view-subcategory') }}" class="nav-link "><span class="pcoded-mtext">Sub
                                     Category</span></a>
                         </li>
-
                         <li class="nav-item pcoded-hasmenu">
                             <a href="{{ route('view-item') }}" class="nav-link "><span class="pcoded-mtext">Stock
                                     Item</span></a>
-
                         <li class="nav-item pcoded-hasmenu">
                             <a href="{{ route('viewpurchase') }}" class="nav-link "><span class="pcoded-mtext">Restock
                                     Item</span></a>
@@ -65,8 +72,6 @@
                         </li>
                     </ul>
                 </li>
-
-
                 <li class="nav-item pcoded-hasmenu">
                     <a href="#!" class="nav-link"><span class="pcoded-micon"><i
                                 class="feather icon-settings"></i></span><b><span class="pcoded-mtext">
@@ -91,7 +96,6 @@
                                 <li><a href="{{ route('create-roles') }}">Add Role</a></li>
                             </ul>
                         </li>
-
                         <li class="nav-item pcoded-hasmenu">
                             <a href="#!" class="nav-link "><b><span class="pcoded-mtext">Manage
                                         Users</span></b></a>
@@ -105,17 +109,13 @@
                                         Trail</a>
                                 </li>
                                 <li class="nav-item pcoded">
-                                    <a href="{{ route('login_and_logout') }}">User Logs
+                                    <a href="{{ route('login_and_logout_activities') }}">User Logs
                                         Activies</a>
                                 </li>
                             </ul>
                         </li>
-
                     </ul>
-
-
                 </li>
-
                 <li class="nav-item pcoded">
                     <a href="{{ route('logout') }}" class="nav-link"><span class="pcoded-micon"><i
                                 class="fas fa-sign-out-alt"></i></span><b><span

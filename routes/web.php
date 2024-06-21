@@ -47,7 +47,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/generalactive{id}', [PagesController::class, 'Active'])->name('user.active');
     Route::get('/items-info', [DashboardController::class, 'View'])->name('home.dash');
     Route::get('/history', [DashboardController::class, 'Historytable'])->name('history.dash');
-    Route::get('/login_activities', [LogactivityController::class, 'login_and_logout_activities'])->name('login_and_logout');
+    Route::get('/log-activities', [LogactivityController::class, 'login_and_logout_activities'])->name('login_and_logout_activities');
     Route::prefix('AuditTrail')->group(function () {
         Route::get('/audittrail', [AuditController::class, 'ViewAudit'])->name('audit.trail');
     });
@@ -78,10 +78,16 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('issue-item-out')->group(function () {
         Route::get('/item-issued-out', [IssueItemOutController::class, 'index'])->name('item-issued-out');
+        Route::get('/all-items-confirmed-issued', [IssueItemOutController::class, 'issued_items'])->name('all-items-confirmed-issued');
+        Route::get('/aggregated-issue-item', [IssueItemOutController::class, 'aggreagtated_issue_item'])->name('aggregated-item');
         Route::get('/issue-out', [IssueItemOutController::class, 'issueout'])->name('Issue-out');
         // Route::get('/add', [UnitController::class, 'Add'])->name('add-unit');
         Route::post('/store', [IssueItemOutController::class, 'store'])->name('store-items-issued-out');
         Route::get('/delete/{uuid}', [IssueItemOutController::class, 'item_issued_out_delete'])->name('delete-item-issued-out');
+        Route::get('edit-item/{uuid}', [IssueItemOutController::class, 'edit'])->name('edit-item-issued-out');
+        Route::post('/update-issued-items', [IssueItemOutController::class, 'update'])->name('update-issued-items');
+        Route::get('/item-issued/{uuid}/pdf', [IssueItemOutController::class, 'generatePdf'])->name('item-issued-pdf');
+
     });
 
     Route::prefix('unit')->group(function () {
@@ -91,7 +97,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/edit/{uuid}', [UnitController::class, 'Edit'])->name('edit-unit');
         Route::post('/update/{uuid}', [UnitController::class, 'Update'])->name('update-unit');
         Route::get('/delete{uuid}', [UnitController::class, 'Delete'])->name('delete-unit');
-        Route::post('/import/units', [UnitController::class,'import'])->name('import-units');
+        Route::post('/import/units', [UnitController::class, 'import'])->name('import-units');
     });
     Route::prefix('inventory')->group(function () {
         Route::prefix('restock-items')->group(function () {
