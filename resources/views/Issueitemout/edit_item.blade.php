@@ -21,7 +21,53 @@
     {{-- {{ route('confirm-quantity') }} --}}<div class="card">
 
         <div class="card-body">
-            <h4 class="card-title">Issue/Receipt Voucher</h4>
+            <h5 class="card-title">ISSUE AND RECEIPT VOUCHER</h5>
+
+            <table class="table table-xs" style="width:100%; ">
+            <tr>
+                <th>Defence Form G. 1033</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+            <tr>
+                <td>Voucher must accompany Store if practicable</td>
+                <td style="border: 1px solid black;">Issue Voucher No. and Date</td>
+                <td style="border: 1px solid black;"> Put Invoive No here</td>
+                <td style="border: 1px solid black;">RECEIPT Voucher No. and Date</td>
+                <td style="border: 1px solid black;"> Generate No</td>
+            </tr>
+            <tr>
+                <td>Office Stamp</td>
+                <td style="border: 1px solid black;">Account</td>
+                <td style="border: 1px solid black;"></td>
+                <td style="border: 1px solid black;">Account</td>
+                <td style="border: 1px solid black;"></td>
+            </tr>
+             <tr>
+                <td>Consignor (Original and Triplicate)</td>
+                <td style="border: 1px solid black;">Issued By</td>
+                <td style="border: 1px solid black;"></td>
+                <td style="border: 1px solid black;">Issued To</td>
+                <td style="border: 1px solid black;"></td>
+            </tr>
+             <tr>
+                <td>Consignor (Duplicate)</td>
+                <td style="border: 1px solid black;">Authority for Issue</td>
+                <td style="border: 1px solid black;"></td>
+                <td style="border: 1px solid black;">Date and Mode of Conveyance</td>
+                <td style="border: 1px solid black;"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            </table>
+            <br>
             <form method="POST" action="{{ route('update-issued-items') }}">
                 @csrf
                 <input type="hidden" name="uuid" value="{{ $aggregatedItem->uuid }}">
