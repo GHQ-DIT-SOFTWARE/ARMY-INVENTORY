@@ -104,14 +104,15 @@
 
             <div class="card">
                 <div class="card-body">
-                    <div id="filters" class="button-group">
+                    {{-- <div id="filters" class="button-group">
                         <button class="button btn btn-outline-secondary my-1 active" data-filter="*">Show
                             all</button>
                         <button class="button btn btn-outline-secondary my-1" data-filter=".operation">Operations</button>
                         <button class="button btn btn-outline-secondary my-1" data-filter=".logistics">Logistics</button>
                         <button class="button btn btn-outline-secondary my-1" data-filter=".admin">Administration</button>
                         <button class="button btn btn-outline-secondary my-1" data-filter=".others">Others</button>
-                    </div>
+                    </div> --}}
+                    <h5 style="text-align: center">MANAGE DASHBOARD</h5>
                 </div>
             </div>
 
@@ -154,20 +155,8 @@
                             </a>
                         </div>
 
-                        <div class="element-item admin neutral " data-category="admin">
-                            <a href="{{ route('all-items-confirmed-issued') }}">
-                            <div class="card mx-3 shadow p-3" style="width: 8rem;">
-                                <img src="{{ asset('assets/images/dashicons/search.png') }}" style="width: 3rem;"
-                                class="card-img-top mx-auto d-block mt-2 mb-2" alt="...">
-                                <div class="card-body p-2">
-                                <p class="card-text text-center font-weight-bold">Search</p>
-                                </div>
-                            </div>
-                            </a>
-                        </div>
-
-
                         <div class="element-item admin sponsored " data-category="admin">
+                            <a href="{{ route('all-items-confirmed-issued') }}">
                             <div class="card mx-3 shadow p-3" style="width: 8rem;">
                                 <img src="{{ asset('assets/images/dashicons/request.png') }}" style="width: 3rem;"
                                 class="card-img-top mx-auto d-block mt-2 mb-2" alt="...">
@@ -175,6 +164,19 @@
                                 <p class="card-text text-center font-weight-bold">Issued</p>
                                 </div>
                             </div>
+                            </a>
+                        </div>
+
+                        <div class="element-item admin neutral " data-category="admin">
+                            <a href="{{ route('all-items-confirmed-issued') }}">
+                            <div class="card mx-3 shadow p-3" style="width: 8rem;">
+                                <img src="{{ asset('assets/images/dashicons/letter.png') }}" style="width: 3rem;"
+                                class="card-img-top mx-auto d-block mt-2 mb-2" alt="...">
+                                <div class="card-body p-2">
+                                <p class="card-text text-center font-weight-bold">Write-Off</p>
+                                </div>
+                            </div>
+                            </a>
                         </div>
 
                         <div class="element-item others neutral " data-category="others">
@@ -230,6 +232,25 @@
             </div>
         </div>
 
+          <!-- progressbar static data start -->
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Request by all units</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="collected-chart"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                    </div>
+                </div>
+            </div>
+
     </div>
     </div>
+
 @endsection

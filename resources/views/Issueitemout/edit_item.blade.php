@@ -21,7 +21,7 @@
     {{-- {{ route('confirm-quantity') }} --}}<div class="card">
 
         <div class="card-body">
-            <h4 class="card-title">Issue Items</h4>
+            <h4 class="card-title">Issue/Receipt Voucher</h4>
             <form method="POST" action="{{ route('update-issued-items') }}">
                 @csrf
                 <input type="hidden" name="uuid" value="{{ $aggregatedItem->uuid }}">

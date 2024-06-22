@@ -101,7 +101,7 @@
                                 </div>
                                 <div class="col-sm-6 col-md-3">
                                     <div class="form-group row">
-                                        <label for="actual_qty" class="col-sm-4 col-form-label">Dte/Dir/Unit</label>
+                                        <label for="actual_qty" class="col-sm-4 col-form-label">Unit</label>
                                         <div class="col-sm-8">
                                             <select class="form-control select2" name="unit_id" id="unit_id" required>
                                                 <option value=" ">Select Unit</option>

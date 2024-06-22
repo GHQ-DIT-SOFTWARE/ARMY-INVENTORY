@@ -40,9 +40,14 @@
                                     class="pcoded-mtext">Pending Issurance
                                 </span></a>
                         </li>
-                        <li class="nav-item pcoded-hasmenu">
+                        {{-- <li class="nav-item pcoded-hasmenu">
                             <a href="{{ route('all-items-confirmed-issued') }}" class="nav-link "><span
                                     class="pcoded-mtext">Search Invoice
+                                </span></a>
+                        </li> --}}
+                        <li class="nav-item pcoded-hasmenu">
+                            <a href="{{ route('all-items-confirmed-issued') }}" class="nav-link "><span
+                                    class="pcoded-mtext">Issued Request
                                 </span></a>
                         </li>
                     </ul>
