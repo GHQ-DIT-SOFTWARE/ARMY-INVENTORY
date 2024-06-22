@@ -29,7 +29,7 @@
                 </div>
                 <div class="card-body">
                     <div class="row align-items-center m-l-0">
-                        <div class="col-sm-6 text-left">
+                        {{-- <div class="col-sm-6 text-left">
 
                             <nav class="navbar justify-content-between p-0 align-items-center">
                                 <div class="col-sm-6 text-left"><br />
@@ -70,7 +70,7 @@
 
                                 </div>
                             </nav>
-                        </div>
+                        </div> --}}
                         <div class="dt-responsive table-responsive">
                             <div class="dt-responsive table-responsive">
                                 <table id="example" class="table table-striped table-bordered nowrap">

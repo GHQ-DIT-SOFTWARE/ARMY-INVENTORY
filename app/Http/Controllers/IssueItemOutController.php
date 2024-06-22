@@ -2,20 +2,32 @@
 declare (strict_types = 1);
 namespace App\Http\Controllers;
 
+use App\Models\AggregatedIssueItem;
 use App\Models\Category;
 use App\Models\IssueItemOut;
 use App\Models\Item;
 use App\Models\Unit;
 use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB; // Import DB facade for transactions
+use Illuminate\Http\Request; // Import DB facade for transactions
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use PDF;
 
 class IssueItemOutController extends Controller
 {
     public function index()
     {
         return view('Issueitemout.index');
+    }
+
+    public function aggreagtated_issue_item()
+    {
+        return view('Issueitemout.aggregated_issue_items');
+    }
+    public function issued_items()
+    {
+        return view('Issueitemout.issued_items_aggregated');
     }
     public function issueout()
     {
@@ -30,7 +42,6 @@ class IssueItemOutController extends Controller
         $lastInvoiceNumber = $lastInvoice ? $lastInvoice->invoice_no : null;
         return response()->json(['last_invoice_number' => $lastInvoiceNumber]);
     }
-
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -46,24 +57,33 @@ class IssueItemOutController extends Controller
 
         try {
             DB::beginTransaction();
+
             // Fetch the last invoice number and increment it
             $lastInvoice = IssueItemOut::orderBy('invoice_no', 'desc')->first();
-            $newInvoiceNumber = $lastInvoice ? $lastInvoice->invoice_no + 1 : 1;
+            $lastInvoiceNumber = $lastInvoice ? (int) filter_var($lastInvoice->invoice_no, FILTER_SANITIZE_NUMBER_INT) : 0;
+            $newInvoiceNumber = $lastInvoiceNumber + 1;
+            $formattedInvoiceNumber = 'INVOICE-NO-' . $newInvoiceNumber . '-' . now()->year;
+
             $issueItems = [];
             $currentDate = now();
+            $aggregatedItems = []; // Array to hold aggregated items data
+
             foreach ($validatedData['item_id'] as $index => $itemName) {
                 $item = Item::where('item_name', $itemName)->first();
                 if (!$item) {
                     return back()->withErrors(['item_id' => "Item $itemName not found."]);
                 }
+
                 $requestedQty = $validatedData['qty'][$index];
                 if ($requestedQty > $item->qty) {
                     return back()->withErrors(['qty' => "Requested quantity for $itemName is more than available quantity."]);
                 }
+
                 // Subtract the quantity from the item
                 $item->qty -= $requestedQty;
                 $item->save();
-                // Add the issue item to the array
+
+                // Add the issue item to the array for IssueItemOut
                 $issueItems[] = [
                     'uuid' => (string) Str::uuid(), // Generate a UUID for each record
                     'category_id' => $validatedData['category_id'][$index],
@@ -73,20 +93,45 @@ class IssueItemOutController extends Controller
                     'qty' => $requestedQty,
                     'unit_id' => $validatedData['unit_id'][$index],
                     'description' => $validatedData['description'] ?? '',
-                    'invoice_no' => $newInvoiceNumber,
+                    'invoice_no' => $formattedInvoiceNumber,
                     'date' => $currentDate, // Automatically set the current date and time
                     'created_at' => now(), // Assuming you have timestamps in your table
                     'updated_at' => now(), // Assuming you have timestamps in your table
+                    'status' => 0, // Setting the status field to 0
+                ];
+
+                // Add item to aggregated items array for AggregatedIssueItem
+                $aggregatedItems[] = [
+                    'category_id' => $validatedData['category_id'][$index],
+                    'sub_category' => $validatedData['sub_category'][$index],
+                    'item_id' => $item->id,
+                    'sizes' => $validatedData['sizes'][$index],
+                    'qty' => $requestedQty,
+                    'unit_id' => $validatedData['unit_id'][$index],
+                    'description' => $validatedData['description'] ?? '',
+                    'invoice_no' => $formattedInvoiceNumber, // Add invoice_no here
+                    'status' => 0,
                 ];
             }
-            // Insert all issue items at once
+
+            // Insert into IssueItemOut
             IssueItemOut::insert($issueItems);
+
+            // Insert into AggregatedIssueItem
+            AggregatedIssueItem::create([
+                'uuid' => (string) Str::uuid(),
+                'invoice_no' => $formattedInvoiceNumber,
+                'items' => json_encode($aggregatedItems),
+            ]);
+
             DB::commit();
+
             $notification = [
                 'message' => 'Items issued successfully.',
                 'alert-type' => 'success',
             ];
             return redirect()->back()->with($notification);
+
         } catch (Exception $e) {
             DB::rollBack();
             // Log the exception message
@@ -94,6 +139,7 @@ class IssueItemOutController extends Controller
             return back()->withErrors(['error' => 'An error occurred while issuing items. Please try again.']);
         }
     }
+
     // public function store(Request $request)
     // {
     //     $validatedData = $request->validate([
@@ -107,109 +153,347 @@ class IssueItemOutController extends Controller
     //         'invoice_no' => 'nullable|string',
     //     ]);
 
-    //     // Fetch the last invoice number and increment it
-    //     $lastInvoice = IssueItemOut::orderBy('invoice_no', 'desc')->first();
-    //     $newInvoiceNumber = $lastInvoice ? $lastInvoice->invoice_no + 1 : 1;
+    //     try {
+    //         DB::beginTransaction();
 
-    //     $issueItems = [];
-    //     $currentDate = now();
+    //         // Fetch the last invoice number and increment it
+    //         $lastInvoice = IssueItemOut::orderBy('invoice_no', 'desc')->first();
+    //         $lastInvoiceNumber = $lastInvoice ? (int) filter_var($lastInvoice->invoice_no, FILTER_SANITIZE_NUMBER_INT) : 0;
+    //         $newInvoiceNumber = $lastInvoiceNumber + 1;
+    //         $formattedInvoiceNumber = 'INVOICE-NO-' . $newInvoiceNumber . '-' . now()->year;
 
-    //     foreach ($validatedData['item_id'] as $index => $itemName) {
-    //         $item = Item::where('item_name', $itemName)->first();
-
-    //         if (!$item) {
-    //             return back()->withErrors(['item_id' => "Item $itemName not found."]);
+    //         $issueItems = [];
+    //         $currentDate = now();
+    //         $aggregatedItems = []; // Array to hold aggregated items data
+    //         foreach ($validatedData['item_id'] as $index => $itemName) {
+    //             $item = Item::where('item_name', $itemName)->first();
+    //             if (!$item) {
+    //                 return back()->withErrors(['item_id' => "Item $itemName not found."]);
+    //             }
+    //             $requestedQty = $validatedData['qty'][$index];
+    //             if ($requestedQty > $item->qty) {
+    //                 return back()->withErrors(['qty' => "Requested quantity for $itemName is more than available quantity."]);
+    //             }
+    //             // Subtract the quantity from the item
+    //             $item->qty -= $requestedQty;
+    //             $item->save();
+    //             // Add the issue item to the array
+    //             $issueItems[] = [
+    //                 'uuid' => (string) Str::uuid(), // Generate a UUID for each record
+    //                 'category_id' => $validatedData['category_id'][$index],
+    //                 'sub_category' => $validatedData['sub_category'][$index],
+    //                 'item_id' => $item->id, // Storing item ID instead of name
+    //                 'sizes' => $validatedData['sizes'][$index],
+    //                 'qty' => $requestedQty,
+    //                 'unit_id' => $validatedData['unit_id'][$index],
+    //                 'description' => $validatedData['description'] ?? '',
+    //                 'invoice_no' => $formattedInvoiceNumber,
+    //                 'date' => $currentDate, // Automatically set the current date and time
+    //                 'created_at' => now(), // Assuming you have timestamps in your table
+    //                 'updated_at' => now(), // Assuming you have timestamps in your table
+    //                 'status' => 0, // Setting the status field to 0
+    //             ];
+    //             // Add item to aggregated items array
+    //             $aggregatedItems[] = [
+    //                 'category_id' => $validatedData['category_id'][$index],
+    //                 'sub_category' => $validatedData['sub_category'][$index],
+    //                 'item_id' => $item->id,
+    //                 'sizes' => $validatedData['sizes'][$index],
+    //                 'qty' => $requestedQty,
+    //                 'unit_id' => $validatedData['unit_id'][$index],
+    //                 'description' => $validatedData['description'] ?? '',
+    //                 'status' => 0,
+    //             ];
     //         }
-
-    //         $requestedQty = $validatedData['qty'][$index];
-
-    //         if ($requestedQty > $item->qty) {
-    //             return back()->withErrors(['qty' => "Requested quantity for $itemName is more than available quantity."]);
-    //         }
-
-    //         // Subtract the quantity from the item
-    //         $item->qty -= $requestedQty;
-    //         $item->save();
-
-    //         // Add the issue item to the array
-    //         $issueItems[] = [
-    //             'uuid' => (string) Str::uuid(), // Generate a UUID for each record
-    //             'category_id' => $validatedData['category_id'][$index],
-    //             'sub_category' => $validatedData['sub_category'][$index],
-    //             'item_id' => $item->id, // Storing item ID instead of name
-    //             'sizes' => $validatedData['sizes'][$index],
-    //             'qty' => $requestedQty,
-    //             'unit_id' => $validatedData['unit_id'][$index],
-    //             'description' => $validatedData['description'] ?? '',
-    //             'invoice_no' => $newInvoiceNumber,
-    //             'date' => $currentDate, // Automatically set the current date and time
-    //             'created_at' => now(), // Assuming you have timestamps in your table
-    //             'updated_at' => now(), // Assuming you have timestamps in your table
+    //         IssueItemOut::insert($issueItems);
+    //         // Insert aggregated issue items
+    //         AggregatedIssueItem::create([
+    //             'uuid' => (string) Str::uuid(),
+    //             'invoice_no' => $formattedInvoiceNumber,
+    //             'items' => json_encode($aggregatedItems),
+    //         ]);
+    //         DB::commit();
+    //         $notification = [
+    //             'message' => 'Items issued successfully.',
+    //             'alert-type' => 'success',
     //         ];
+    //         return redirect()->back()->with($notification);
+    //     } catch (Exception $e) {
+    //         DB::rollBack();
+    //         // Log the exception message
+    //         Log::error('Error issuing items: ' . $e->getMessage());
+    //         return back()->withErrors(['error' => 'An error occurred while issuing items. Please try again.']);
     //     }
 
-    //     // Insert all issue items at once
-    //     IssueItemOut::insert($issueItems);
-
-    //     return redirect()->back()->with('success', 'Items issued successfully.');
     // }
-    // public function store(Request $request)
+    public function edit($uuid)
+    {
+        try {
+            $aggregatedItem = AggregatedIssueItem::where('uuid', $uuid)->firstOrFail();
+
+            // Fetch item names using ITEM_IDs from the items array
+            $itemsArray = is_string($aggregatedItem->items) ? json_decode($aggregatedItem->items, true) : $aggregatedItem->items;
+            $itemIds = collect($itemsArray)->pluck('ITEM_ID')->unique()->toArray();
+            $itemNames = Item::whereIn('id', $itemIds)->pluck('item_name', 'id');
+
+            // Pass $aggregatedItem and $itemNames to your view for editing
+            return view('Issueitemout.edit_item', compact('aggregatedItem', 'itemNames'));
+        } catch (\Exception $e) {
+            // Handle any exceptions (e.g., ModelNotFoundException)
+            return redirect()->route('issue-item-index')->with('error', 'Item not found.');
+        }
+    }
+    public function update(Request $request)
+    {
+        $validatedData = $request->validate([
+            'confirm_qty.*' => 'required|integer|min:1',
+            'remarks.*' => 'required|string|max:255',
+            'item_data.*.ITEM_ID' => 'required|exists:items,id',
+            'item_data.*.STATUS' => 'required|in:0,1',
+            'uuid' => 'required|exists:aggregated_issue_items,uuid',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            // Fetch the AggregatedIssueItem
+            $aggregatedItem = AggregatedIssueItem::where('uuid', $validatedData['uuid'])
+                ->firstOrFail();
+
+            // Update items attribute in AggregatedIssueItem
+            $updatedItems = collect($aggregatedItem->items)->map(function ($item, $index) use ($validatedData) {
+                foreach ($validatedData['item_data'] as $dataIndex => $itemData) {
+                    if ($item['ITEM_ID'] == $itemData['ITEM_ID']) {
+                        $item['STATUS'] = 1; // Set STATUS to 1
+                        $item['CONFIRM_QTY'] = $validatedData['confirm_qty'][$dataIndex];
+                        $item['REMARKS'] = $validatedData['remarks'][$dataIndex];
+                        break;
+                    }
+                }
+                return $item;
+            });
+
+            // Convert updated items back to JSON and save
+            $aggregatedItem->items = $updatedItems->toArray();
+            $aggregatedItem->save();
+
+            // Update IssueItemOut records
+            foreach ($validatedData['item_data'] as $index => $itemData) {
+                $issueItem = IssueItemOut::where('item_id', $itemData['ITEM_ID'])
+                    ->where('invoice_no', $aggregatedItem->invoice_no)
+                    ->firstOrFail();
+
+                $issueItem->confirm_qty = $validatedData['confirm_qty'][$index];
+                $issueItem->remarks = $validatedData['remarks'][$index];
+                $issueItem->status = 1; // Update status to 1
+                $issueItem->save();
+            }
+
+            DB::commit();
+
+            $notification = [
+                'message' => 'Items updated successfully.',
+                'alert-type' => 'success',
+            ];
+            return redirect()->route('dashboard')->with($notification);
+        } catch (\Exception $e) {
+            DB::rollback();
+            $errorMessage = "Failed to update items: " . $e->getMessage();
+            return back()->withErrors(['error' => $errorMessage]);
+        }
+    }
+    public function generatePdf($uuid)
+    {
+        $item = AggregatedIssueItem::where('uuid', $uuid)->first();
+
+        if ($item) {
+            $itemsArray = is_string($item->items) ? json_decode($item->items, true) : $item->items;
+
+            // Fetch item names using ITEM_IDs from the items array
+            $itemIds = collect($itemsArray)->pluck('ITEM_ID')->unique()->toArray();
+            $itemNames = Item::whereIn('id', $itemIds)->pluck('item_name', 'id');
+
+            // Transform each item data into a structured format for display
+            $formattedItems = collect($itemsArray)->map(function ($data, $index) use ($itemNames) {
+                $itemName = $itemNames[$data['ITEM_ID']] ?? 'Unknown Item'; // Fetch item name based on ITEM_ID
+                $status = $data['STATUS'] == 1 ? 'Issuance Issued' : 'Pending';
+
+                // Build the details for each item
+                $itemDetails = [
+                    'Category' => $data['CATEGORY_ID'],
+                    'Sub Category' => $data['SUB_CATEGORY'],
+                    'Item Name' => $itemName,
+                    'Size' => $data['SIZES'],
+                    'Quantity' => $data['QTY'],
+                    'Unit ID' => $data['UNIT_ID'],
+                    'Description' => $data['DESCRIPTION'],
+                    'Status' => $status,
+                    'Invoice No' => $data['INVOICE_NO'],
+                    'Confirm Qty' => $data['CONFIRM_QTY'],
+                    'Remarks' => $data['REMARKS'],
+                ];
+
+                return $itemDetails;
+            });
+
+            $data = [
+                'uuid' => $item->uuid,
+                'invoice_no' => $item->invoice_no,
+                'items' => $formattedItems,
+                'issued_by' => 'Great Logic', // Replace with actual issuer
+                'date_issued' => date('Y-m-d'), // Replace with actual issue date if available
+            ];
+
+            $pdf = PDF::loadView('pdf.item_issued', $data)->setPaper('a4', 'portrait');
+
+            return $pdf->stream('item-issued.pdf');
+        }
+
+        return redirect()->back()->with('error', 'Item not found');
+    }
+
+    // public function generatePdf($uuid)
     // {
-    //     $validatedData = $request->validate([
-    //         'category_id' => 'required|array',
-    //         'sub_category' => 'required|array',
-    //         'item_id' => 'required|array',
-    //         'sizes' => 'required|array',
-    //         'qty' => 'required|array',
-    //         'unit_id' => 'required|array',
-    //         'description' => 'nullable|string',
-    //         'invoice_no' => 'nullable|string',
-    //     ]);
+    //     $item = AggregatedIssueItem::where('uuid', $uuid)->first();
 
-    //     // Fetch the last invoice number and increment it
-    //     $lastInvoice = IssueItemOut::orderBy('invoice_no', 'desc')->first();
-    //     $newInvoiceNumber = $lastInvoice ? $lastInvoice->invoice_no + 1 : 1;
+    //     if ($item) {
+    //         $itemsArray = is_string($item->items) ? json_decode($item->items, true) : $item->items;
 
-    //     $issueItems = [];
-    //     $currentDate = now();
+    //         // Fetch item names using ITEM_IDs from the items array
+    //         $itemIds = collect($itemsArray)->pluck('ITEM_ID')->unique()->toArray();
+    //         $itemNames = Item::whereIn('id', $itemIds)->pluck('item_name', 'id');
 
-    //     foreach ($validatedData['item_id'] as $index => $itemName) {
-    //         $item = Item::where('item_name', $itemName)->first();
+    //         // Transform each item data into a structured format for display
+    //         $formattedItems = collect($itemsArray)->map(function ($data, $index) use ($itemNames) {
+    //             $itemName = $itemNames[$data['ITEM_ID']] ?? 'Unknown Item'; // Fetch item name based on ITEM_ID
+    //             $status = $data['STATUS'] == 1 ? 'Issuance Issued' : 'Pending';
 
-    //         if (!$item) {
-    //             return back()->withErrors(['item_id' => "Item $itemName not found."]);
-    //         }
+    //             // Build the details for each item
+    //             $itemDetails = [
+    //                 'Category' => $data['CATEGORY_ID'],
+    //                 'Sub Category' => $data['SUB_CATEGORY'],
+    //                 'Item Name' => $itemName,
+    //                 'Size' => $data['SIZES'],
+    //                 'Quantity' => $data['QTY'],
+    //                 'Unit ID' => $data['UNIT_ID'],
+    //                 'Description' => $data['DESCRIPTION'],
+    //                 'Status' => $status,
+    //                 'Invoice No' => $data['INVOICE_NO'],
+    //                 'Confirm Qty' => $data['CONFIRM_QTY'],
+    //                 'Remarks' => $data['REMARKS'],
+    //             ];
 
-    //         $requestedQty = $validatedData['qty'][$index];
+    //             return $itemDetails;
+    //         });
 
-    //         if ($requestedQty > $item->qty) {
-    //             return back()->withErrors(['qty' => "Requested quantity for $itemName is more than available quantity."]);
-    //         }
-
-    //         // Subtract the quantity from the item
-    //         $item->qty -= $requestedQty;
-    //         $item->save();
-
-    //         // Add the issue item to the array
-    //         $issueItems[] = [
-    //             'category_id' => $validatedData['category_id'][$index],
-    //             'sub_category' => $validatedData['sub_category'][$index],
-    //             'item_id' => $item->id, // Storing item ID instead of name
-    //             'sizes' => $validatedData['sizes'][$index],
-    //             'qty' => $requestedQty,
-    //             'unit_id' => $validatedData['unit_id'][$index],
-    //             'description' => $validatedData['description'] ?? '',
-    //             'invoice_no' => $newInvoiceNumber,
-    //             'date' => $currentDate, // Automatically set the current date and time
-    //             'created_at' => now(), // Assuming you have timestamps in your table
-    //             'updated_at' => now(), // Assuming you have timestamps in your table
+    //         $data = [
+    //             'uuid' => $item->uuid,
+    //             'invoice_no' => $item->invoice_no,
+    //             'items' => $formattedItems,
+    //             'issued_by' => 'John Doe', // Replace with actual issuer
+    //             'date_issued' => date('Y-m-d'), // Replace with actual issue date if available
     //         ];
+
+    //         $pdf = PDF::loadView('pdf.item_issued', $data)->setPaper('a4', 'landscape');
+
+    //         return $pdf->stream('item-issued.pdf');
     //     }
 
-    //     // Insert all issue items at once
-    //     IssueItemOut::insert($issueItems);
+    //     return redirect()->back()->with('error', 'Item not found');
+    // }
 
-    //     return redirect()->back()->with('success', 'Items issued successfully.');
+    // public function generatePdf($uuid)
+    // {
+    //     $item = AggregatedIssueItem::where('uuid', $uuid)->first();
+
+    //     if ($item) {
+    //         $itemsArray = is_string($item->items) ? json_decode($item->items, true) : $item->items;
+
+    //         // Fetch item names using ITEM_IDs from the items array
+    //         $itemIds = collect($itemsArray)->pluck('ITEM_ID')->unique()->toArray();
+    //         $itemNames = Item::whereIn('id', $itemIds)->pluck('item_name', 'id');
+
+    //         // Transform each item data into a structured format for display
+    //         $formattedItems = collect($itemsArray)->map(function ($data, $index) use ($itemNames) {
+    //             $itemName = $itemNames[$data['ITEM_ID']] ?? 'Unknown Item'; // Fetch item name based on ITEM_ID
+    //             $status = $data['STATUS'] == 1 ? 'Issuance Issued' : 'Pending';
+
+    //             // Build the details for each item
+    //             $itemDetails = [
+    //                 'Category' => $data['CATEGORY_ID'],
+    //                 'Sub Category' => $data['SUB_CATEGORY'],
+    //                 'Item Name' => $itemName,
+    //                 'Size' => $data['SIZES'],
+    //                 'Quantity' => $data['QTY'],
+    //                 'Unit ID' => $data['UNIT_ID'],
+    //                 'Description' => $data['DESCRIPTION'],
+    //                 'Status' => $status,
+    //                 'Invoice No' => $data['INVOICE_NO'],
+    //                 'Confirm Qty' => $data['CONFIRM_QTY'],
+    //                 'Remarks' => $data['REMARKS'],
+    //             ];
+
+    //             return $itemDetails;
+    //         });
+
+    //         $data = [
+    //             'uuid' => $item->uuid,
+    //             'invoice_no' => $item->invoice_no,
+    //             'items' => $formattedItems,
+    //         ];
+
+    //         $pdf = PDF::loadView('pdf.item_issued', $data);
+
+    //         return $pdf->stream('item-issued.pdf');
+    //     }
+
+    //     return redirect()->back()->with('error', 'Item not found');
+    // }
+
+    // public function update(Request $request)
+    // {
+    //     $validatedData = $request->validate([
+    //         'confirm_qty.*' => 'required|integer|min:1',
+    //         'remarks.*' => 'required|string|max:255',
+    //         'item_data.*.ITEM_ID' => 'required|exists:items,id',
+    //         'item_data.*.STATUS' => 'required|in:0,1',
+    //         'uuid' => 'required|exists:aggregated_issue_items,uuid',
+    //     ]);
+
+    //     $aggregatedItem = AggregatedIssueItem::where('uuid', $validatedData['uuid'])
+    //         ->firstOrFail();
+
+    //     // Update items attribute in AggregatedIssueItem
+    //     $updatedItems = collect($aggregatedItem->items)->map(function ($item, $index) use ($validatedData) {
+    //         foreach ($validatedData['item_data'] as $dataIndex => $itemData) {
+    //             if ($item['ITEM_ID'] == $itemData['ITEM_ID']) {
+    //                 $item['STATUS'] = 1; // Set STATUS to 1
+    //                 $item['CONFIRM_QTY'] = $validatedData['confirm_qty'][$dataIndex];
+    //                 $item['REMARKS'] = $validatedData['remarks'][$dataIndex];
+    //                 break;
+    //             }
+    //         }
+    //         return $item;
+    //     });
+
+    //     // Convert updated items back to JSON and save
+    //     $aggregatedItem->items = $updatedItems->toArray();
+    //     $aggregatedItem->save();
+    //     // Update IssueItemOut records
+    //     foreach ($validatedData['item_data'] as $index => $itemData) {
+    //         $issueItem = IssueItemOut::where('item_id', $itemData['ITEM_ID'])
+    //             ->where('invoice_no', $aggregatedItem->invoice_no)
+    //             ->firstOrFail();
+    //         $issueItem->confirm_qty = $validatedData['confirm_qty'][$index];
+    //         $issueItem->remarks = $validatedData['remarks'][$index];
+    //         $issueItem->status = 1; // Update status to 1
+    //         $issueItem->save();
+    //     }
+    //     $notification = [
+    //         'message' => 'Items updated successfully.',
+    //         'alert-type' => 'success',
+    //     ];
+    //     return redirect()->route('dashboard')->with($notification);
     // }
 
     public function item_issued_out_delete($uuid)

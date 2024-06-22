@@ -36,14 +36,7 @@
                                 <tr>
                                     <th>SL</th>
                                     <th>Invoice Number</th>
-                                    <th>Item Name</th>
-                                    <th>Category</th>
-                                    <th>Sub Category</th>
-                                    <th>Quantity</th>
-                                    <th>Size</th>
-                                    <th>Issued Date</th>
-                                    <th>Issued TO(UNIT)</th>
-                                    <th>Status</th>
+                                    <th>Items</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -89,7 +82,7 @@
                     [15, 25, 50, 100, 200, 'All'],
                 ],
                 ajax: {
-                    url: "{{ route('api-issued-out') }}",
+                    url: "{{ route('aggregated-issue-items') }}",
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -113,41 +106,9 @@
                         data: 'invoice_no',
                         name: 'invoice_no'
                     },
-
                     {
-                        data: 'item_name',
-                        name: 'item_name'
-                    },
-
-
-                    {
-                        data: 'category_id',
-                        name: 'category_id'
-                    },
-                    {
-                        data: 'sub_category',
-                        name: 'sub_category'
-                    },
-                    {
-                        data: 'qty',
-                        name: 'qty'
-                    },
-
-                    {
-                        data: 'sizes',
-                        name: 'sizes'
-                    },
-                    {
-                        data: 'date',
-                        name: 'date'
-                    },
-                    {
-                        data: 'unit_id',
-                        name: 'unit_id'
-                    },
-                    {
-                        data: 'status',
-                        name: 'status'
+                        data: 'items',
+                        name: 'items'
                     },
                     {
                         data: 'action',
@@ -156,7 +117,6 @@
                         searchable: false
                     },
                 ],
-
             });
         });
     </script>

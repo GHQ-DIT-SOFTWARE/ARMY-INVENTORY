@@ -25,7 +25,17 @@ class IssuedOutItemController extends Controller
             ->editColumn('invoice_no', function ($item) {
                 return '#' . $item->invoice_no;
             })
-            ->rawColumns(['action', 'date', 'item_name', 'invoice_no'])
+            ->editColumn('status', function ($items) {
+                switch ($items->status) {
+                    case '0':
+                        return '<span class="badge badge-warning mr-1">PENDING ISSURANCE</span>';
+                    case '1':
+                        return '<span class="badge badge-success mr-1">ISSUED</span>';
+                    default:
+                        return '';
+                }
+            })
+            ->rawColumns(['action', 'date', 'item_name', 'invoice_no', 'status'])
             ->make(true);
     }
 }

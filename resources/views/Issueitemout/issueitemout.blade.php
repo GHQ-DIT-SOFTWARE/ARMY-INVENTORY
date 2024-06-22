@@ -384,11 +384,11 @@
                             type: "GET",
                             dataType: "json",
                             success: function(data) {
-                                $('#qty').val(data.qty); 
+                                $('#qty').val(data.qty);
                             }
                         });
                     } else {
-                        $('#qty').val(''); 
+                        $('#qty').val('');
                     }
                 });
 
