@@ -339,7 +339,7 @@ class IssueItemOutController extends Controller
                 'message' => 'Items updated successfully.',
                 'alert-type' => 'success',
             ];
-            return redirect()->route('dashboard')->with($notification);
+            return redirect()->route('all-items-confirmed-issued')->with($notification);
         } catch (\Exception $e) {
             DB::rollback();
             $errorMessage = "Failed to update items: " . $e->getMessage();
