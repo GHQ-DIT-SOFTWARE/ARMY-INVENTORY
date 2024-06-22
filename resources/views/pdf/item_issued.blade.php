@@ -5,37 +5,39 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            font-size: 12px;
         }
 
         .header {
             display: flex;
             justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 20px;
         }
 
         .address {
             text-align: left;
+            width: 50%;
         }
 
         .issued-info {
             text-align: right;
+            width: 50%;
         }
 
         .signature {
-            margin-top: 50px;
+            margin-top: 30px;
             text-align: left;
         }
 
         .signature-line {
             border-top: 1px solid #000;
             width: 200px;
-            margin-top: 50px;
+            margin-top: 30px;
         }
 
         .footer {
-            position: fixed;
-            bottom: 50px;
-            left: 0;
-            right: 0;
+            margin-top: 30px;
             text-align: left;
         }
 
@@ -43,17 +45,22 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            font-size: 10px;
         }
 
         th,
         td {
             border: 1px solid black;
-            padding: 8px;
+            padding: 4px;
             text-align: left;
         }
 
         th {
             background-color: #f2f2f2;
+        }
+
+        .small-text {
+            font-size: 10px;
         }
     </style>
 </head>
@@ -64,15 +71,15 @@
             <strong>Address:</strong><br>
             {{ $address }}
         </div>
-        <div class="issued-info">
-            <strong>Authorized Date:</strong> {{ \Carbon\Carbon::parse($date_issued)->format('d F Y') }}<br>
-            <strong>Confirmed Authorized:</strong>
-            {{ \Carbon\Carbon::parse($items->first()['confirmed_issued'])->format('d F Y') }} <br>
-            {{-- <strong>Status:</strong> {{ $item['STATUS'] == 'Issuance Issued' ? 'Issuance Issued' : 'Pending' }} --}}
-
+        <div class="issued-info" style="float: right;">
+            <strong>Authorized Date:</strong> {{ $date_issued }}<br>
+            <strong>Confirmed Authorized:</strong> {{ $items->first()['confirmed_issued'] }}<br>
+            <strong>Status:</strong> {{ $items->first()['STATUS'] }}
         </div>
     </div>
-    <h2>Invoice No: {{ $invoice_no }}</h2>
+    <h2 class="small-text">Invoice No: {{ $invoice_no }}</h2>
+    <br><br>
+    <hr>
     <table>
         <thead>
             <tr>
@@ -101,17 +108,12 @@
             @endforeach
         </tbody>
     </table>
-
-    <div class="footer">
-        <strong>Description:</strong><br>
-        @foreach ($items as $item)
-            {{ $item['Description'] }}<br>
-        @endforeach
-    </div>
+<br>
+    <strong>Description: {{ $items->first()['Description'] }}<br></strong>
 
     <div class="signature">
         <div class="signature-line"></div>
-        <strong>Authorized By:</strong> {{ $signature }}
+        <strong>ISSUED BY:</strong> {{ $signature }}
     </div>
 
 

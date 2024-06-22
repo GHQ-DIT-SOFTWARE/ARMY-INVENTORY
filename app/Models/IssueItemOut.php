@@ -27,6 +27,11 @@ class IssueItemOut extends Model implements Auditable
     {
         return $this->belongsTo(Item::class, 'item_id', 'id');
     }
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
     /**
      * The attributes that should be cast.
      *

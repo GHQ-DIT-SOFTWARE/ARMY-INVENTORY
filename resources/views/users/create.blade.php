@@ -27,7 +27,7 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="header-title">Create New Role</h4>
-                    @include('systemsetting.users.part.message')
+                    @include('users.part.message')
                     <form action="{{ route('store-user') }}" method="POST">
                         @csrf
                         <div class="form-row">
