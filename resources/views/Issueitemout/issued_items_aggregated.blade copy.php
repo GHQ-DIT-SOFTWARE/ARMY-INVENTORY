@@ -23,19 +23,14 @@
                 <div class="card-body">
                     <div class="row align-items-center m-l-0">
                         <div class="col-sm-6">
-                            <form id="searchForm">
-                                <input type="text" class="form-control" id="invoice_no" name="invoice_no"
-                                    placeholder="Search by Invoice Number">
-                                <button type="submit" class="btn btn-primary mt-2">Search</button>
-                            </form>
                         </div>
-                        {{-- <div class="col-sm-6 text-right">
+                        <div class="col-sm-6 text-right">
                             <a href="{{ route('Issue-out') }}" class="btn btn-primary btn-sm btn-round has-ripple"
                                 data-target="#modal-report"><i class="feather icon-plus"></i>Issue Item Out</a>
-                        </div> --}}
+                        </div>
                     </div>
                     <br>
-                    <div class="table-responsive" id="tableContainer" style="display:none;">
+                    <div class="table-responsive">
                         <table id="itemissuedconfirmed" class="table mb-0">
                             <thead class="thead-light">
                                 <tr>
@@ -66,69 +61,62 @@
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('#searchForm').on('submit', function(e) {
-                e.preventDefault();
-                var invoice_no = $('#invoice_no').val();
-
-                // Show the table container
-                $('#tableContainer').show();
-
-                // Initialize DataTable
-                var dataTable = $('#itemissuedconfirmed').DataTable({
-                    destroy: true, // Destroy the existing DataTable instance
-                    dom: "<'row'<'col-sm-2'l><'col'B><'col-sm-2'f>>" +
-                        "<'row'<'col-sm-12'tr>>" +
-                        "<'row'<'col-sm-6'i><'col-sm-6'p>>",
-                    buttons: [
-                        'colvis',
-                        {
-                            extend: 'copy',
-                            text: 'Copy to clipboard'
-                        },
-                        'excel',
-                    ],
-                    scrollY: 960,
-                    scrollCollapse: true,
-                    processing: true,
-                    serverSide: true,
-                    lengthMenu: [
-                        [15, 25, 50, 100, 200, -1],
-                        [15, 25, 50, 100, 200, 'All'],
-                    ],
-                    ajax: {
-                        url: "{{ route('items-issued-aggregated') }}",
-                        type: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        data: {
-                            invoice_no: invoice_no
-                        },
+            $('#itemissuedconfirmed').DataTable({
+                dom: "<'row'<'col-sm-2'l><'col'B><'col-sm-2'f>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-6'i><'col-sm-6'p>>",
+                buttons: [
+                    'colvis',
+                    {
+                        extend: 'copy',
+                        text: 'Copy to clipboard'
                     },
-                    columns: [{
-                            data: null,
-                            orderable: false,
-                            searchable: false,
-                            render: function(data, type, full, meta) {
-                                return meta.row + 1;
-                            }
-                        },
-                        {
-                            data: 'invoice_no',
-                            name: 'invoice_no'
-                        },
-                        {
-                            data: 'items',
-                            name: 'items'
-                        },
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false
+                    'excel',
+                ],
+                scrollY: 960,
+                scrollCollapse: true,
+                processing: true,
+                serverSide: true,
+                lengthMenu: [
+                    [15, 25, 50, 100, 200, -1],
+                    [15, 25, 50, 100, 200, 'All'],
+                ],
+                ajax: {
+                    url: "{{ route('items-issued-aggregated') }}",
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: function(d) {
+                        var formData = $('#items').serializeArray();
+                        $.each(formData, function(index, item) {
+                            d[item.name] = item.value;
+                        });
+                    },
+                },
+                columns: [{
+                        data: null,
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, full, meta) {
+                            return meta.row + 1;
                         }
-                    ],
-                });
+                    },
+                    {
+                        data: 'invoice_no',
+                        name: 'invoice_no'
+                    },
+                    {
+                        data: 'items',
+                        name: 'items'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
+                    },
+                ],
             });
         });
     </script>

@@ -9,6 +9,7 @@ use App\Models\Item;
 use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Http\Request; // Import DB facade for transactions
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use PDF;
@@ -346,6 +347,70 @@ class IssueItemOutController extends Controller
         }
     }
 
+    public function generatePdf($uuid)
+    {
+        // Obtain the authenticated user
+        $authenticatedUser = Auth::user();
+
+        // Check if user is authenticated
+        if ($authenticatedUser) {
+            // Retrieve the item based on UUID
+            $item = AggregatedIssueItem::where('uuid', $uuid)->first();
+
+            if ($item) {
+                // Decode items JSON if it's a string
+                $itemsArray = is_string($item->items) ? json_decode($item->items, true) : $item->items;
+
+                // Fetch item names using ITEM_IDs from the items array
+                $itemIds = collect($itemsArray)->pluck('ITEM_ID')->unique()->toArray();
+                $itemNames = Item::whereIn('id', $itemIds)->pluck('item_name', 'id');
+
+                // Transform each item data into a structured format for display
+                $formattedItems = collect($itemsArray)->map(function ($data) use ($itemNames) {
+                    $itemName = $itemNames[$data['ITEM_ID']] ?? 'Unknown Item';
+                    $status = $data['STATUS'] == 1 ? 'Issuance Issued' : 'Pending';
+                    // Build the details for each item
+                    return [
+                        'Category' => $data['CATEGORY_ID'],
+                        'Sub Category' => $data['SUB_CATEGORY'],
+                        'Item Name' => $itemName,
+                        'Size' => $data['SIZES'],
+                        'Quantity' => $data['QTY'],
+                        'Unit ID' => $data['UNIT_ID'],
+                        'Confirm Qty' => $data['CONFIRM_QTY'],
+                        'Remarks' => $data['REMARKS'],
+                        'Description' => $data['DESCRIPTION'] ?? '',
+                        'confirmed_issued' => \Carbon\Carbon::parse($data['confirmed_issued'])->format('d F Y'),
+                        'STATUS' => $status,
+                        'CREATED_BY' => $data['CREATED_BY'], // Include CREATED_BY here
+                    ];
+                });
+                // Static address
+                $address = '123 Main Street, Anytown, USA';
+                // Fetch user who created the item
+                $createdByUser = User::find($item->created_by);
+                $createdByName = $createdByUser ? $createdByUser->name : 'Unknown User';
+
+                // Prepare data for the PDF view
+                $data = [
+                    'uuid' => $item->uuid,
+                    'invoice_no' => $item->invoice_no,
+                    'items' => $formattedItems,
+                    'issued_by' => $createdByName, // Use created by user name
+                    'date_issued' => \Carbon\Carbon::parse($item->created_at)->format('d F Y'),
+                    'address' => $address,
+                    'signature' => $authenticatedUser->name, // Signature by authenticated user
+                    'created_by' => $createdByName, // Pass created by user name to the view
+                ];
+                // Load the PDF view and stream it to the user
+                $pdf = PDF::loadView('pdf.item_issued', $data)->setPaper('a4', 'portrait');
+                return $pdf->stream('item-issued.pdf');
+            }
+            return redirect()->back()->with('error', 'Item not found');
+        }
+        return redirect()->back()->with('error', 'Unauthorized access');
+    }
+
     // public function update(Request $request)
     // {
     //     $validatedData = $request->validate([
@@ -404,64 +469,183 @@ class IssueItemOutController extends Controller
     //         return back()->withErrors(['error' => $errorMessage]);
     //     }
     // }
-    public function generatePdf($uuid)
-    {
-        $item = AggregatedIssueItem::where('uuid', $uuid)->first();
+    // public function generatePdf($uuid)
+    // {
+    //     $item = AggregatedIssueItem::where('uuid', $uuid)->first();
 
-        if ($item) {
-            $itemsArray = is_string($item->items) ? json_decode($item->items, true) : $item->items;
+    //     if ($item) {
+    //         $itemsArray = is_string($item->items) ? json_decode($item->items, true) : $item->items;
 
-            // Fetch item names using ITEM_IDs from the items array
-            $itemIds = collect($itemsArray)->pluck('ITEM_ID')->unique()->toArray();
-            $itemNames = Item::whereIn('id', $itemIds)->pluck('item_name', 'id');
+    //         // Fetch item names using ITEM_IDs from the items array
+    //         $itemIds = collect($itemsArray)->pluck('ITEM_ID')->unique()->toArray();
+    //         $itemNames = Item::whereIn('id', $itemIds)->pluck('item_name', 'id');
 
-            // Fetch user who created the item
-            $createdBy = User::find($item->created_by);
-            $createdByName = $createdBy ? $createdBy->name : 'Unknown User';
+    //         // Fetch user who created the item
+    //         $createdBy = User::find($item->created_by);
+    //         $createdByName = $createdBy ? $createdBy->name : 'Unknown User';
 
-            // Static address
-            $address = '123 Main Street, Anytown, USA';
+    //         // Static address
+    //         $address = '123 Main Street, Anytown, USA';
 
-            // Transform each item data into a structured format for display
-            $formattedItems = collect($itemsArray)->map(function ($data, $index) use ($itemNames) {
-                $itemName = $itemNames[$data['ITEM_ID']] ?? 'Unknown Item';
-                $status = $data['STATUS'] == 1 ? 'Issuance Issued' : 'Pending';
+    //         // Transform each item data into a structured format for display
+    //         $formattedItems = collect($itemsArray)->map(function ($data, $index) use ($itemNames) {
+    //             $itemName = $itemNames[$data['ITEM_ID']] ?? 'Unknown Item';
+    //             $status = $data['STATUS'] == 1 ? 'Issuance Issued' : 'Pending';
 
-                // Build the details for each item
-                $itemDetails = [
-                    'Category' => $data['CATEGORY_ID'],
-                    'Sub Category' => $data['SUB_CATEGORY'],
-                    'Item Name' => $itemName,
-                    'Size' => $data['SIZES'],
-                    'Quantity' => $data['QTY'],
-                    'Unit ID' => $data['UNIT_ID'],
-                    'Confirm Qty' => $data['CONFIRM_QTY'],
-                    'Remarks' => $data['REMARKS'],
-                    'Description' => $data['DESCRIPTION'] ?? '',
-                    'confirmed_issued' => \Carbon\Carbon::parse($data['confirmed_issued'])->format('Y-m-d'),
-                ];
+    //             // Build the details for each item
+    //             $itemDetails = [
+    //                 'Category' => $data['CATEGORY_ID'],
+    //                 'Sub Category' => $data['SUB_CATEGORY'],
+    //                 'Item Name' => $itemName,
+    //                 'Size' => $data['SIZES'],
+    //                 'Quantity' => $data['QTY'],
+    //                 'Unit ID' => $data['UNIT_ID'],
+    //                 'Confirm Qty' => $data['CONFIRM_QTY'],
+    //                 'Remarks' => $data['REMARKS'],
+    //                 'Description' => $data['DESCRIPTION'] ?? '',
+    //                 'confirmed_issued' => \Carbon\Carbon::parse($data['confirmed_issued'])->format('Y-m-d'),
+    //             ];
 
-                return $itemDetails;
-            });
+    //             return $itemDetails;
+    //         });
 
-            $data = [
-                'uuid' => $item->uuid,
-                'invoice_no' => $item->invoice_no,
-                'items' => $formattedItems,
-                'issued_by' => $createdByName,
-                'date_issued' => \Carbon\Carbon::parse($item->created_at)->format('Y-m-d'),
-                'address' => $address,
-                'signature' => $createdByName,
-            ];
+    //         $data = [
+    //             'uuid' => $item->uuid,
+    //             'invoice_no' => $item->invoice_no,
+    //             'items' => $formattedItems,
+    //             'issued_by' => $createdByName,
+    //             'date_issued' => \Carbon\Carbon::parse($item->created_at)->format('Y-m-d'),
+    //             'address' => $address,
+    //             'signature' => $createdByName,
+    //         ];
 
-            $pdf = PDF::loadView('pdf.item_issued', $data)->setPaper('a4', 'portrait');
+    //         $pdf = PDF::loadView('pdf.item_issued', $data)->setPaper('a4', 'portrait');
 
-            return $pdf->stream('item-issued.pdf');
-        }
+    //         return $pdf->stream('item-issued.pdf');
+    //     }
 
-        return redirect()->back()->with('error', 'Item not found');
-    }
+    //     return redirect()->back()->with('error', 'Item not found');
+    // }
 
+    // public function generatePdf($uuid)
+    // {
+    //     $item = AggregatedIssueItem::where('uuid', $uuid)->first();
+
+    //     if ($item) {
+    //         $itemsArray = is_string($item->items) ? json_decode($item->items, true) : $item->items;
+
+    //         // Fetch item names using ITEM_IDs from the items array
+    //         $itemIds = collect($itemsArray)->pluck('ITEM_ID')->unique()->toArray();
+    //         $itemNames = Item::whereIn('id', $itemIds)->pluck('item_name', 'id');
+
+    //         // Fetch user who created the item
+    //         $createdBy = User::find($item->created_by);
+    //         $createdByName = $createdBy ? $createdBy->name : 'Unknown User';
+
+    //         // Static address
+    //         $address = '123 Main Street, Anytown, USA';
+
+    //         // Transform each item data into a structured format for display
+    //         $formattedItems = collect($itemsArray)->map(function ($data, $index) use ($itemNames) {
+    //             $itemName = $itemNames[$data['ITEM_ID']] ?? 'Unknown Item';
+    //             $status = $data['STATUS'] == 1 ? 'Issuance Issued' : 'Pending';
+
+    //             // Build the details for each item
+    //             $itemDetails = [
+    //                 'Category' => $data['CATEGORY_ID'],
+    //                 'Sub Category' => $data['SUB_CATEGORY'],
+    //                 'Item Name' => $itemName,
+    //                 'Size' => $data['SIZES'],
+    //                 'Quantity' => $data['QTY'],
+    //                 'Unit ID' => $data['UNIT_ID'],
+    //                 'Confirm Qty' => $data['CONFIRM_QTY'],
+    //                 'Remarks' => $data['REMARKS'],
+    //                 'Description' => $data['DESCRIPTION'] ?? '',
+    //                 'confirmed_issued' => \Carbon\Carbon::parse($data['confirmed_issued'])->format('d F Y'),
+    //                 'STATUS' => $status,
+    //                 'CREATED_BY' => $data['CREATED_BY'],
+    //             ];
+
+    //             return $itemDetails;
+    //         });
+
+    //         $data = [
+    //             'uuid' => $item->uuid,
+    //             'invoice_no' => $item->invoice_no,
+    //             'items' => $formattedItems,
+    //             'issued_by' => $createdByName,
+    //             'date_issued' => \Carbon\Carbon::parse($item->created_at)->format('d F Y'),
+    //             'address' => $address,
+    //             'signature' => $createdByName,
+    //         ];
+
+    //         $pdf = PDF::loadView('pdf.item_issued', $data)->setPaper('a4', 'portrait');
+
+    //         return $pdf->stream('item-issued.pdf');
+    //     }
+
+    //     return redirect()->back()->with('error', 'Item not found');
+    // }
+
+    //newwest one
+    // public function generatePdf($uuid)
+    // {
+    //     $item = AggregatedIssueItem::where('uuid', $uuid)->first();
+
+    //     if ($item) {
+    //         $itemsArray = is_string($item->items) ? json_decode($item->items, true) : $item->items;
+
+    //         // Fetch item names using ITEM_IDs from the items array
+    //         $itemIds = collect($itemsArray)->pluck('ITEM_ID')->unique()->toArray();
+    //         $itemNames = Item::whereIn('id', $itemIds)->pluck('item_name', 'id');
+
+    //         // Fetch user who created the item
+    //         $createdBy = User::find($item->created_by);
+    //         $createdByName = $createdBy ? $createdBy->name : 'Unknown User';
+
+    //         // Static address
+    //         $address = '123 Main Street, Anytown, USA';
+
+    //         // Transform each item data into a structured format for display
+    //         $formattedItems = collect($itemsArray)->map(function ($data, $index) use ($itemNames) {
+    //             $itemName = $itemNames[$data['ITEM_ID']] ?? 'Unknown Item';
+    //             $status = $data['STATUS'] == 1 ? 'Issuance Issued' : 'Pending';
+
+    //             // Build the details for each item
+    //             $itemDetails = [
+    //                 'Category' => $data['CATEGORY_ID'],
+    //                 'Sub Category' => $data['SUB_CATEGORY'],
+    //                 'Item Name' => $itemName,
+    //                 'Size' => $data['SIZES'],
+    //                 'Quantity' => $data['QTY'],
+    //                 'Unit ID' => $data['UNIT_ID'],
+    //                 'Confirm Qty' => $data['CONFIRM_QTY'],
+    //                 'Remarks' => $data['REMARKS'],
+    //                 'Description' => $data['DESCRIPTION'] ?? '',
+    //                 'confirmed_issued' => \Carbon\Carbon::parse($data['confirmed_issued'])->format('d F Y'),
+    //                 'STATUS' => $status,
+    //             ];
+
+    //             return $itemDetails;
+    //         });
+
+    //         $data = [
+    //             'uuid' => $item->uuid,
+    //             'invoice_no' => $item->invoice_no,
+    //             'items' => $formattedItems,
+    //             'issued_by' => $createdByName,
+    //             'date_issued' => \Carbon\Carbon::parse($item->created_at)->format('d F Y'),
+    //             'address' => $address,
+    //             'signature' => $createdByName,
+    //         ];
+
+    //         $pdf = PDF::loadView('pdf.item_issued', $data)->setPaper('a4', 'portrait');
+
+    //         return $pdf->stream('item-issued.pdf');
+    //     }
+
+    //     return redirect()->back()->with('error', 'Item not found');
+    // }
 
 //latest pdf
     // public function generatePdf($uuid)
