@@ -35,6 +35,10 @@ class AggregatedIssueItem extends Model implements Auditable
     {
         return json_decode($value, true);
     }
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
     /**
      * The attributes that should be cast.
      *
