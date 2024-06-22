@@ -25,17 +25,13 @@ return new class extends Migration
             $table->string('unit_id')->nullable();
             $table->string('category_id')->nullable();
             $table->string('sub_category')->nullable();
-            // $table->unsignedBigInteger('category_id')->nullable();
-            // $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
-            // $table->unsignedBigInteger('sub_category')->nullable();
-            // $table->foreign('sub_category')->references('id')->on('sub_categories')->onDelete('cascade');
             $table->string('qty')->nullable();
             $table->string('sizes')->nullable();
             $table->text('description')->nullable();
             $table->integer('confirm_qty')->nullable();
             $table->string('remarks')->nullable();
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

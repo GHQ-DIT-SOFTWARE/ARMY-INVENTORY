@@ -13,12 +13,12 @@
                 <li class="nav-item">
                     <a href="{{ route('dashboard') }}" class="nav-link "><span class="pcoded-micon"><i
                                 class="feather icon-home"></i></span><b><span
-                                class="pcoded-mtext">Dashboard</span></b></a>
+                                class="pcoded-mtext">Home</span></b></a>
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('home.dash') }}" class="nav-link "><span class="pcoded-micon"><i
-                                class="feather icon-home"></i></span>
-                        <b><span class="pcoded-mtext">Admin-Dashboard</span></b></a>
+                                class="feather icon-monitor"></i></span>
+                        <b><span class="pcoded-mtext">Dashboard</span></b></a>
                 </li>
 
                 <li class="nav-item pcoded-hasmenu">

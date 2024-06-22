@@ -16,7 +16,7 @@
             </div>
         </div>
     </div>
-    <div class="row mx-4">
+    {{-- <div class="row mx-4">
         <!-- seo start -->
         <div class="card mx-3 shadow p-3" style="width: 8rem;">
             <img src="{{ asset('assets/images/dashicons/award.png') }}" style="width: 2rem;"
@@ -95,7 +95,128 @@
                 <p class="card-text text-center font-weight-bold">Some quick</p>
             </div>
         </div>
-
+    </div> --}}
         <!-- seo end -->
+
+
+         <div class="row">
+        <div class="col-lg-12">
+
+            <div class="card">
+                <div class="card-body">
+                    <div id="filters" class="button-group">
+                        <button class="button btn btn-outline-secondary my-1 active" data-filter="*">Show
+                            all</button>
+                        <button class="button btn btn-outline-secondary my-1" data-filter=".operation">Operations</button>
+                        <button class="button btn btn-outline-secondary my-1" data-filter=".logistics">Logistics</button>
+                        <button class="button btn btn-outline-secondary my-1" data-filter=".admin">Administration</button>
+                        <button class="button btn btn-outline-secondary my-1" data-filter=".others">Others</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="">
+                <div class="card-body hd-detail hdd-admin border-bottom">
+                    <div class="grid row">
+
+                        <div class="element-item admin notrated " data-category="logistics">
+                            <a href="{{ route('Issue-out') }}">
+                            <div class="card mx-3 shadow p-3" style="width: 8rem;">
+                                <img src="{{ asset('assets/images/dashicons/award.png') }}" style="width: 2rem;"
+                                class="card-img-top mx-auto d-block mt-2 mb-2" alt="...">
+                                <div class="card-body p-2">
+                                <p class="card-text text-center font-weight-bold">Issued Out</p>
+                                </div>
+                            </div>
+                            </a>
+                        </div>
+
+
+                        <div class="element-item operation neutral " data-category="operation">
+                            <div class="card mx-3 shadow p-3" style="width: 8rem;">
+                                <img src="{{ asset('assets/images/dashicons/award.png') }}" style="width: 2rem;"
+                                class="card-img-top mx-auto d-block mt-2 mb-2" alt="...">
+                                <div class="card-body p-2">
+                                <p class="card-text text-center font-weight-bold">Some quick</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="element-item admin neutral " data-category="admin">
+                             <div class="card mx-3 shadow p-3" style="width: 8rem;">
+                                <img src="{{ asset('assets/images/dashicons/award.png') }}" style="width: 2rem;"
+                                class="card-img-top mx-auto d-block mt-2 mb-2" alt="...">
+                                <div class="card-body p-2">
+                                <p class="card-text text-center font-weight-bold">Some quick</p>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="element-item admin sponsored " data-category="admin">
+                            <div class="card mx-3 shadow p-3" style="width: 8rem;">
+                                <img src="{{ asset('assets/images/dashicons/award.png') }}" style="width: 2rem;"
+                                class="card-img-top mx-auto d-block mt-2 mb-2" alt="...">
+                                <div class="card-body p-2">
+                                <p class="card-text text-center font-weight-bold">Some quick</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="element-item others neutral " data-category="others">
+                             <div class="card mx-3 shadow p-3" style="width: 8rem;">
+                                <img src="{{ asset('assets/images/dashicons/award.png') }}" style="width: 2rem;"
+                                class="card-img-top mx-auto d-block mt-2 mb-2" alt="...">
+                                <div class="card-body p-2">
+                                <p class="card-text text-center font-weight-bold">Some quick</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="element-item others sponsored " data-category="others">
+                             <div class="card mx-3 shadow p-3" style="width: 8rem;">
+                                <img src="{{ asset('assets/images/dashicons/award.png') }}" style="width: 2rem;"
+                                class="card-img-top mx-auto d-block mt-2 mb-2" alt="...">
+                                <div class="card-body p-2">
+                                <p class="card-text text-center font-weight-bold">Some quick</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="element-item operation sponsored " data-category="operation">
+                             <div class="card mx-3 shadow p-3" style="width: 8rem;">
+                                <img src="{{ asset('assets/images/dashicons/award.png') }}" style="width: 2rem;"
+                                class="card-img-top mx-auto d-block mt-2 mb-2" alt="...">
+                                <div class="card-body p-2">
+                                <p class="card-text text-center font-weight-bold">Some quick</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="element-item operation sponsored" data-category="operation">
+                             <div class="card mx-3 shadow p-3" style="width: 8rem;">
+                                <img src="{{ asset('assets/images/dashicons/award.png') }}" style="width: 2rem;"
+                                class="card-img-top mx-auto d-block mt-2 mb-2" alt="...">
+                                <div class="card-body p-2">
+                                <p class="card-text text-center font-weight-bold">Some quick</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="element-item logistics notrated " data-category="admin">
+                             <div class="card mx-3 shadow p-3" style="width: 8rem;">
+                                <img src="{{ asset('assets/images/dashicons/award.png') }}" style="width: 2rem;"
+                                class="card-img-top mx-auto d-block mt-2 mb-2" alt="...">
+                                <div class="card-body p-2">
+                                <p class="card-text text-center font-weight-bold">Some quick</p>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+
+            </div>
+        </div>
+
+    </div>
     </div>
 @endsection
