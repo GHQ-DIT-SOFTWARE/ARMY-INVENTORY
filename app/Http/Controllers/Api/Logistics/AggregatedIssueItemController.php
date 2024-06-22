@@ -50,7 +50,8 @@ class AggregatedIssueItemController extends Controller
 
         return DataTables::of($items)
             ->addColumn('action', function ($item) {
-                return '<a class="btn btn-primary btn-sm" href="' . route('edit-item-issued-out', $item['uuid']) . '"><i class="feather icon-eye"></i> Edit</a>';
+                return '<a class="btn btn-primary btn-sm" href="' . route('item-issued-pdf', $item['uuid']) . '" target="_blank"><i class="feather icon-eye"></i> Print</a>,
+                <a class="btn btn-primary btn-sm" href="' . route('edit-item-issued-out', $item['uuid']) . '"><i class="feather icon-eye"></i> Edit</a>';
             })
             ->editColumn('items', function ($item) {
                 $html = '<table class="table table-sm table-bordered">';
