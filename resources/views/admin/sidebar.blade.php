@@ -12,22 +12,22 @@
 
                 <li class="nav-item">
                     <a href="{{ route('dashboard') }}" class="nav-link "><span class="pcoded-micon"><i
-                                class="feather icon-home"></i></span><b><span
-                                class="pcoded-mtext">Home</span></b></a>
+                                class="feather icon-home"></i></span><span
+                                class="pcoded-mtext">Home</span></a>
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('home.dash') }}" class="nav-link "><span class="pcoded-micon"><i
                                 class="feather icon-monitor"></i></span>
-                        <b><span class="pcoded-mtext">Dashboard</span></b></a>
+                        <span class="pcoded-mtext">Dashboard</span></a>
                 </li>
 
                 <li class="nav-item pcoded-hasmenu">
                     <a href="#" class="nav-link"><span class="pcoded-micon"><i
-                                class=" feather icon-align-center"></i></span><b><span class="pcoded-mtext">Issue Item
-                                Out</span></b></a>
+                                class=" feather icon-align-center"></i></span><span class="pcoded-mtext">Issue Item
+                                Out</span></a>
                     <ul class="pcoded-submenu">
                         <li class="nav-item pcoded-hasmenu">
-                            <a href="{{ route('Issue-out') }}" class="nav-link "><span class="pcoded-mtext">Initial
+                            <a href="{{ route('Issue-out') }}" class="nav-link "><span class="pcoded-mtext">Initiate
                                     Request</span></a>
                         </li>
                         <li class="nav-item pcoded-hasmenu">
@@ -42,15 +42,15 @@
                         </li>
                         <li class="nav-item pcoded-hasmenu">
                             <a href="{{ route('all-items-confirmed-issued') }}" class="nav-link "><span
-                                    class="pcoded-mtext">Issued Issurance
+                                    class="pcoded-mtext">Search Invoice
                                 </span></a>
                         </li>
                     </ul>
                 </li>
                 <li class="nav-item pcoded-hasmenu">
                     <a href="#!" class="nav-link"><span class="pcoded-micon"><i
-                                class="feather icon-grid"></i></span><b><span class="pcoded-mtext">Instock
-                                Items</span></b></a>
+                                class="feather icon-grid"></i></span><span class="pcoded-mtext">Instock
+                                Items</span></a>
                     <ul class="pcoded-submenu">
                         <li class="nav-item pcoded-hasmenu">
                             <a href="{{ route('view-index') }}" class="nav-link "><span
@@ -74,8 +74,8 @@
                 </li>
                 <li class="nav-item pcoded-hasmenu">
                     <a href="#!" class="nav-link"><span class="pcoded-micon"><i
-                                class="feather icon-settings"></i></span><b><span class="pcoded-mtext">
-                                Setting</span></b></a>
+                                class="feather icon-settings"></i></span><span class="pcoded-mtext">
+                                Setting</span></a>
                     <ul class="pcoded-submenu">
                         <li class="nav-item pcoded-hasmenu">
                             <a href="#!" class="nav-link "><span class="pcoded-mtext">Unit</span></a>
@@ -97,8 +97,8 @@
                             </ul>
                         </li>
                         <li class="nav-item pcoded-hasmenu">
-                            <a href="#!" class="nav-link "><b><span class="pcoded-mtext">Manage
-                                        Users</span></b></a>
+                            <a href="#!" class="nav-link "><span class="pcoded-mtext">Manage
+                                        Users</span></a>
                             <ul class="pcoded-submenu">
                                 <li>
                                     <a href="{{ route('index-user') }}">User List</a>
@@ -118,8 +118,8 @@
                 </li>
                 <li class="nav-item pcoded">
                     <a href="{{ route('logout') }}" class="nav-link"><span class="pcoded-micon"><i
-                                class="fas fa-sign-out-alt"></i></span><b><span
-                                class="pcoded-mtext">Logout</span></b></a>
+                                class="fas fa-sign-out-alt"></i></span><span
+                                class="pcoded-mtext">Logout</span></a>
                 </li>
             </ul>
         </div>
