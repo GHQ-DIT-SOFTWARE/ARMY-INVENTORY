@@ -58,8 +58,22 @@
                 <td style="border: 1px solid black;"></td>
                 <td style="border: 1px solid black;">Date and Mode of Conveyance</td>
                 <td style="border: 1px solid black;"></td>
+             </tr>
+               <tr>
+                <td rowspan="3">Signature</td>
+                <td rowspan="3" style="border: 1px solid black;">Sheet No</td>
+                <td rowspan="3" style="border: 1px solid black;">No of Sheets </td>
+                <td colspan="2" style="border: 1px solid black; text-align:center;"> For Store Depot use Only</td>
             </tr>
-            <tr>
+             </tr>
+               <tr>
+                <td colspan="2" style="border: 1px solid black; text-align:center;">Carries/Convey</td>
+            </tr>
+             </tr>
+               <tr>
+                <td colspan="2" style="border: 1px solid black; text-align:center;">Note No. and Date</td>
+            </tr>
+               <tr>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -72,20 +86,33 @@
                 @csrf
                 <input type="hidden" name="uuid" value="{{ $aggregatedItem->uuid }}">
                 <input type="hidden" name="invoice_no" value="{{ $aggregatedItem->invoice_no }}">
-                <table class="table table-bordered" id="itemTable">
-                    <thead>
+                <table class="table table-sm table-bordered" width="100%" id="itemTable">
+                    <thead style="text-align: center">
                         <tr>
-                            <th>Category</th>
+                            <th>SRL</th>
                             <th>Sub Category</th>
                             <th>Item Name</th>
                             <th>Size</th>
                             <th>Quantity Requested</th>
-                            <th>Confirm Quantity</th>
+                            <th>Quantity Received</th>
                             <th>Unit</th>
                             <th>Description</th>
                             <th>Status</th>
                             <th>Remarks</th>
                             <th>Invoice No</th> <!-- Added column for Invoice No -->
+                        </tr>
+                        <tr>
+                            <td>(1)</td>
+                            <td>(1)</td>
+                            <td>(1)</td>
+                            <td>(1)</td>
+                            <td>(1)</td>
+                            <td>(1)</td>
+                            <td>(1)</td>
+                            <td>(1)</td>
+                            <td>(1)</td>
+                            <td>(1)</td>
+                            <td>(1)</td>
                         </tr>
                     </thead>
                     <tbody>
@@ -136,6 +163,7 @@
                         @endforeach
                     </tbody>
                 </table>
+                <br>
                 <button type="submit" class="btn btn-success">Submit</button>
             </form>
         </div>

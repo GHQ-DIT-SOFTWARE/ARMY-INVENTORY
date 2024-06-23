@@ -167,16 +167,14 @@
                             </a>
                         </div>
 
-                        <div class="element-item admin neutral " data-category="admin">
-                            <a href="{{ route('all-items-confirmed-issued') }}">
-                            <div class="card mx-3 shadow p-3" style="width: 8rem;">
-                                <img src="{{ asset('assets/images/dashicons/letter.png') }}" style="width: 3rem;"
+                        <div class="element-item logistics notrated " data-category="admin">
+                             <div class="card mx-3 shadow p-3" style="width: 8rem;">
+                                <img src="{{ asset('assets/images/dashicons/search.png') }}" style="width: 3rem;"
                                 class="card-img-top mx-auto d-block mt-2 mb-2" alt="...">
                                 <div class="card-body p-2">
-                                <p class="card-text text-center font-weight-bold">Write-Off</p>
+                                <p class="card-text text-center font-weight-bold">Search</p>
                                 </div>
                             </div>
-                            </a>
                         </div>
 
                         <div class="element-item others neutral " data-category="others">
@@ -217,16 +215,18 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="element-item logistics notrated " data-category="admin">
-                             <div class="card mx-3 shadow p-3" style="width: 8rem;">
-                                <img src="{{ asset('assets/images/dashicons/setting.png') }}" style="width: 3rem;"
+                           <div class="element-item admin neutral " data-category="admin">
+                            <a href="{{ route('all-items-confirmed-issued') }}">
+                            <div class="card mx-3 shadow p-3" style="width: 8rem;">
+                                <img src="{{ asset('assets/images/dashicons/letter.png') }}" style="width: 3rem;"
                                 class="card-img-top mx-auto d-block mt-2 mb-2" alt="...">
                                 <div class="card-body p-2">
-                                <p class="card-text text-center font-weight-bold">Settings</p>
+                                <p class="card-text text-center font-weight-bold">Write-Off</p>
                                 </div>
                             </div>
+                            </a>
                         </div>
-                </div>
+                    </div>
 
 
             </div>
