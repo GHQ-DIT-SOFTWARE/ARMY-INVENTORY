@@ -19,7 +19,6 @@
     </div>
     <div class="row">
         <div class="col-xl-12">
-         <div class="col-xl-12">
             <div class="card">
                 <div class="card-body">
                     <div class="row align-items-center m-l-0">
@@ -30,16 +29,12 @@
                                         <input type="text" class="form-control" id="invoice_no" name="invoice_no"
                                     placeholder="Search by Invoice Number">
                                     </div>
-                                <div class="col-sm-6 col-md-3">
-                                    <button type="submit" class="btn btn-primary mt-2">Search</button>
+                                    <div class="col-sm-6 col-md-3">
+                                        <button type="submit" class="btn btn-primary mt-2">Search</button>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
-                    </div>
-                        {{-- <div class="col-sm-6 text-right">
-                            <a href="{{ route('Issue-out') }}" class="btn btn-primary btn-sm btn-round has-ripple"
-                                data-target="#modal-report"><i class="feather icon-plus"></i>Issue Item Out</a>
-                        </div> --}}
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -47,7 +42,7 @@
 
             <div class="table-responsive" id="tableContainer" style="display:none;">
                 <div class="card">
-                <div class="card-body">
+                    <div class="card-body">
                         <table id="itemissuedconfirmed" class="table mb-0">
                             <thead class="thead-light">
                                 <tr>

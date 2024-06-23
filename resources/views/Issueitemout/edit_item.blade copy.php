@@ -89,6 +89,7 @@
                 <table class="table table-sm table-bordered" width="100%" id="itemTable">
                     <thead style="text-align: center">
                         <tr>
+                            <th>SRL</th>
                             <th>Sub Category</th>
                             <th>Item Name</th>
                             <th>Size</th>
@@ -98,7 +99,7 @@
                             <th>Description</th>
                             <th>Status</th>
                             <th>Remarks</th>
-
+                            <th>Invoice No</th> <!-- Added column for Invoice No -->
                         </tr>
                         <tr>
                             <td>(1)</td>
@@ -110,12 +111,14 @@
                             <td>(1)</td>
                             <td>(1)</td>
                             <td>(1)</td>
-
+                            <td>(1)</td>
+                            <td>(1)</td>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($aggregatedItem->items as $index => $data)
                             <tr>
+                                <td>{{ $data['CATEGORY_ID'] ?? 'Unknown Category' }}</td>
                                 <td>{{ $data['SUB_CATEGORY'] ?? 'Unknown Sub Category' }}</td>
                                 <td>{{ $itemNames[$data['ITEM_ID']] ?? 'Unknown Item' }}</td>
                                 <td>{{ $data['SIZES'] ?? 'Unknown Size' }}</td>
@@ -155,6 +158,7 @@
                                     <input type="text" class="form-control" name="remarks[{{ $index }}]"
                                         placeholder="Remarks" value="{{ old('remarks.' . $index) }}">
                                 </td>
+                                <td>{{ $aggregatedItem->invoice_no }}</td> <!-- Display invoice_no -->
                             </tr>
                         @endforeach
                     </tbody>
