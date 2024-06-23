@@ -67,12 +67,11 @@
                 <td></td>
             </tr>
             </table>
-            <br>
             <form method="POST" action="{{ route('update-issued-items') }}">
                 @csrf
                 <input type="hidden" name="uuid" value="{{ $aggregatedItem->uuid }}">
                 <input type="hidden" name="invoice_no" value="{{ $aggregatedItem->invoice_no }}">
-                <table class="table table-bordered" id="itemTable">
+                <table class="table table-sm table-bordered" width="100%" id="itemTable">
                     <thead>
                         <tr>
                             <th>Category</th>
@@ -136,6 +135,7 @@
                         @endforeach
                     </tbody>
                 </table>
+                <br>
                 <button type="submit" class="btn btn-success">Submit</button>
             </form>
         </div>
