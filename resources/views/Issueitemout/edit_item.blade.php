@@ -18,11 +18,9 @@
             </div>
         </div>
     </div>
-    {{-- {{ route('confirm-quantity') }} --}}<div class="card">
-
+    <div class="card">
         <div class="card-body">
             <h5 class="card-title">ISSUE AND RECEIPT VOUCHER</h5>
-
             <table class="table table-xs" style="width:100%; ">
                 <tr>
                     <th>Defence Form G. 1033</th>

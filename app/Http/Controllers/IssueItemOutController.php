@@ -120,40 +120,10 @@ class IssueItemOutController extends Controller
                     'created_by' => $createdBy,
                     'date' => $currentDate,
                 ];
-                // $issueItems[] = [
-                //     'uuid' => (string) Str::uuid(), // Generate a UUID for each record
-                //     'category_id' => $validatedData['category_id'][$index],
-                //     'sub_category' => $validatedData['sub_category'][$index],
-                //     'item_id' => $item->id, // Storing item ID instead of name
-                //     'sizes' => $validatedData['sizes'][$index],
-                //     'qty' => $requestedQty,
-                //     'unit_id' => $validatedData['unit_id'][$index],
-                //     'description' => $validatedData['description'] ?? '',
-                //     'invoice_no' => $formattedInvoiceNumber,
-                //     'date' => $currentDate, // Automatically set the current date and time
-                //     'created_at' => now(), // Assuming you have timestamps in your table
-                //     'updated_at' => now(), // Assuming you have timestamps in your table
-                //     'status' => 0, // Setting the status field to 0
-                // ];
-
-                // // Add item to aggregated items array for AggregatedIssueItem
-                // $aggregatedItems[] = [
-                //     'category_id' => $validatedData['category_id'][$index],
-                //     'sub_category' => $validatedData['sub_category'][$index],
-                //     'item_id' => $item->id,
-                //     'sizes' => $validatedData['sizes'][$index],
-                //     'qty' => $requestedQty,
-                //     'unit_id' => $validatedData['unit_id'][$index],
-                //     'description' => $validatedData['description'] ?? '',
-                //     'invoice_no' => $formattedInvoiceNumber, // Add invoice_no here
-                //     'status' => 0,
-                // ];
             }
 
             // Insert into IssueItemOut
             IssueItemOut::insert($issueItems);
-
-            // Insert into AggregatedIssueItem
 
             AggregatedIssueItem::create([
                 'uuid' => (string) Str::uuid(),
