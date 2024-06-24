@@ -7,14 +7,22 @@
             <div class="row align-items-center">
                 <div class="col-md-12">
                     <div class="page-header-title">
-                        <h5 class="m-b-10">Item </h5>
+                        <h5 class="m-b-10">Initiate Request</h5>
                     </div>
                     <ul class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
-                        <li class="breadcrumb-item"><a href="#!">Items</a></li>
+                        <li class="breadcrumb-item"><a href="#!">Request Items</a></li>
                         <li class="breadcrumb-item"><a href="#!">Dashboard</a></li>
                     </ul>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header border-0">
+                <h5>INITIATE REQUEST - ITEMS DETAILS </h5>
             </div>
         </div>
     </div>
@@ -25,15 +33,13 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Issue Item</h4>
-
-                            <div class="row">
-                                <div class="col-md-4">
+                            <div class="row filter-row">
+                                <div class="col-sm-6 col-md-3">
                                     <div class="form-group row">
-                                        <label for="name" class="col-sm-4 col-form-label">Main Category</label>
+                                        <label for="name" class="col-sm-4 col-form-label">Item Category</label>
                                         <div class="col-sm-8">
                                             <select id="category_id" name="category_id" class="form-control select2">
-                                                <option selected="">Open this select menu</option>
+                                                <option selected="">Select category</option>
                                                 @foreach ($category as $cat)
                                                     <option value="{{ $cat->id }}">{{ $cat->category_name }}</option>
                                                 @endforeach
@@ -44,7 +50,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-sm-6 col-md-3">
                                     <div class="form-group row">
                                         <label for="service" class="col-sm-4 col-form-label">Sub Category</label>
                                         <div class="col-sm-8">
@@ -55,12 +61,12 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-sm-6 col-md-3">
                                     <div class="form-group row">
                                         <label for="name" class="col-sm-4 col-form-label">Item Name</label>
                                         <div class="col-sm-8">
                                             <select name="item_id" id="item_id" class="form-control select2">
-                                                <option selected="">Open this select menu</option>
+                                                <option selected="">Select Item</option>
                                             </select>
                                             @error('item_id')
                                                 <span class="text-danger">{{ $message }}</span>
@@ -68,7 +74,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-sm-6 col-md-3">
                                     <div class="form-group row">
                                         <label for="size" class="col-sm-4 col-form-label">Size</label>
                                         <div class="col-sm-8">
@@ -81,19 +87,19 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-sm-6 col-md-3">
                                     <div class="form-group row">
-                                        <label for="qty" class="col-sm-4 col-form-label">Qty</label>
+                                        <label for="qty" class="col-sm-4 col-form-label">Quatity</label>
                                         <div class="col-sm-8">
                                             <input type="text" id="qty" class="form-control" name="qty"
-                                                placeholder="Qty" readonly>
+                                                placeholder="Quatity Available" readonly>
                                             @error('qty')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-sm-6 col-md-3">
                                     <div class="form-group row">
                                         <label for="actual_qty" class="col-sm-4 col-form-label">Unit</label>
                                         <div class="col-sm-8">
@@ -110,13 +116,10 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-3">
-                                    <div class="md-3">
-                                        <label for="example-text-input" class="form-label" style="margin-top:43px;"></label>
-                                        <i
-                                            class="btn btn-secondary btn-rounded waves-effect waves-light fas fa-plus-circle addeventmore">
-                                            Add More</i>
-                                    </div>
+                                <div class="col-sm-6 col-md-3">
+                                        {{-- <label for="example-text-input" class="form-label" style="margin-top:43px;"></label> --}}
+                                        <i class="btn btn-secondary btn-rounded waves-effect waves-light fas fa-plus-circle addeventmore">
+                                            Add Request</i>
                                 </div>
                             </div>
                         </div>
@@ -124,6 +127,7 @@
 
 
                     <div class="card">
+                        <div class="card-body">
                         <form method="post" action="{{ route('store-items-issued-out') }}">
                             @csrf
                             <table class="table-sm table-bordered" width="100%" style="border-color: #ddd;">
@@ -147,10 +151,11 @@
                                 </div>
                             </div><br><br>
                             <div class="form-group">
-                                <button type="submit" class="btn btn-success" id="storeButton">Issue Item</button>
+                                <button type="submit" class="btn btn-success" id="storeButton">Authorise Request</button>
                             </div>
                         </form>
                     </div>
+                </div>
                 </div>
             </div>
         </div>
@@ -384,11 +389,11 @@
                             type: "GET",
                             dataType: "json",
                             success: function(data) {
-                                $('#qty').val(data.qty); 
+                                $('#qty').val(data.qty);
                             }
                         });
                     } else {
-                        $('#qty').val(''); 
+                        $('#qty').val('');
                     }
                 });
 

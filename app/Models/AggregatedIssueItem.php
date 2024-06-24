@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 
-class IssueItemOut extends Model implements Auditable
+class AggregatedIssueItem extends Model implements Auditable
 {
     use HasFactory;
     use UuidTrait;
@@ -20,24 +20,31 @@ class IssueItemOut extends Model implements Auditable
      * @var array<int, string>
      */
     protected $fillable = [
-        'category_id', 'sub_category', 'item_id', 'sizes', 'qty', 'unit_id', 'description', 'invoice_no', 'confirm_qty', 'remarks', 'confirmed_issued',
-        'created_by',
+        'invoice_no',
+        'items',
+        'status',
     ];
-    public function issuedoutitem()
+
+    public function setItemsAttribute($value)
     {
-        return $this->belongsTo(Item::class, 'item_id', 'id');
+        $this->attributes['items'] = json_encode($value);
+    }
+
+    // Accessor to decode items from JSON when getting
+    public function getItemsAttribute($value)
+    {
+        return json_decode($value, true);
     }
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');
     }
-
     /**
      * The attributes that should be cast.
      *
      * @var array<string, string>
      */
     protected $casts = [
-
+        'items' => 'array',
     ];
 }
