@@ -242,7 +242,7 @@ class IssueItemOutController extends Controller
     {
         try {
             $aggregatedItem = AggregatedIssueItem::where('uuid', $uuid)->firstOrFail();
-
+ 
             // Fetch item names using ITEM_IDs from the items array
             $itemsArray = is_string($aggregatedItem->items) ? json_decode($aggregatedItem->items, true) : $aggregatedItem->items;
             $itemIds = collect($itemsArray)->pluck('ITEM_ID')->unique()->toArray();
