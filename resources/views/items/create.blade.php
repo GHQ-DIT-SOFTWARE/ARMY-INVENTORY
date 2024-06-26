@@ -146,17 +146,12 @@
             </div>
         </div>
     </div>
+
     <script>
         $(document).ready(function() {
+            // Function to update sub-categories based on selected main category
             $('#category_id').on('change', function() {
                 var categoryId = $(this).val();
-                var selectedCategoryText = $('#category_id option:selected').text().trim();
-                if (selectedCategoryText === 'TECHNICAL' || selectedCategoryText === 'ACCOMMODATION') {
-                    $('#size').parent().parent().hide(); // Hide size field
-                } else {
-                    $('#size').parent().parent().show(); // Show size field
-                }
-
                 if (categoryId) {
                     $.ajax({
                         url: '{{ route('get-subcategory', ['categoryId' => ':categoryId']) }}'
@@ -166,11 +161,11 @@
                         success: function(data) {
                             $('#sub_category').empty();
                             $('#sub_category').append(
-                                '<option value="">Select Option</option>');
+                            '<option value="">Select Option</option>');
                             $.each(data, function(index, subcategory) {
                                 $('#sub_category').append('<option value="' +
-                                    subcategory.id +
-                                    '">' + subcategory.sub_name + '</option>');
+                                    subcategory.id + '">' + subcategory.sub_name +
+                                    '</option>');
                             });
                         }
                     });
@@ -182,9 +177,11 @@
                 }
             });
 
+            // Function to update sizes based on selected sub-category
             $('#sub_category').on('change', function() {
                 var subCategoryId = $(this).val();
                 var sizeOptions = [];
+
                 if (subCategoryId) {
                     var selectedSubCategory = $('#sub_category option:selected').text().trim();
                     if (selectedSubCategory === 'BERETS') {
@@ -207,13 +204,20 @@
                 }
             });
 
-            $('#image').change(function(e) {
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    $('#showImage').attr('src', e.target.result);
+            // Function to handle visibility of Sizes based on selected category
+            $('#category_id').on('change', function() {
+                var selectedCategory = $('#category_id option:selected').text().trim();
+                var hideSizesCategories = ['TECHNICAL', 'ACCOMMODATION'];
+
+                if (hideSizesCategories.includes(selectedCategory)) {
+                    $('#size').closest('.col-md-4').hide(); // Hide the entire column for sizes
+                } else {
+                    $('#size').closest('.col-md-4').show(); // Show the sizes column
                 }
-                reader.readAsDataURL(e.target.files[0]);
             });
+
+            // Trigger change event initially to check category on page load
+            $('#category_id').change();
         });
     </script>
 @endsection

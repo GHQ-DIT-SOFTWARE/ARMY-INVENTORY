@@ -191,18 +191,33 @@ class ItemsController extends Controller
         return response()->json($items);
     }
 
+    // public function getSizes($itemId)
+    // {
+    //     $item = Item::findOrFail($itemId);
+    //     // Assuming 'size' is a field in your Item model containing the size as a string
+    //     $sizeOptions = [$item->sizes];
+    //     // Return as JSON response
+    //     return response()->json($sizeOptions);
+    // }
+    // public function getQuantity($sizeId)
+    // {
+    //     // Example: Fetch quantity from the Item model based on the selected size ID
+    //     $item = Item::where('sizes', $sizeId)->first();
+    //     $quantity = $item ? $item->qty : 0;
+    //     return response()->json(['qty' => $quantity]);
+    // }
+
     public function getSizes($itemId)
     {
         $item = Item::findOrFail($itemId);
-        // Assuming 'size' is a field in your Item model containing the size as a string
-        $sizeOptions = [$item->sizes];
-        // Return as JSON response
+        $sizeOptions = $item->sizes ? explode(',', $item->sizes) : [];
         return response()->json($sizeOptions);
     }
+
     public function getQuantity($sizeId)
     {
-        // Example: Fetch quantity from the Item model based on the selected size ID
-        $item = Item::where('sizes', $sizeId)->first();
+        // Check if sizeId corresponds to a size or an itemId
+        $item = Item::where('sizes', 'LIKE', '%' . $sizeId . '%')->orWhere('id', $sizeId)->first();
         $quantity = $item ? $item->qty : 0;
         return response()->json(['qty' => $quantity]);
     }
