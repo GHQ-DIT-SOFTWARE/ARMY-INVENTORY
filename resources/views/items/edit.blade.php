@@ -149,9 +149,15 @@
     </div>
     <script>
         $(document).ready(function() {
-            function loadSubCategoriesAndSizes() {
-                var categoryId = $('#category_id').val();
-                var sizeOptions = [];
+            $('#category_id').on('change', function() {
+                var categoryId = $(this).val();
+                var selectedCategoryText = $('#category_id option:selected').text().trim();
+                if (selectedCategoryText === 'TECHNICAL' || selectedCategoryText === 'ACCOMMODATION') {
+                    $('#size').parent().parent().hide(); // Hide size field
+                } else {
+                    $('#size').parent().parent().show(); // Show size field
+                }
+
                 if (categoryId) {
                     $.ajax({
                         url: '{{ route('get-subcategory', ['categoryId' => ':categoryId']) }}'
@@ -160,6 +166,8 @@
                         dataType: "json",
                         success: function(data) {
                             $('#sub_category').empty();
+                            $('#sub_category').append(
+                                '<option value="">Select Option</option>');
                             $.each(data, function(index, subcategory) {
                                 $('#sub_category').append('<option value="' +
                                     subcategory.id +
@@ -167,40 +175,54 @@
                             });
                         }
                     });
+                } else {
+                    $('#sub_category').empty();
+                    $('#sub_category').append('<option value="">Select Option</option>');
+                    $('#size').empty();
+                    $('#size').append('<option selected="">Select Size</option>');
+                }
+            });
 
-                    @foreach ($category as $cat)
-                        if (categoryId == '{{ $cat->id }}' && '{{ $cat->category_name }}' == 'BOOT') {
-                            sizeOptions = [39, 40, 41, 42, 43, 44, 45, 46];
-                        } else if (categoryId == '{{ $cat->id }}' && '{{ $cat->category_name }}' ==
-                            'BERET') {
-                            sizeOptions = [52, 53, 54, 55, 56, 57, 58, 59];
-                        } else {
-                            sizeOptions = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
-                        }
-                    @endforeach
+            $('#sub_category').on('change', function() {
+                var subCategoryId = $(this).val();
+                var sizeOptions = [];
+                if (subCategoryId) {
+                    var selectedSubCategory = $('#sub_category option:selected').text().trim();
+                    if (selectedSubCategory === 'BERETS') {
+                        sizeOptions = [52, 53, 54, 55, 56, 57, 58, 59];
+                    } else if (selectedSubCategory === 'BLACK SHOE' || selectedSubCategory ===
+                        'BROWN SHOE' || selectedSubCategory === 'COMBAT BOOT' || selectedSubCategory ===
+                        'DESERT BOOT') {
+                        sizeOptions = [39, 40, 41, 42, 43, 44, 45, 46];
+                    } else {
+                        sizeOptions = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+                    }
 
                     $('#size').empty();
                     $.each(sizeOptions, function(index, size) {
                         $('#size').append('<option value="' + size + '">' + size + '</option>');
                     });
-                    $('#size').val('{{ $items->sizes }}');
                 } else {
-                    $('#sub_category').empty();
                     $('#size').empty();
                     $('#size').append('<option selected="">Select Size</option>');
                 }
-            }
+            });
 
-            $('#category_id').on('change', loadSubCategoriesAndSizes);
             $('#image').change(function(e) {
                 var reader = new FileReader();
                 reader.onload = function(e) {
                     $('#showImage').attr('src', e.target.result);
                 }
-                reader.readAsDataURL(e.target.files['0']);
+                reader.readAsDataURL(e.target.files[0]);
             });
 
-            loadSubCategoriesAndSizes(); // Load subcategories and sizes on page load
+            // Initial check for hiding/showing the size field
+            var initialCategoryText = $('#category_id option:selected').text().trim();
+            if (initialCategoryText === 'TECHNICAL' || initialCategoryText === 'ACCOMMODATION') {
+                $('#size').parent().parent().hide();
+            } else {
+                $('#size').parent().parent().show();
+            }
         });
     </script>
 @endsection
