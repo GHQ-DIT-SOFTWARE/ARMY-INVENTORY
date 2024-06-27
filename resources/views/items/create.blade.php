@@ -181,7 +181,6 @@
             $('#sub_category').on('change', function() {
                 var subCategoryId = $(this).val();
                 var sizeOptions = [];
-
                 if (subCategoryId) {
                     var selectedSubCategory = $('#sub_category option:selected').text().trim();
                     if (selectedSubCategory === 'BERETS') {
@@ -213,6 +212,16 @@
                     $('#size').closest('.col-md-4').hide(); // Hide the entire column for sizes
                 } else {
                     $('#size').closest('.col-md-4').show(); // Show the sizes column
+                }
+            });
+
+            // Clear size value if the sizes field is hidden before form submission
+            $('#myForm').on('submit', function() {
+                var selectedCategory = $('#category_id option:selected').text().trim();
+                var hideSizesCategories = ['TECHNICAL', 'ACCOMMODATION'];
+
+                if (hideSizesCategories.includes(selectedCategory)) {
+                    $('#size').val(''); // Clear the value of the size field
                 }
             });
 

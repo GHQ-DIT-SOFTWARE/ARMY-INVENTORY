@@ -156,7 +156,6 @@
     </div>
     <script>
         $(document).ready(function() {
-            // Function to update sub-categories based on selected main category
             $('#category_id').on('change', function() {
                 var categoryId = $(this).val();
                 if (categoryId) {
@@ -171,8 +170,8 @@
                             '<option value="">Select Option</option>');
                             $.each(data, function(index, subcategory) {
                                 $('#sub_category').append('<option value="' +
-                                    subcategory.id + '">' + subcategory.sub_name +
-                                    '</option>');
+                                    subcategory.id +
+                                    '">' + subcategory.sub_name + '</option>');
                             });
                             // Trigger subcategory change event to populate sizes
                             $('#sub_category').trigger('change');
@@ -186,11 +185,9 @@
                 }
             });
 
-            // Function to update sizes based on selected sub-category
             $('#sub_category').on('change', function() {
                 var subCategoryId = $(this).val();
                 var sizeOptions = [];
-
                 if (subCategoryId) {
                     var selectedSubCategory = $('#sub_category option:selected').text().trim();
                     if (selectedSubCategory === 'BERETS') {
@@ -202,7 +199,94 @@
                     } else {
                         sizeOptions = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
                     }
+                    $('#size').empty();
+                    $.each(sizeOptions, function(index, size) {
+                        $('#size').append('<option value="' + size + '">' + size + '</option>');
+                    });
+                } else {
+                    $('#size').empty();
+                    $('#size').append('<option selected="">Select Size</option>');
+                }
+                // Check if category is TECHNICAL or ACCOMMODATION and hide/show sizes field
+                var selectedCategory = $('#category_id option:selected').text().trim();
+                if (selectedCategory === 'TECHNICAL' || selectedCategory === 'ACCOMMODATION') {
+                    $('#size').closest('.col-md-4').hide(); // Hide the sizes field
+                } else {
+                    $('#size').closest('.col-md-4').show(); // Show the sizes field
+                }
+            });
+            // Trigger change event on page load if a subcategory is pre-selected
+            $('#sub_category').trigger('change');
+            $('#image').change(function(e) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#showImage').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(e.target.files[0]);
+            });
 
+            // Handle form submission
+            $('#myForm').submit(function(event) {
+                var selectedCategory = $('#category_id option:selected').text().trim();
+                if (selectedCategory === 'TECHNICAL' || selectedCategory === 'ACCOMMODATION') {
+                    // If sizes are hidden, prevent them from being submitted
+                    $('#size').val(''); // Clear the value
+                }
+                // Optionally, you can also disable the sizes field to prevent submission
+                // $('#size').prop('disabled', true);
+
+                // Continue with form submission
+                return true;
+            });
+        });
+    </script>
+
+
+    {{-- <script>
+        $(document).ready(function() {
+            $('#category_id').on('change', function() {
+                var categoryId = $(this).val();
+                if (categoryId) {
+                    $.ajax({
+                        url: '{{ route('get-subcategory', ['categoryId' => ':categoryId']) }}'
+                            .replace(':categoryId', categoryId),
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            $('#sub_category').empty();
+                            $('#sub_category').append(
+                                '<option value="">Select Option</option>');
+                            $.each(data, function(index, subcategory) {
+                                $('#sub_category').append('<option value="' +
+                                    subcategory.id +
+                                    '">' + subcategory.sub_name + '</option>');
+                            });
+                            // Trigger subcategory change event to populate sizes
+                            $('#sub_category').trigger('change');
+                        }
+                    });
+                } else {
+                    $('#sub_category').empty();
+                    $('#sub_category').append('<option value="">Select Option</option>');
+                    $('#size').empty();
+                    $('#size').append('<option selected="">Select Size</option>');
+                }
+            });
+
+            $('#sub_category').on('change', function() {
+                var subCategoryId = $(this).val();
+                var sizeOptions = [];
+                if (subCategoryId) {
+                    var selectedSubCategory = $('#sub_category option:selected').text().trim();
+                    if (selectedSubCategory === 'BERETS') {
+                        sizeOptions = [52, 53, 54, 55, 56, 57, 58, 59];
+                    } else if (selectedSubCategory === 'BLACK SHOE' || selectedSubCategory ===
+                        'BROWN SHOE' || selectedSubCategory === 'COMBAT BOOT' || selectedSubCategory ===
+                        'DESERT BOOT') {
+                        sizeOptions = [39, 40, 41, 42, 43, 44, 45, 46];
+                    } else {
+                        sizeOptions = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+                    }
                     $('#size').empty();
                     $.each(sizeOptions, function(index, size) {
                         $('#size').append('<option value="' + size + '">' + size + '</option>');
@@ -212,23 +296,9 @@
                     $('#size').append('<option selected="">Select Size</option>');
                 }
             });
-            // Function to handle visibility of Sizes based on selected category
-            $('#category_id').on('change', function() {
-                var selectedCategory = $('#category_id option:selected').text().trim();
-                var hideSizesCategories = ['TECHNICAL', 'ACCOMMODATION'];
-                if (hideSizesCategories.includes(selectedCategory)) {
-                    $('#size').closest('.col-md-4').hide(); // Hide the entire column for sizes
-                } else {
-                    $('#size').closest('.col-md-4').show(); // Show the sizes column
-                }
-            });
-            // Trigger change event on page load if a category is pre-selected
-            $('#category_id').change();
+            // Trigger change event on page load if a subcategory is pre-selected
+            $('#sub_category').trigger('change');
 
-            // Trigger change event on subcategory if pre-selected
-            $('#sub_category').change();
-
-            // Image preview functionality
             $('#image').change(function(e) {
                 var reader = new FileReader();
                 reader.onload = function(e) {
@@ -237,70 +307,5 @@
                 reader.readAsDataURL(e.target.files[0]);
             });
         });
-
-        // $(document).ready(function() {
-        //     $('#category_id').on('change', function() {
-        //         var categoryId = $(this).val();
-        //         if (categoryId) {
-        //             $.ajax({
-        //                 url: '{{ route('get-subcategory', ['categoryId' => ':categoryId']) }}'
-        //                     .replace(':categoryId', categoryId),
-        //                 type: "GET",
-        //                 dataType: "json",
-        //                 success: function(data) {
-        //                     $('#sub_category').empty();
-        //                     $('#sub_category').append(
-        //                         '<option value="">Select Option</option>');
-        //                     $.each(data, function(index, subcategory) {
-        //                         $('#sub_category').append('<option value="' +
-        //                             subcategory.id +
-        //                             '">' + subcategory.sub_name + '</option>');
-        //                     });
-        //                     // Trigger subcategory change event to populate sizes
-        //                     $('#sub_category').trigger('change');
-        //                 }
-        //             });
-        //         } else {
-        //             $('#sub_category').empty();
-        //             $('#sub_category').append('<option value="">Select Option</option>');
-        //             $('#size').empty();
-        //             $('#size').append('<option selected="">Select Size</option>');
-        //         }
-        //     });
-
-        //     $('#sub_category').on('change', function() {
-        //         var subCategoryId = $(this).val();
-        //         var sizeOptions = [];
-        //         if (subCategoryId) {
-        //             var selectedSubCategory = $('#sub_category option:selected').text().trim();
-        //             if (selectedSubCategory === 'BERETS') {
-        //                 sizeOptions = [52, 53, 54, 55, 56, 57, 58, 59];
-        //             } else if (selectedSubCategory === 'BLACK SHOE' || selectedSubCategory ===
-        //                 'BROWN SHOE' || selectedSubCategory === 'COMBAT BOOT' || selectedSubCategory ===
-        //                 'DESERT BOOT') {
-        //                 sizeOptions = [39, 40, 41, 42, 43, 44, 45, 46];
-        //             } else {
-        //                 sizeOptions = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
-        //             }
-        //             $('#size').empty();
-        //             $.each(sizeOptions, function(index, size) {
-        //                 $('#size').append('<option value="' + size + '">' + size + '</option>');
-        //             });
-        //         } else {
-        //             $('#size').empty();
-        //             $('#size').append('<option selected="">Select Size</option>');
-        //         }
-        //     });
-        //     // Trigger change event on page load if a subcategory is pre-selected
-        //     $('#sub_category').trigger('change');
-
-        //     $('#image').change(function(e) {
-        //         var reader = new FileReader();
-        //         reader.onload = function(e) {
-        //             $('#showImage').attr('src', e.target.result);
-        //         }
-        //         reader.readAsDataURL(e.target.files[0]);
-        //     });
-        // });
-    </script>
+    </script> --}}
 @endsection

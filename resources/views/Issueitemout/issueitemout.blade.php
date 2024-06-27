@@ -1,4 +1,7 @@
 @extends('admin.admin_master')
+@section('title')
+    ISSUING ITEM
+@endsection
 @section('admin')
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <div class="page-header">
@@ -83,10 +86,10 @@
                         </div>
                         <div class="col-sm-6 col-md-3">
                             <div class="form-group row">
-                                <label for="qty" class="col-sm-4 col-form-label">Quatity</label>
+                                <label for="qty" class="col-sm-4 col-form-label">Quantity</label>
                                 <div class="col-sm-8">
                                     <input type="text" id="qty" class="form-control" name="qty"
-                                        placeholder="Quatity Available" readonly>
+                                        placeholder="Quantity Available" readonly>
                                     @error('qty')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -119,7 +122,6 @@
                 </div>
             </div>
 
-
             <div class="card">
                 <div class="card-body">
                     <form method="post" action="{{ route('store-items-issued-out') }}">
@@ -145,8 +147,7 @@
                             </div>
                         </div><br><br>
                         <div class="form-group">
-                            <button type="submit" class="btn btn-success" id="storeButton">Authorise
-                                Request</button>
+                            <button type="submit" class="btn btn-success" id="storeButton">Authorise Request</button>
                         </div>
                     </form>
                 </div>
@@ -220,7 +221,9 @@
                                         size + '</option>');
                                 });
                             } else {
-                                // If no sizes, get quantity directly
+                                // If no sizes, clear the size field and get quantity directly
+                                $('#size').append(
+                                '<option value="">No Size Available</option>');
                                 $.ajax({
                                     url: '{{ route('get-quantity', ['sizeId' => ':sizeId']) }}'
                                         .replace(':sizeId', itemId),
@@ -282,7 +285,7 @@
                     subCategoryName + '" readonly></td>' +
                     '<td><input type="text" class="form-control" name="item_id[]" value="' + itemName +
                     '" readonly></td>' +
-                    '<td><input type="text" class="form-control" name="sizes[]" value="' + size +
+                    '<td><input type="text" class="form-control" name="sizes[]" value="' + (size || '') +
                     '" readonly></td>' +
                     '<td><input type="text" class="form-control" name="qty[]" value="' + quantity +
                     '"></td>' +
@@ -303,151 +306,18 @@
             $('tbody').on('click', '.removeeventmore', function() {
                 $(this).closest('tr').remove();
             });
+
+            $('#myForm').on('submit', function() {
+                var selectedCategory = $('#category_id option:selected').text().trim();
+                var hideSizesCategories = ['TECHNICAL', 'ACCOMMODATION'];
+
+                if (hideSizesCategories.includes(selectedCategory)) {
+                    $('#size').val(''); // Clear the value of the size field
+                }
+            });
+
+            // Trigger change event initially to check category on page load
+            $('#category_id').change();
         });
-
-        // $(document).ready(function() {
-        //     $('#category_id').on('change', function() {
-        //         var categoryId = $(this).val();
-        //         if (categoryId) {
-        //             $.ajax({
-        //                 url: '{{ route('get-issue-subcategory', ['categoryId' => ':categoryId']) }}'
-        //                     .replace(':categoryId', categoryId),
-        //                 type: "GET",
-        //                 dataType: "json",
-        //                 success: function(data) {
-        //                     $('#sub_category').empty();
-        //                     $('#sub_category').append(
-        //                         '<option value="">Select Option</option>');
-        //                     $.each(data, function(key, value) {
-        //                         $('#sub_category').append('<option value="' + key +
-        //                             '">' + value + '</option>');
-        //                     });
-        //                 }
-        //             });
-        //         } else {
-        //             $('#sub_category').empty();
-        //             $('#sub_category').append('<option value="">Select Option</option>');
-        //         }
-        //     });
-
-        //     $('#sub_category').on('change', function() {
-        //         var subCategoryId = $(this).val();
-        //         if (subCategoryId) {
-        //             $.ajax({
-        //                 url: '{{ route('get-items', ['subCategoryId' => ':subCategoryId']) }}'
-        //                     .replace(':subCategoryId', subCategoryId),
-        //                 type: "GET",
-        //                 dataType: "json",
-        //                 success: function(data) {
-        //                     $('#item_id').empty();
-        //                     $('#item_id').append('<option value="">Select Item</option>');
-        //                     $.each(data, function(key, value) {
-        //                         $('#item_id').append('<option value="' + key + '">' +
-        //                             value + '</option>');
-        //                     });
-        //                 }
-        //             });
-        //         } else {
-        //             $('#item_id').empty();
-        //             $('#item_id').append('<option value="">Select Item</option>');
-        //         }
-        //     });
-
-        //     $('#item_id').on('change', function() {
-        //         var itemId = $(this).val();
-        //         if (itemId) {
-        //             $.ajax({
-        //                 url: '{{ route('get-sizes', ['itemId' => ':itemId']) }}'.replace(':itemId',
-        //                     itemId),
-        //                 type: "GET",
-        //                 dataType: "json",
-        //                 success: function(data) {
-        //                     $('#size').empty();
-        //                     $('#size').append('<option value="">Select Size</option>');
-        //                     $.each(data, function(index, size) {
-        //                         $('#size').append('<option value="' + size + '">' +
-        //                             size + '</option>');
-        //                     });
-        //                 }
-        //             });
-        //         } else {
-        //             $('#size').empty();
-        //             $('#size').append('<option value="">Select Size</option>');
-        //         }
-        //     });
-
-        //     $('#size').on('change', function() {
-        //         var sizeId = $(this).val();
-        //         if (sizeId) {
-        //             $.ajax({
-        //                 url: '{{ route('get-quantity', ['sizeId' => ':sizeId']) }}'.replace(
-        //                     ':sizeId', sizeId),
-        //                 type: "GET",
-        //                 dataType: "json",
-        //                 success: function(data) {
-        //                     $('#qty').val(data.qty);
-        //                 }
-        //             });
-        //         } else {
-        //             $('#qty').val('');
-        //         }
-        //     });
-
-        //     // Add More button functionality to add rows to the table
-        //     $('.addeventmore').on('click', function() {
-        //         var categoryId = $('#category_id').val();
-        //         var categoryName = $('#category_id option:selected').text();
-        //         var subCategoryId = $('#sub_category').val();
-        //         var subCategoryName = $('#sub_category option:selected').text();
-        //         var itemId = $('#item_id').val();
-        //         var itemName = $('#item_id option:selected').text();
-        //         var size = $('#size').val();
-        //         var quantity = $('#qty').val();
-        //         var unitId = $('#unit_id').val();
-        //         var unitName = $('#unit_id option:selected').text();
-        //         var invoiceNo = $('#invoice_no').val();
-        //         var description = $('#description').val();
-
-        //         // Validate required fields (you may want to improve this)
-        //         if (categoryId === '' || subCategoryId === '' || itemId === '' || size === '' ||
-        //             quantity === '' || unitId === '') {
-        //             alert('Please fill all required fields.');
-        //             return;
-        //         }
-
-        //         // Add row to the table
-        //         var newRow = '<tr>' +
-        //             '<td><input type="text" class="form-control" name="category_id[]" value="' +
-        //             categoryName + '" readonly></td>' +
-        //             '<td><input type="text" class="form-control" name="sub_category[]" value="' +
-        //             subCategoryName + '" readonly></td>' +
-        //             '<td><input type="text" class="form-control" name="item_id[]" value="' + itemName +
-        //             '" readonly></td>' +
-        //             '<td><input type="text" class="form-control" name="sizes[]" value="' + size +
-        //             '" readonly></td>' +
-        //             '<td><input type="text" class="form-control" name="qty[]" value="' + quantity +
-        //             '"></td>' +
-        //             '<td><input type="text" class="form-control" name="unit_id[]" value="' + unitName +
-        //             '" readonly></td>' +
-        //             '<td><i class="btn btn-danger btn-sm fas fa-trash-alt removeeventmore"></i></td>' +
-        //             '</tr>';
-        //         $('#addRow').append(newRow);
-
-        //         // Clear input fields after adding row
-        //         $('#category_id').val('');
-        //         $('#sub_category').val('');
-        //         $('#item_id').val('');
-        //         $('#size').val('');
-        //         $('#qty').val('');
-        //         $('#unit_id').val('');
-        //         $('#invoice_no').val('');
-        //         $('#description').val('');
-        //     });
-
-        //     // Remove row functionality
-        //     $('tbody').on('click', '.removeeventmore', function() {
-        //         $(this).closest('tr').remove();
-        //     });
-        // });
     </script>
 @endsection

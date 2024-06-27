@@ -59,7 +59,7 @@ class ItemsController extends Controller
             'category_id' => 'required',
             'sub_category' => 'required',
             'qty' => 'required|integer',
-            'sizes' => 'required',
+            'sizes' => 'nullable',
             'item_image' => 'nullable|image',
         ]);
         // Check if an item with the same category, sub-category, item name, and size already exists
@@ -164,9 +164,6 @@ class ItemsController extends Controller
 
     public function Delete($uuid)
     {
-        if (is_null($this->user) || !$this->user->can('logistic.delete')) {
-            abort(403, 'Sorry !! You are Unauthorized to view any Logistic !');
-        }
         $delete_item = Item::where('uuid', $uuid)->first();
         if (!$delete_item) {
             abort(404);

@@ -49,7 +49,7 @@ class IssueItemOutController extends Controller
             'category_id' => 'required|array',
             'sub_category' => 'required|array',
             'item_id' => 'required|array',
-            'sizes' => 'required|array',
+            'sizes' => 'nullable|array',
             'qty' => 'required|array',
             'unit_id' => 'required|array',
             'description' => 'nullable|string',
@@ -242,7 +242,7 @@ class IssueItemOutController extends Controller
     {
         try {
             $aggregatedItem = AggregatedIssueItem::where('uuid', $uuid)->firstOrFail();
- 
+
             // Fetch item names using ITEM_IDs from the items array
             $itemsArray = is_string($aggregatedItem->items) ? json_decode($aggregatedItem->items, true) : $aggregatedItem->items;
             $itemIds = collect($itemsArray)->pluck('ITEM_ID')->unique()->toArray();
