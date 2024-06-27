@@ -222,14 +222,6 @@ class ItemsController extends Controller
         return response()->json(['qty' => $quantity]);
     }
 
-    // public function getQuantity($sizeId)
-    // {
-    //     // Implement logic to fetch quantity based on $sizeId
-    //     $quantity = 10; // Example: Fetch quantity from database based on $sizeId
-
-    //     return response()->json(['quantity' => $quantity]);
-    // }
-
     public function Serviceable()
     {
         if (is_null($this->user) || !$this->user->can('logistic.view')) {
