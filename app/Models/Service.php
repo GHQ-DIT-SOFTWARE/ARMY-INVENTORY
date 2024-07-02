@@ -18,7 +18,9 @@ class Service extends Model implements Auditable
         * @var array<int, string>
         */
         protected $fillable = [
-
+            'arm_of_service',
+            'created_by',
+            'updated_by',
         ];
 
         /**

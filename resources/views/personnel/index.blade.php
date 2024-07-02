@@ -33,7 +33,7 @@
         <div class="col-sm-12">
             <div class="card user-profile-list">
                 <div class="card-header">
-                    {{-- <div class="alert alert-info">
+                    <div class="alert alert-info">
                         <strong>Instructions for Importing Excel Data:</strong>
                         <ol>
                             <li>Ensure your Excel file follows the specified format:</li>
@@ -42,13 +42,16 @@
                                 <button id="downloadButton" class="btn btn-success">Download</button>
                             </li>
                         </ol>
-                    </div> --}}
+                    </div>
+
+                </div>
+                <div class="card-body">
                     <nav class="navbar justify-content-between p-0 align-items-center">
                         <div class="col-sm-6 text-left"><br />
                             <p>Perform these Actions on Personal.</p>
                         </div>
                         <div class="input-group" style="width: auto;">
-                            {{-- <div class="col-auto">
+                            <div class="col-auto">
                                 <div class="btn-group">
                                     <form action="{{ route('import-personnel') }}" method="POST"
                                         enctype="multipart/form-data">
@@ -68,7 +71,7 @@
                                         @enderror
                                     </form>
                                 </div>
-                            </div> --}}
+                            </div>
 
                             <div class="col text-right">
                                 <div class="btn-group mb-2 mr-2" style="display: inline-block;">
@@ -79,8 +82,6 @@
                             </div>
                         </div>
                     </nav>
-                </div>
-                <div class="card-body">
                     <div class="row align-items-center m-l-0">
 
                         <div class="dt-responsive table-responsive">
@@ -99,8 +100,13 @@
                                             <th>#SVC</th>
                                             <th>RANK</th>
                                             <th>PERSONAL NAME</th>
-                                            <th>UNIT</th>
-
+                                            <th>SERVICE OF ARM</th>
+                                            <th>SERVICE CATEGORY</th>
+                                            {{-- <th>UNIT</th> --}}
+                                            <th>EMAIL</th>
+                                            <th>GENDER</th>
+                                            <th>MOBILE NO</th>
+                                            <th>PERSONNEL IMAGE</th>
                                             <th>ACTION</th>
                                         </tr>
                                     </thead>
@@ -127,24 +133,11 @@
     <script>
         $(document).ready(function() {
             $('#personnel-table').DataTable({
-                dom: "<'row'<'col-sm-2'l><'col'B><'col-sm-2'f>>" +
-                    "<'row'<'col-sm-12'tr>>" +
-                    "<'row'<'col-sm-6'i><'col-sm-6'p>>",
-                buttons: [
-                    'colvis',
-                    {
-                        extend: 'copy',
-                        text: 'Copy to clipboard'
-                    },
-                    'excel',
-                ],
-                scrollY: 960,
-                scrollCollapse: true,
                 processing: true,
                 serverSide: true,
                 lengthMenu: [
-                    [15, 25, 50, 100, 200, -1],
-                    [15, 25, 50, 100, 200, 'All'],
+                    [10, 15, 25, 50, 100, 200, 2000, 5000, ],
+                    [10, 15, 25, 50, 100, 200, 2000, 5000, ],
                 ],
                 ajax: {
                     url: '{{ route('api-view-personnel') }}',
@@ -164,20 +157,51 @@
                         name: 'svcnumber'
                     },
                     {
-                        data: 'rank_name',
-                        name: 'rank_name',
-
+                        data: null,
+                        name: 'rank.rank_name',
+                        render: function(data, type, full, meta) {
+                            return full.rank ? full.rank.rank_name : '';
+                        }
                     },
                     {
-                        data: 'personnel_name',
-                        name: 'personnel_name',
+                        data: 'initial',
+                        name: 'initial',
+                        render: function(data, type, full, meta) {
+                            return full.initial;
+                        }
                     },
                     {
-                        data: 'unit_name',
-                        name: 'unit_name'
+                        data: null,
+                        name: 'service.arm_of_service',
+                        render: function(data, type, full, meta) {
+                            return full.service ? full.service.arm_of_service : '';
+                        }
                     },
-
-
+                    {
+                        data: 'service_category',
+                        name: 'service_category'
+                    },
+                    {
+                        data: 'email',
+                        name: 'email'
+                    },
+                    {
+                        data: 'gender',
+                        name: 'gender'
+                    },
+                    {
+                        data: 'mobile_no',
+                        name: 'mobile_no'
+                    },
+                    {
+                        data: 'personnel_image',
+                        name: 'personnel_image',
+                        render: function(data, type, full, meta) {
+                            var imageUrl = data ? '{{ asset('') }}' + data :
+                                '{{ asset('upload/images.png') }}';
+                            return '<img src="' + imageUrl + '" style="width:60px; height:50px">';
+                        }
+                    },
                     {
                         data: 'action',
                         name: 'action',
@@ -185,24 +209,7 @@
                         searchable: false
                     },
                 ]
-
             });
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var downloadButton = document.getElementById('downloadButton');
-            if (downloadButton) {
-                downloadButton.addEventListener('click', function() {
-                    var downloadLink = document.createElement('a');
-                    downloadLink.href = "{{ url('/download-sample-excel') }}";
-                    downloadLink.download = 'personnel.csv';
-                    downloadLink.style.display = 'none';
-                    document.body.appendChild(downloadLink);
-                    downloadLink.click();
-                    document.body.removeChild(downloadLink);
-                });
-            }
         });
     </script>
 @endsection

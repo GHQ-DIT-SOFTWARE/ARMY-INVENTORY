@@ -20,12 +20,38 @@ class Personnel extends Model implements Auditable
      * @var array<int, string>
      */
     protected $fillable = [
+        'rank_id',
+        'arm_of_service',
         'svcnumber',
-        'rank_name',
-        'personnel_name',
-        'unit_name',
+        'surname',
+        'othernames',
+        'first_name',
+        'service_category',
+        'initial',
+        'mobile_no',
+        'email',
+        'gender',
+        'blood_group',
+        'height',
+        'unit_id',
+        'virtual_mark',
+        'personnel_image',
+        'created_by',
     ];
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class, 'unit_id', 'id');
+    }
 
+    public function rank()
+    {
+        return $this->belongsTo(rank::class, 'rank_id', 'id');
+    }
+
+    public function service()
+    {
+        return $this->belongsTo(Service::class, 'arm_of_service', 'id');
+    }
     /**
      * The attributes that should be cast.
      *
