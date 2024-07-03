@@ -19,11 +19,8 @@ class ImportPersonnel implements ToModel, WithChunkReading, WithHeadingRow
     {
         // Check if all required fields are present and not empty
         if (
-            empty($row['svcnumber']) || empty($row['surname']) || empty($row['first_name']) ||
-            empty($row['othernames']) || empty($row['gender']) ||
-            empty($row['arm_of_service']) || is_null($row['service_category'])
+            empty($row['svcnumber']) || empty($row['surname']) || empty($row['first_name']) || empty($row['othernames']) || empty($row['gender']) || empty($row['arm_of_service']) || empty($row['service_category'])
         ) {
-            // Skip the row if any required field is missing or empty
             return null;
         }
 
@@ -85,7 +82,7 @@ class ImportPersonnel implements ToModel, WithChunkReading, WithHeadingRow
             'surname' => $row['surname'],
             'first_name' => $row['first_name'],
             'othernames' => $row['othernames'],
-            'rank_id' => $row['rank_id'], // Ensure rank_id is provided in your data
+            'rank_id' => $row['rank_id'],
             'initial' => $initials,
             'gender' => $mappedGender,
             'blood_group' => $row['blood_group'],
@@ -109,6 +106,6 @@ class ImportPersonnel implements ToModel, WithChunkReading, WithHeadingRow
     // }
     public function chunkSize(): int
     {
-        return 2000;
+        return 1000;
     }
 }

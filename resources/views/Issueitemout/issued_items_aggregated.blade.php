@@ -27,7 +27,7 @@
                                 <div class="row filter-row">
                                     <div class="col-sm-6 col-md-3">
                                         <input type="text" class="form-control" id="invoice_no" name="invoice_no"
-                                    placeholder="Search by Invoice Number">
+                                            placeholder="Search by Invoice Number">
                                     </div>
                                     <div class="col-sm-6 col-md-3">
                                         <button type="submit" class="btn btn-primary mt-2">Search</button>
@@ -40,7 +40,7 @@
             </div>
             <br>
 
-            <div class="table-responsive" id="tableContainer" style="display:none;">
+            <div class="table-responsive" id="tableContainer">
                 <div class="card">
                     <div class="card-body">
                         <table id="itemissuedconfirmed" class="table mb-0">
@@ -73,69 +73,66 @@
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
     <script>
         $(document).ready(function() {
+            // Initialize DataTable when the page loads
+            var dataTable = $('#itemissuedconfirmed').DataTable({
+                dom: "<'row'<'col-sm-2'l><'col'B><'col-sm-2'f>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-6'i><'col-sm-6'p>>",
+                buttons: [
+                    'colvis',
+                    {
+                        extend: 'copy',
+                        text: 'Copy to clipboard'
+                    },
+                    'excel',
+                ],
+                scrollY: 960,
+                scrollCollapse: true,
+                processing: true,
+                serverSide: true,
+                lengthMenu: [
+                    [15, 25, 50, 100, 200, -1],
+                    [15, 25, 50, 100, 200, 'All'],
+                ],
+                ajax: {
+                    url: "{{ route('items-issued-aggregated') }}",
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: function(d) {
+                        d.invoice_no = $('#invoice_no').val();
+                    },
+                },
+                columns: [{
+                        data: null,
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, full, meta) {
+                            return meta.row + 1;
+                        }
+                    },
+                    {
+                        data: 'invoice_no',
+                        name: 'invoice_no'
+                    },
+                    {
+                        data: 'items',
+                        name: 'items'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
+                    }
+                ],
+            });
+
+            // On form submission, reload the DataTable with the new search term
             $('#searchForm').on('submit', function(e) {
                 e.preventDefault();
-                var invoice_no = $('#invoice_no').val();
-
-                // Show the table container
-                $('#tableContainer').show();
-
-                // Initialize DataTable
-                var dataTable = $('#itemissuedconfirmed').DataTable({
-                    destroy: true, // Destroy the existing DataTable instance
-                    dom: "<'row'<'col-sm-2'l><'col'B><'col-sm-2'f>>" +
-                        "<'row'<'col-sm-12'tr>>" +
-                        "<'row'<'col-sm-6'i><'col-sm-6'p>>",
-                    buttons: [
-                        'colvis',
-                        {
-                            extend: 'copy',
-                            text: 'Copy to clipboard'
-                        },
-                        'excel',
-                    ],
-                    scrollY: 960,
-                    scrollCollapse: true,
-                    processing: true,
-                    serverSide: true,
-                    lengthMenu: [
-                        [15, 25, 50, 100, 200, -1],
-                        [15, 25, 50, 100, 200, 'All'],
-                    ],
-                    ajax: {
-                        url: "{{ route('items-issued-aggregated') }}",
-                        type: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        data: {
-                            invoice_no: invoice_no
-                        },
-                    },
-                    columns: [{
-                            data: null,
-                            orderable: false,
-                            searchable: false,
-                            render: function(data, type, full, meta) {
-                                return meta.row + 1;
-                            }
-                        },
-                        {
-                            data: 'invoice_no',
-                            name: 'invoice_no'
-                        },
-                        {
-                            data: 'items',
-                            name: 'items'
-                        },
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false
-                        }
-                    ],
-                });
+                dataTable.ajax.reload();
             });
         });
     </script>
