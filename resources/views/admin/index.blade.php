@@ -25,9 +25,9 @@
     </div>
     <div class="col-sm-12">
         <div class="card" style="background-color:rgb(255, 249, 249);">
-            <h1 class="font-weight-normal" style="text-align: center; color:rgb(19, 20, 20);"><b
-                    class="font-weight-bolder">GAF LOGISTICS MANAGEMENT SYSTEM</b></h1>
-            <img src="{{ asset('assets/images/auth/GAF ghq colors circular wide.png') }}" style="width:40%" alt=""
+            {{-- <h1 class="font-weight-normal" style="text-align: center; color:rgb(19, 20, 20);"><b
+                    class="font-weight-bolder">GAF LOGISTICS MANAGEMENT SYSTEM</b></h1> --}}
+            <img src="{{ asset('assets/images/WELCOME.png') }}"alt=""
                 class="img-fluid">
         </div>
     </div>
