@@ -69,15 +69,15 @@
     <div class="header">
         <div class="address">
             <strong>Address:</strong><br>
-            {{ $address ?? 'N/A' }}
+            {{ $address }}
         </div>
         <div class="issued-info" style="float: right;">
-            <strong>Authorized Date:</strong> {{ $date_issued ?? 'N/A' }}<br>
-            <strong>Confirmed Authorized:</strong> {{ $items->first()['confirmed_issued'] ?? 'N/A' }}<br>
-            <strong>Status:</strong> {{ $items->first()['STATUS'] ?? 'N/A' }}
+            <strong>Authorized Date:</strong> {{ $date_issued }}<br>
+            <strong>Confirmed Authorized:</strong> {{ $items->first()['confirmed_issued'] }}<br>
+            <strong>Status:</strong> {{ $items->first()['STATUS'] }}
         </div>
     </div>
-    <h2 class="small-text">Invoice No: {{ $invoice_no ?? 'N/A' }}</h2>
+    <h2 class="small-text">Invoice No: {{ $invoice_no }}</h2>
     <br><br>
     <hr>
     <table>
@@ -96,25 +96,27 @@
         <tbody>
             @foreach ($items as $item)
                 <tr>
-                    <td>{{ $item['Category'] ?? 'N/A' }}</td>
-                    <td>{{ $item['Sub Category'] ?? 'N/A' }}</td>
-                    <td>{{ $item['Item Name'] ?? 'N/A' }}</td>
-                    <td>{{ $item['Size'] ?? 'N/A' }}</td>
-                    <td>{{ $item['Quantity'] ?? 'N/A' }}</td>
-                    <td>{{ $item['Unit ID'] ?? 'N/A' }}</td>
-                    <td>{{ $item['Confirm Qty'] ?? 'N/A' }}</td>
-                    <td>{{ $item['Remarks'] ?? 'N/A' }}</td>
+                    <td>{{ $item['Category'] }}</td>
+                    <td>{{ $item['Sub Category'] }}</td>
+                    <td>{{ $item['Item Name'] }}</td>
+                    <td>{{ $item['Size'] }}</td>
+                    <td>{{ $item['Quantity'] }}</td>
+                    <td>{{ $item['Unit ID'] }}</td>
+                    <td>{{ $item['Confirm Qty'] }}</td>
+                    <td>{{ $item['Remarks'] }}</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
-    <br>
-    <strong>Description: {{ $items->first()['Description'] ?? 'N/A' }}<br></strong>
+<br>
+    <strong>Description: {{ $items->first()['Description'] }}<br></strong>
 
     <div class="signature">
         <div class="signature-line"></div>
-        <strong>ISSUED BY:</strong> {{ $signature ?? 'N/A' }}
+        <strong>ISSUED BY:</strong> {{ $signature }}
     </div>
+
+
 </body>
 
 </html>

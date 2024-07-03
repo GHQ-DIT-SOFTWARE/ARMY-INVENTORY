@@ -146,11 +146,12 @@
             </div>
         </div>
     </div>
+
     <script>
         $(document).ready(function() {
+            // Function to update sub-categories based on selected main category
             $('#category_id').on('change', function() {
                 var categoryId = $(this).val();
-                var sizeOptions = [];
                 if (categoryId) {
                     $.ajax({
                         url: '{{ route('get-subcategory', ['categoryId' => ':categoryId']) }}'
@@ -159,45 +160,73 @@
                         dataType: "json",
                         success: function(data) {
                             $('#sub_category').empty();
+                            $('#sub_category').append(
+                            '<option value="">Select Option</option>');
                             $.each(data, function(index, subcategory) {
                                 $('#sub_category').append('<option value="' +
-                                    subcategory.id +
-                                    '">' + subcategory.sub_name + '</option>');
+                                    subcategory.id + '">' + subcategory.sub_name +
+                                    '</option>');
                             });
                         }
                     });
+                } else {
+                    $('#sub_category').empty();
+                    $('#sub_category').append('<option value="">Select Option</option>');
+                    $('#size').empty();
+                    $('#size').append('<option selected="">Select Size</option>');
+                }
+            });
 
-                    // Update size options based on category
-                    @foreach ($category as $cat)
-                        if (categoryId == '{{ $cat->id }}' && '{{ $cat->category_name }}' ==
-                            'BOOT') {
-                            sizeOptions = [39, 40, 41, 42, 43, 44, 45, 46];
-                        } else if (categoryId == '{{ $cat->id }}' && '{{ $cat->category_name }}' ==
-                            'BERET') {
-                            sizeOptions = [52, 53, 54, 55, 56, 57, 58, 59];
-                        } else {
-                            sizeOptions = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
-                        }
-                    @endforeach
+            // Function to update sizes based on selected sub-category
+            $('#sub_category').on('change', function() {
+                var subCategoryId = $(this).val();
+                var sizeOptions = [];
+                if (subCategoryId) {
+                    var selectedSubCategory = $('#sub_category option:selected').text().trim();
+                    if (selectedSubCategory === 'BERETS') {
+                        sizeOptions = [52, 53, 54, 55, 56, 57, 58, 59];
+                    } else if (selectedSubCategory === 'BLACK SHOE' || selectedSubCategory ===
+                        'BROWN SHOE' || selectedSubCategory === 'COMBAT BOOT' || selectedSubCategory ===
+                        'DESERT BOOT') {
+                        sizeOptions = [39, 40, 41, 42, 43, 44, 45, 46];
+                    } else {
+                        sizeOptions = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+                    }
 
                     $('#size').empty();
                     $.each(sizeOptions, function(index, size) {
                         $('#size').append('<option value="' + size + '">' + size + '</option>');
                     });
                 } else {
-                    $('#sub_category').empty();
                     $('#size').empty();
                     $('#size').append('<option selected="">Select Size</option>');
                 }
             });
 
-            $('#image').change(function(e) {
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    $('#showImage').attr('src', e.target.result);
+            // Function to handle visibility of Sizes based on selected category
+            $('#category_id').on('change', function() {
+                var selectedCategory = $('#category_id option:selected').text().trim();
+                var hideSizesCategories = ['TECHNICAL', 'ACCOMMODATION'];
+
+                if (hideSizesCategories.includes(selectedCategory)) {
+                    $('#size').closest('.col-md-4').hide(); // Hide the entire column for sizes
+                } else {
+                    $('#size').closest('.col-md-4').show(); // Show the sizes column
                 }
-                reader.readAsDataURL(e.target.files['0']);
             });
+
+            // Clear size value if the sizes field is hidden before form submission
+            $('#myForm').on('submit', function() {
+                var selectedCategory = $('#category_id option:selected').text().trim();
+                var hideSizesCategories = ['TECHNICAL', 'ACCOMMODATION'];
+
+                if (hideSizesCategories.includes(selectedCategory)) {
+                    $('#size').val(''); // Clear the value of the size field
+                }
+            });
+
+            // Trigger change event initially to check category on page load
+            $('#category_id').change();
         });
     </script>
 @endsection

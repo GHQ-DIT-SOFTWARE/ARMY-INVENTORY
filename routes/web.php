@@ -175,11 +175,13 @@ Route::prefix('ranks')->group(function () {
     Route::post('/update{id}', [rankcontroller::class, 'Update'])->name('rankupdate');
     Route::get('/delete{id}', [rankcontroller::class, 'Delete'])->name('rankdelete');
 });
-Route::prefix('Personnel_details')->group(function () {
-    Route::get('/view', [personnelController::class, 'index'])->name('perview');
-    Route::get('/add', [personnelController::class, 'create'])->name('percreate');
-    Route::post('/store', [personnelController::class, 'store'])->name('perstore');
-    Route::get('/edit{id}', [personnelController::class, 'edit'])->name('peredit');
-    Route::post('/update', [personnelController::class, 'update'])->name('perupdate');
-    Route::get('/delete{id}', [personnelController::class, 'delete'])->name('perdelete');
+Route::prefix('personnel')->group(function () {
+    Route::get('/', [personnelController::class, 'index'])->name('personal-view');
+    Route::get('/mech', [personnelController::class, 'create'])->name('personal-mech');
+    Route::post('/store', [personnelController::class, 'store'])->name('personal-store');
+    Route::get('/edit/{uuid}', [personnelController::class, 'edit'])->name('personal-edit');
+    Route::post('/update', [personnelController::class, 'update'])->name('personal-update');
+    Route::get('/delete{uuid}', [personnelController::class, 'delete'])->name('personal-delete');
+    Route::post('/import', [personnelController::class, 'import'])->name('import-personnel');
+    Route::get('/download-sample-excel', [personnelController::class, 'downloadSampleExcel']);
 });

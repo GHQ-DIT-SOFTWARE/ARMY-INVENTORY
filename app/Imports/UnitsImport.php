@@ -29,3 +29,4 @@ class UnitsImport implements ToModel, WithChunkReading, WithHeadingRow
         return 1000;
     }
 }
+// php artisan make:import ImportUser --model=User

@@ -43,6 +43,9 @@
                             </li>
                         </ol>
                     </div>
+
+                </div>
+                <div class="card-body">
                     <nav class="navbar justify-content-between p-0 align-items-center">
                         <div class="col-sm-6 text-left"><br />
                             <p>Perform these Actions on Personal.</p>
@@ -79,8 +82,6 @@
                             </div>
                         </div>
                     </nav>
-                </div>
-                <div class="card-body">
                     <div class="row align-items-center m-l-0">
 
                         <div class="dt-responsive table-responsive">
@@ -101,6 +102,7 @@
                                             <th>PERSONAL NAME</th>
                                             <th>SERVICE OF ARM</th>
                                             <th>SERVICE CATEGORY</th>
+                                            {{-- <th>UNIT</th> --}}
                                             <th>EMAIL</th>
                                             <th>GENDER</th>
                                             <th>MOBILE NO</th>
@@ -208,22 +210,6 @@
                     },
                 ]
             });
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var downloadButton = document.getElementById('downloadButton');
-            if (downloadButton) {
-                downloadButton.addEventListener('click', function() {
-                    var downloadLink = document.createElement('a');
-                    downloadLink.href = "{{ url('/download-sample-excel') }}";
-                    downloadLink.download = 'personnel.csv';
-                    downloadLink.style.display = 'none';
-                    document.body.appendChild(downloadLink);
-                    downloadLink.click();
-                    document.body.removeChild(downloadLink);
-                });
-            }
         });
     </script>
 @endsection

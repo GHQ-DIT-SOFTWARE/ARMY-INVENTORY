@@ -29,6 +29,7 @@
                     class="font-weight-bolder">GAF LOGISTICS MANAGEMENT SYSTEM</b></h1> --}}
             <img src="{{ asset('assets/images/WELCOME.png') }}"alt=""
                 class="img-fluid">
+            {{-- <img src="{{ asset('assets/images/auth/new.png') }}" alt="" class="img-fluid"> --}}
         </div>
     </div>
 @endsection

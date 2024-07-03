@@ -59,7 +59,7 @@ class ItemsController extends Controller
             'category_id' => 'required',
             'sub_category' => 'required',
             'qty' => 'required|integer',
-            'sizes' => 'required',
+            'sizes' => 'nullable',
             'item_image' => 'nullable|image',
         ]);
         // Check if an item with the same category, sub-category, item name, and size already exists
@@ -164,9 +164,6 @@ class ItemsController extends Controller
 
     public function Delete($uuid)
     {
-        if (is_null($this->user) || !$this->user->can('logistic.delete')) {
-            abort(403, 'Sorry !! You are Unauthorized to view any Logistic !');
-        }
         $delete_item = Item::where('uuid', $uuid)->first();
         if (!$delete_item) {
             abort(404);
@@ -191,29 +188,36 @@ class ItemsController extends Controller
         return response()->json($items);
     }
 
+    // public function getSizes($itemId)
+    // {
+    //     $item = Item::findOrFail($itemId);
+    //     // Assuming 'size' is a field in your Item model containing the size as a string
+    //     $sizeOptions = [$item->sizes];
+    //     // Return as JSON response
+    //     return response()->json($sizeOptions);
+    // }
+    // public function getQuantity($sizeId)
+    // {
+    //     // Example: Fetch quantity from the Item model based on the selected size ID
+    //     $item = Item::where('sizes', $sizeId)->first();
+    //     $quantity = $item ? $item->qty : 0;
+    //     return response()->json(['qty' => $quantity]);
+    // }
+
     public function getSizes($itemId)
     {
         $item = Item::findOrFail($itemId);
-        // Assuming 'size' is a field in your Item model containing the size as a string
-        $sizeOptions = [$item->sizes];
-        // Return as JSON response
+        $sizeOptions = $item->sizes ? explode(',', $item->sizes) : [];
         return response()->json($sizeOptions);
     }
+
     public function getQuantity($sizeId)
     {
-        // Example: Fetch quantity from the Item model based on the selected size ID
-        $item = Item::where('sizes', $sizeId)->first();
+        // Check if sizeId corresponds to a size or an itemId
+        $item = Item::where('sizes', 'LIKE', '%' . $sizeId . '%')->orWhere('id', $sizeId)->first();
         $quantity = $item ? $item->qty : 0;
         return response()->json(['qty' => $quantity]);
     }
-
-    // public function getQuantity($sizeId)
-    // {
-    //     // Implement logic to fetch quantity based on $sizeId
-    //     $quantity = 10; // Example: Fetch quantity from database based on $sizeId
-
-    //     return response()->json(['quantity' => $quantity]);
-    // }
 
     public function Serviceable()
     {

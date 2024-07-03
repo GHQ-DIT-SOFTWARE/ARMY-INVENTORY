@@ -17,6 +17,10 @@ class Rank extends Model implements Auditable
         *
         * @var array<int, string>
         */
+        public function service()
+    {
+        return $this->belongsTo(Service::class, 'arm_of_service', 'id');
+    }
         protected $fillable = [
 
         ];

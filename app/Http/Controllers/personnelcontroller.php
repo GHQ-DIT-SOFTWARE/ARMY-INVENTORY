@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Imports\PersonnelImport;
+use App\Imports\ImportPersonnel;
 use App\Models\Personnel;
 use App\Models\rank;
 use App\Models\Service;
@@ -24,7 +24,7 @@ class personnelcontroller extends Controller
     public function index()
     {
         // $pers = Personnel::latest()->get();
-        return view('deployment.personnel.index');
+        return view('personnel.index');
     }
 
     public function create()
@@ -33,7 +33,7 @@ class personnelcontroller extends Controller
         $ranks = rank::all();
         $service = Service::all();
 
-        return view('deployment.personnel.create', compact('unit', 'ranks', 'service'));
+        return view('personnel.create', compact('unit', 'ranks', 'service'));
     }
 
     public function store(Request $request)
@@ -99,7 +99,7 @@ class personnelcontroller extends Controller
         $unit = Unit::all();
         $ranks = rank::all();
         $service = Service::all();
-        return view('deployment.personnel.edit', compact('personel', 'unit', 'ranks', 'service'));
+        return view('personnel.edit', compact('personel', 'unit', 'ranks', 'service'));
     }
 
     public function update(Request $request)
@@ -242,7 +242,7 @@ class personnelcontroller extends Controller
         $request->validate([
             'file' => 'required|file|mimes:csv,xls,xlsx',
         ]);
-        Excel::import(new PersonnelImport, $request->file('file'));
+        Excel::import(new ImportPersonnel, $request->file('file'));
         $notification = [
             'message' => 'Imported Successfully',
             'alert-type' => 'success',

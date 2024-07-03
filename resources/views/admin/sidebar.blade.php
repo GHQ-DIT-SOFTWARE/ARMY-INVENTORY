@@ -9,7 +9,6 @@
                 <li class="nav-item pcoded-menu-caption">
                     <label>Menu</label>
                 </li>
-
                 <li class="nav-item">
                     <a href="{{ route('dashboard') }}" class="nav-link "><span class="pcoded-micon"><i
                                 class="feather icon-home"></i></span><span
@@ -52,6 +51,11 @@
                         </li>
                     </ul>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('personal-view') }}" class="nav-link "><span class="pcoded-micon"><i
+                                class="feather icon-monitor"></i></span>
+                        <span class="pcoded-mtext">Personnel</span></a>
+                </li>
                 <li class="nav-item pcoded-hasmenu">
                     <a href="#!" class="nav-link"><span class="pcoded-micon"><i
                                 class="feather icon-grid"></i></span><span class="pcoded-mtext">Instock
@@ -77,6 +81,7 @@
                         </li>
                     </ul>
                 </li>
+
                 <li class="nav-item pcoded-hasmenu">
                     <a href="#!" class="nav-link"><span class="pcoded-micon"><i
                                 class="feather icon-settings"></i></span><span class="pcoded-mtext">
@@ -130,4 +135,4 @@
         </div>
     </div>
 </nav>
-<!-- [ navigation menu ] end -->
+

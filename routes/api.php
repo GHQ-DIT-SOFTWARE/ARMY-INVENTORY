@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\Logistics\LogisticsController;
 use App\Http\Controllers\Api\Logistics\RestockItemController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Api\personnelcontroller;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -20,6 +20,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+Route::prefix('personnel')->group(function () {
+    Route::post('/api-view-personnel', [personnelcontroller::class, 'index'])->name('api-view-personnel');
+    Route::post('/store', [personnelcontroller::class, 'store'])->name('api.appointments.store');
 });
 Route::prefix('logistics')->group(function () {
     Route::post('/api-view-items', [LogisticsController::class, 'index'])->name('api-logistics-itemx');

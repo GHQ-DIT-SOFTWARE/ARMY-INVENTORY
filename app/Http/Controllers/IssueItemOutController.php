@@ -49,7 +49,7 @@ class IssueItemOutController extends Controller
             'category_id' => 'required|array',
             'sub_category' => 'required|array',
             'item_id' => 'required|array',
-            'sizes' => 'required|array',
+            'sizes' => 'nullable|array',
             'qty' => 'required|array',
             'unit_id' => 'required|array',
             'description' => 'nullable|string',
