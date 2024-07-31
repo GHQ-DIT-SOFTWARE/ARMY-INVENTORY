@@ -22,9 +22,9 @@ class IssuedOutItemController extends Controller
             ->editColumn('date', function ($items) {
                 return $items->date ? date('d M, Y', strtotime($items->date)) : '';
             })
-            ->editColumn('invoice_no', function ($item) {
-                return '#' . $item->invoice_no;
-            })
+        // ->editColumn('invoice_no', function ($item) {
+        //     return '#' . $item->invoice_no;
+        // })
             ->editColumn('status', function ($items) {
                 switch ($items->status) {
                     case '0':
@@ -35,7 +35,7 @@ class IssuedOutItemController extends Controller
                         return '';
                 }
             })
-            ->rawColumns(['action', 'date', 'item_name', 'invoice_no', 'status'])
+            ->rawColumns(['action', 'date', 'item_name', 'status'])
             ->make(true);
     }
 }
