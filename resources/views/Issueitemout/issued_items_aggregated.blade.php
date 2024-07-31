@@ -21,38 +21,21 @@
         <div class="col-xl-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="row align-items-center m-l-0">
-                        <div class="col-sm-9">
-                            <form id="searchForm">
-                                <div class="row filter-row">
-                                    <div class="col-sm-6 col-md-3">
-                                        <input type="text" class="form-control" id="invoice_no" name="invoice_no"
-                                            placeholder="Search by Invoice Number">
-                                    </div>
-                                    <div class="col-sm-6 col-md-3">
-                                        <button type="submit" class="btn btn-primary mt-2">Search</button>
-                                    </div>
-                                </div>
-                            </form>
+                    <div class="table-responsive" id="tableContainer">
+                        <div class="card">
+                            <div class="card-body">
+                                <table id="itemissuedconfirmed" class="table mb-0">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>SL</th>
+                                            <th>Invoice Number</th>
+                                            <th>Items</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <br>
-
-            <div class="table-responsive" id="tableContainer">
-                <div class="card">
-                    <div class="card-body">
-                        <table id="itemissuedconfirmed" class="table mb-0">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th>SL</th>
-                                    <th>Invoice Number</th>
-                                    <th>Items</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                        </table>
                     </div>
                 </div>
             </div>
@@ -73,7 +56,6 @@
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Initialize DataTable when the page loads
             var dataTable = $('#itemissuedconfirmed').DataTable({
                 dom: "<'row'<'col-sm-2'l><'col'B><'col-sm-2'f>>" +
                     "<'row'<'col-sm-12'tr>>" +
@@ -90,10 +72,6 @@
                 scrollCollapse: true,
                 processing: true,
                 serverSide: true,
-                lengthMenu: [
-                    [15, 25, 50, 100, 200, -1],
-                    [15, 25, 50, 100, 200, 'All'],
-                ],
                 ajax: {
                     url: "{{ route('items-issued-aggregated') }}",
                     type: 'POST',
@@ -118,7 +96,10 @@
                     },
                     {
                         data: 'items',
-                        name: 'items'
+                        name: 'items',
+                        render: function(data, type, row) {
+                            return data; // This renders HTML directly
+                        }
                     },
                     {
                         data: 'action',
@@ -127,12 +108,6 @@
                         searchable: false
                     }
                 ],
-            });
-
-            // On form submission, reload the DataTable with the new search term
-            $('#searchForm').on('submit', function(e) {
-                e.preventDefault();
-                dataTable.ajax.reload();
             });
         });
     </script>
