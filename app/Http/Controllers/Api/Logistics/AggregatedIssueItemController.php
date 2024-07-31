@@ -22,7 +22,6 @@ class AggregatedIssueItemController extends Controller
             // Return an empty collection if no invoice number is provided
             return DataTables::of(collect([]))->make(true);
         }
-
         $items = $itemsQuery->get()->map(function ($item) {
             $itemsArray = is_string($item->items) ? json_decode($item->items, true) : $item->items;
             $itemIds = collect($itemsArray)->pluck('ITEM_ID')->unique()->toArray();
