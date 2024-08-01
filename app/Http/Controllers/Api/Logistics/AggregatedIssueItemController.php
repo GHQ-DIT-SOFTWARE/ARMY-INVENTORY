@@ -27,13 +27,10 @@ class AggregatedIssueItemController extends Controller
             $itemNames = Item::whereIn('id', $itemIds)->pluck('item_name', 'id');
             $formattedItems = collect($itemsArray)->map(function ($data) use ($itemNames) {
                 // Debugging output
-
                 $itemName = $itemNames[$data['ITEM_ID']] ?? 'Unknown Item';
                 $status = $data['STATUS'] == 0 ? '<span class="badge badge-warning">Pending Issuance</span>' : 'Pending';
-
                 // Safely access the keys
                 $invoiceNo = $data['INVOICE_NO'] ?? 'N/A';
-
                 return [
                     'Category' => $data['CATEGORY_ID'] ?? 'N/A',
                     'Sub Category' => $data['SUB_CATEGORY'] ?? 'N/A',
@@ -46,19 +43,32 @@ class AggregatedIssueItemController extends Controller
                     'Invoice No' => $invoiceNo,
                 ];
             });
-
             return [
                 'uuid' => $item->uuid,
                 'invoice_no' => $item->invoice_no,
                 'items' => $formattedItems,
             ];
         });
-
         return DataTables::of($items)
+        // ->addColumn('action', function ($item) {
+        //     return '<a class="btn btn-primary btn-sm" href="' . route('item-issued-pdf', $item['uuid']) . '" target="_blank"><i class="feather icon-eye"></i> Print</a>
+        //             <a class="btn btn-primary btn-sm" href="' . route('edit-item-issued-out', $item['uuid']) . '"><i class="feather icon-pencil"></i>Confirm Item Qty</a>';
+        // })
+
             ->addColumn('action', function ($item) {
-                return '<a class="btn btn-primary btn-sm" href="' . route('item-issued-pdf', $item['uuid']) . '" target="_blank"><i class="feather icon-eye"></i> Print</a>
-                        <a class="btn btn-primary btn-sm" href="' . route('edit-item-issued-out', $item['uuid']) . '"><i class="feather icon-pencil"></i> Edit</a>';
+                return '
+            <div style="display: flex; flex-direction: column;">
+                <a class="btn btn-primary btn-sm mb-1" href="' . route('item-issued-pdf', $item['uuid']) . '" target="_blank">
+                    <i class="feather icon-eye"></i> Print
+                </a>
+                <a class="btn btn-primary btn-sm" href="' . route('edit-item-issued-out', $item['uuid']) . '">
+                    <i class="feather icon-pencil"></i> Confirm Item Qty
+                </a>
+
+
+            </div>';
             })
+
             ->editColumn('items', function ($item) {
                 $html = '<table class="table table-sm table-bordered">';
                 $html .= '<thead><tr>';
@@ -88,7 +98,6 @@ class AggregatedIssueItemController extends Controller
     //         ->get()
     //         ->map(function ($item) {
     //             $itemsArray = is_string($item->items) ? json_decode($item->items, true) : $item->items;
-
     //             // Fetch item names using ITEM_IDs from the items array
     //             $itemIds = collect($itemsArray)->pluck('ITEM_ID')->unique()->toArray();
     //             $itemNames = Item::whereIn('id', $itemIds)->pluck('item_name', 'id');
@@ -108,17 +117,14 @@ class AggregatedIssueItemController extends Controller
     //                     'Status' => $status,
     //                     'Invoice No' => $data['INVOICE_NO'],
     //                 ];
-
     //                 return $itemDetails;
     //             });
-
     //             return [
     //                 'uuid' => $item->uuid,
     //                 'invoice_no' => $item->invoice_no,
     //                 'items' => $formattedItems,
     //             ];
     //         });
-
     //     return DataTables::of($items)
     //         ->addColumn('action', function ($item) {
     //             return '<a class="btn btn-primary btn-sm" href="' . route('item-issued-pdf', $item['uuid']) . '" target="_blank"><i class="feather icon-eye"></i> Print</a>,
@@ -149,23 +155,101 @@ class AggregatedIssueItemController extends Controller
     //         ->make(true);
     // }
 
+    // public function item_issued(Request $request)
+    // {
+    //     try {
+    //         $invoice_no = $request->input('invoice_no');
+    //         $itemsQuery = AggregatedIssueItem::query();
+    //         if ($invoice_no) {
+    //             $itemsQuery->where('invoice_no', $invoice_no)
+    //                 ->whereJsonContains('items', [['STATUS' => 1]]);
+    //         }
+    //         $items = $itemsQuery->get()->map(function ($item) {
+    //             $itemsArray = is_string($item->items) ? json_decode($item->items, true) : $item->items;
+    //             $itemIds = collect($itemsArray)->pluck('ITEM_ID')->unique()->toArray();
+    //             $itemNames = Item::whereIn('id', $itemIds)->pluck('item_name', 'id');
+    //             $formattedItems = collect($itemsArray)->map(function ($data) use ($itemNames) {
+    //                 $itemName = $itemNames[$data['ITEM_ID']] ?? 'Unknown Item';
+    //                 $statusClass = $data['STATUS'] == 1 ? 'badge-success' : 'badge-warning';
+    //                 $statusText = $data['STATUS'] == 1 ? 'Issuance Issued' : 'Pending';
+    //                 return [
+    //                     'Category' => $data['CATEGORY_ID'] ?? 'N/A',
+    //                     'Sub Category' => $data['SUB_CATEGORY'] ?? 'N/A',
+    //                     'Item Name' => $itemName,
+    //                     'Size' => $data['SIZES'] ?? 'N/A',
+    //                     'Quantity' => $data['QTY'] ?? 'N/A',
+    //                     'Unit ID' => $data['UNIT_ID'] ?? 'N/A',
+    //                     'Description' => $data['DESCRIPTION'] ?? 'N/A',
+    //                     'Status' => "<span class='badge $statusClass'>$statusText</span>",
+    //                     'Confirm Qty' => $data['CONFIRM_QTY'] ?? 'N/A',
+    //                     'Remarks' => $data['REMARKS'] ?? 'N/A',
+    //                 ];
+    //             });
+    //             return [
+    //                 'uuid' => $item->uuid,
+    //                 'invoice_no' => $item->invoice_no,
+    //                 'items' => $formattedItems,
+    //             ];
+    //         });
+
+    //         return DataTables::of($items)
+    //             ->addColumn('action', function ($item) {
+    //                 return '<a class="btn btn-primary btn-sm" href="' . route('item-issued-pdf', $item['uuid']) . '" target="_blank"><i class="feather icon-eye"></i> Print</a>';
+    //             })
+    //             ->editColumn('items', function ($item) {
+    //                 $html = '<table class="table table-sm table-bordered">';
+    //                 $html .= '<thead><tr>';
+    //                 if (!empty($item['items'][0])) {
+    //                     foreach ($item['items'][0] as $key => $value) {
+    //                         $html .= '<th>' . htmlspecialchars($key) . '</th>';
+    //                     }
+    //                 }
+    //                 $html .= '</tr></thead><tbody>';
+    //                 foreach ($item['items'] as $i) {
+    //                     $html .= '<tr>';
+    //                     foreach ($i as $key => $value) {
+    //                         $html .= '<td>' . $value . '</td>'; // No htmlspecialchars needed for content already formatted as HTML
+    //                     }
+    //                     $html .= '</tr>';
+    //                 }
+    //                 $html .= '</tbody></table>';
+    //                 return $html;
+    //             })
+    //             ->rawColumns(['items', 'action'])
+    //             ->make(true);
+    //     } catch (\Exception $e) {
+    //         \Log::error('Error in item_issued method: ' . $e->getMessage());
+    //         return response()->json(['error' => 'An error occurred while processing your request.'], 500);
+    //     }
+    // }
+
     public function item_issued(Request $request)
     {
         try {
             $invoice_no = $request->input('invoice_no');
             $itemsQuery = AggregatedIssueItem::query();
+
             if ($invoice_no) {
-                $itemsQuery->where('invoice_no', $invoice_no)
-                    ->whereJsonContains('items', [['STATUS' => 1]]);
+                $itemsQuery->where('invoice_no', $invoice_no);
             }
+
+            // Filter items where STATUS is exactly 1
+            $itemsQuery->whereJsonContains('items', [['STATUS' => 1]]);
+
             $items = $itemsQuery->get()->map(function ($item) {
                 $itemsArray = is_string($item->items) ? json_decode($item->items, true) : $item->items;
+
+                // Get unique item IDs from filtered data
                 $itemIds = collect($itemsArray)->pluck('ITEM_ID')->unique()->toArray();
                 $itemNames = Item::whereIn('id', $itemIds)->pluck('item_name', 'id');
-                $formattedItems = collect($itemsArray)->map(function ($data) use ($itemNames) {
+
+                // Format the filtered items for display
+                $formattedItems = collect($itemsArray)->filter(function ($data) {
+                    return $data['STATUS'] == 1;
+                })->map(function ($data) use ($itemNames) {
                     $itemName = $itemNames[$data['ITEM_ID']] ?? 'Unknown Item';
-                    $statusClass = $data['STATUS'] == 1 ? 'badge-success' : 'badge-warning';
-                    $statusText = $data['STATUS'] == 1 ? 'Issuance Issued' : 'Pending';
+                    $statusClass = 'badge-success';
+                    $statusText = 'Issuance Issued';
                     return [
                         'Category' => $data['CATEGORY_ID'] ?? 'N/A',
                         'Sub Category' => $data['SUB_CATEGORY'] ?? 'N/A',
@@ -179,6 +263,7 @@ class AggregatedIssueItemController extends Controller
                         'Remarks' => $data['REMARKS'] ?? 'N/A',
                     ];
                 });
+
                 return [
                     'uuid' => $item->uuid,
                     'invoice_no' => $item->invoice_no,
@@ -202,7 +287,7 @@ class AggregatedIssueItemController extends Controller
                     foreach ($item['items'] as $i) {
                         $html .= '<tr>';
                         foreach ($i as $key => $value) {
-                            $html .= '<td>' . $value . '</td>'; // No htmlspecialchars needed for content already formatted as HTML
+                            $html .= '<td>' . $value . '</td>';
                         }
                         $html .= '</tr>';
                     }
