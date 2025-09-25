@@ -62,11 +62,6 @@ class IssueItemOutController extends Controller
         }
         try {
             DB::beginTransaction();
-
-            // $lastInvoice = IssueItemOut::orderBy('id', 'desc')->first();
-            // $lastInvoiceNumber = $lastInvoice ? (int) filter_var($lastInvoice->invoice_no, FILTER_SANITIZE_NUMBER_INT) : 0;
-            // $newInvoiceNumber = $lastInvoiceNumber + 1;
-            // $formattedInvoiceNumber = 'INVOICE-' . $newInvoiceNumber . '-' . now()->year;
             do {
                 $randomNumber = str_pad((string) rand(0, 9999), 4, '0', STR_PAD_LEFT);
                 $formattedInvoiceNumber = 'GAF-INVOICE-' . $randomNumber;
@@ -81,18 +76,14 @@ class IssueItemOutController extends Controller
                 if (!$item) {
                     return back()->withErrors(['item_id' => "Item $itemName not found."]);
                 }
-
                 $requestedQty = $validatedData['qty'][$index];
                 if ($requestedQty > $item->qty) {
                     return back()->withErrors(['qty' => "Requested quantity for $itemName is more than available quantity."]);
                 }
-
                 // Subtract the quantity from the item
                 $item->qty -= $requestedQty;
                 $item->save();
-
                 // Add the issue item to the array for IssueItemOut
-
                 $issueItems[] = [
                     'uuid' => (string) Str::uuid(), // Generate a UUID for each record
                     'category_id' => $validatedData['category_id'][$index],
@@ -109,7 +100,6 @@ class IssueItemOutController extends Controller
                     'updated_at' => now(), // Assuming you have timestamps in your table
                     'status' => 0, // Setting the status field to 0
                 ];
-
                 // Add item to aggregated items array for AggregatedIssueItem
                 $aggregatedItems[] = [
                     'category_id' => $validatedData['category_id'][$index],
@@ -125,10 +115,8 @@ class IssueItemOutController extends Controller
                     'date' => $currentDate,
                 ];
             }
-
             // Insert into IssueItemOut
             IssueItemOut::insert($issueItems);
-
             AggregatedIssueItem::create([
                 'uuid' => (string) Str::uuid(),
                 'invoice_no' => $formattedInvoiceNumber,
@@ -136,18 +124,12 @@ class IssueItemOutController extends Controller
                 'created_by' => $createdBy,
                 'created_at' => $currentDate,
             ]);
-            // AggregatedIssueItem::create([
-            //     'uuid' => (string) Str::uuid(),
-            //     'invoice_no' => $formattedInvoiceNumber,
-            //     'items' => json_encode($aggregatedItems),
-            // ]);
             DB::commit();
             $notification = [
                 'message' => 'Items issued successfully.',
                 'alert-type' => 'success',
             ];
             return redirect()->back()->with($notification);
-
         } catch (Exception $e) {
             DB::rollBack();
             // Log the exception message
