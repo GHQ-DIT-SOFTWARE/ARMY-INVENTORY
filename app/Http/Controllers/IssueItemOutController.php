@@ -8,6 +8,7 @@ use App\Models\IssueItemOut;
 use App\Models\Item;
 use App\Models\Unit;
 use App\Models\User;
+
 use Illuminate\Http\Request; // Import DB facade for transactions
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -303,14 +304,14 @@ class IssueItemOutController extends Controller
                 // Decode the items to get the invoice_no
                 $itemsArray = is_string($aggregatedItem->items) ? json_decode($aggregatedItem->items, true) : $aggregatedItem->items;
                 $invoiceNo = $aggregatedItem->invoice_no;
-    
+
                 // Delete related IssueItemOut records
                 IssueItemOut::where('invoice_no', $invoiceNo)->delete();
-    
+
                 // Delete the AggregatedIssueItem record
                 $aggregatedItem->delete();
             });
-    
+
             // Return with a success notification
             return redirect()->route('issue-item-index')->with('success', 'Item and related records deleted successfully.');
         } catch (\Exception $e) {
@@ -318,7 +319,7 @@ class IssueItemOutController extends Controller
             return redirect()->route('issue-item-index')->with('error', 'An error occurred while deleting the item.');
         }
     }
-    
+
 
     public function item_issued_out_delete($uuid)
     {
