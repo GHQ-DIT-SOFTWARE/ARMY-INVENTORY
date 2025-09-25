@@ -4,9 +4,10 @@ use App\Http\Controllers\Api\Logistics\AggregatedIssueItemController;
 use App\Http\Controllers\Api\Logistics\IssuedOutItemController;
 use App\Http\Controllers\Api\Logistics\LogisticsController;
 use App\Http\Controllers\Api\Logistics\RestockItemController;
+use App\Http\Controllers\Api\personnelcontroller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\personnelcontroller;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -32,4 +33,6 @@ Route::prefix('logistics')->group(function () {
     Route::post('/issued-out-items', [IssuedOutItemController::class, 'index'])->name('api-issued-out');
     Route::post('/aggregated-issue-items', [AggregatedIssueItemController::class, 'index'])->name('aggregated-issue-items');
     Route::post('/items-issued-aggregated', [AggregatedIssueItemController::class, 'item_issued'])->name('items-issued-aggregated');
+    Route::delete('/item-issued-out/{uuid}/delete', [AggregatedIssueItemController::class, 'delete'])->name('delete-item-aggregated');
+
 });

@@ -30,7 +30,7 @@
                                             placeholder="Search by Invoice Number">
                                     </div>
                                     <div class="col-sm-6 col-md-3">
-                                        <button type="submit" class="btn btn-primary mt-2">Search</button>
+                                        <button type="submit" class="mt-2 btn btn-primary">Search</button>
                                     </div>
                                 </div>
                             </form>
@@ -39,7 +39,7 @@
                 </div>
             </div>
             <br>
-            <div class="table-responsive" id="tableContainer" style="display:none;">
+            <div class="table-responsive" id="tableContainer" >
                 <div class="card">
                     <div class="card-body">
                         <table id="itemissued" class="table mb-0">
@@ -75,10 +75,8 @@
             $('#searchForm').on('submit', function(e) {
                 e.preventDefault();
                 var invoice_no = $('#invoice_no').val();
-
                 // Show the table container
                 $('#tableContainer').show();
-
                 // Initialize DataTable
                 var dataTable = $('#itemissued').DataTable({
                     destroy: true, // Destroy the existing DataTable instance
