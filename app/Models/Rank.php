@@ -22,7 +22,9 @@ class Rank extends Model implements Auditable
         return $this->belongsTo(Service::class, 'arm_of_service', 'id');
     }
         protected $fillable = [
-
+            'rank_name',
+            'created_by',
+            'updated_by',
         ];
 
         /**

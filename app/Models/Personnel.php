@@ -34,6 +34,7 @@ class Personnel extends Model implements Auditable
         'blood_group',
         'height',
         'unit_id',
+        'unit_name',
         'virtual_mark',
         'personnel_image',
         'created_by',
@@ -52,6 +53,7 @@ class Personnel extends Model implements Auditable
     {
         return $this->belongsTo(Service::class, 'arm_of_service', 'id');
     }
+
     /**
      * The attributes that should be cast.
      *

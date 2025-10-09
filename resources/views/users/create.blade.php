@@ -50,12 +50,16 @@
                                     required>
                             </div>
                             <div class="form-group col-md-6 col-sm-12">
-                                <label for="password">Assign Roles</label>
-                                <select name="roles[]" id="roles" class="form-control select2" multiple>
-                                    @foreach ($roles as $role)
-                                        <option value="{{ $role->name }}">{{ $role->name }}</option>
-                                    @endforeach
-                                </select>
+                                <label for="roles">Assign Roles</label>
+                                @if($roles->isEmpty())
+                                    <div class="alert alert-warning">No assignable roles are available for your account.</div>
+                                @else
+                                    <select name="roles[]" id="roles" class="form-control select2" multiple>
+                                        @foreach ($roles as $role)
+                                            <option value="{{ $role->name }}">{{ $role->name }}</option>
+                                        @endforeach
+                                    </select>
+                                @endif
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary mt-4 pr-4 pl-4">Save User</button>
@@ -73,3 +77,7 @@
         });
     </script>
 @endsection
+
+
+
+

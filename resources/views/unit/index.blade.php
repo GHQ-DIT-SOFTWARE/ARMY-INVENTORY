@@ -1,171 +1,132 @@
 @extends('admin.admin_master')
 @section('admin')
-    <!-- [ breadcrumb ] start -->
     <div class="page-header">
         <div class="page-block">
             <div class="row align-items-center">
                 <div class="col-md-12">
                     <div class="page-header-title">
-                        <h5 class="m-b-10">Unit</h5>
+                        <h5 class="m-b-10">Unit Summary</h5>
+                        <p class="text-muted mb-0">Manage units and track their issued control items.</p>
                     </div>
                     <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html"><i class="feather icon-home"></i></a></li>
-                        <li class="breadcrumb-item"><a href="#!">Units</a></li>
-                        <li class="breadcrumb-item"><a href="#!">Dasboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="feather icon-home"></i></a></li>
+                        <li class="breadcrumb-item"><a href="#!">Controls</a></li>
+                        <li class="breadcrumb-item">Units</li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
-    <!-- [ breadcrumb ] end -->
-    <!-- [ Main Content ] start -->
-    <div class="row justify-content-center">
-        <!-- liveline-section start -->
-        <div class="col-sm-12">
 
-            <div class="card user-profile-list">
-                <div class="card-header">
-                    <h5>Details</h5>
-                </div>
+    <div class="row mb-4">
+        <div class="col-xl-4 col-md-6 mb-3">
+            <div class="card">
                 <div class="card-body">
-                    <div class="row align-items-center m-l-0">
-                        {{-- <div class="col-sm-6 text-left">
-
-                            <nav class="navbar justify-content-between p-0 align-items-center">
-                                <div class="col-sm-6 text-left"><br />
-                                    <p>Perform these Actions on Personal.</p>
-                                </div>
-                                <div class="input-group" style="width: auto;">
-                                    <div class="col-auto">
-                                        <div class="btn-group">
-                                            <form action="{{ route('import-units') }}" method="POST"
-                                                enctype="multipart/form-data">
-                                                @csrf
-                                                <div class="row">
-                                                    <div class="input_container">
-                                                        <input type="file" name="file" id="fileUpload"
-                                                            accept=".xlsx, .csv">
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <button class="btn btn-info">Import Excel File</button>
-                                                    </div>
-                                                </div>
-                                                @error('file')
-                                                    <div class="alert alert-danger mt-2">
-                                                        {{ $message }} Please upload a valid file (xlsx, csv).
-                                                    </div>
-                                                @enderror
-                                            </form>
-                                        </div>
-                                    </div>
-                                    <div class="col text-right">
-                                        <div class="btn-group mb-2 mr-2" style="display: inline-block;">
-                                            <a href="{{ route('add-unit') }}" class="btn  btn-primary " type="button"
-                                                aria-haspopup="true" aria-expanded="false"><i
-                                                    class="feather icon-plus"></i>Add
-                                                Units</a>
-
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </nav>
-                        </div> --}}
-                        <div class="dt-responsive table-responsive">
-                            <div class="dt-responsive table-responsive">
-                                <table id="example" class="table table-striped table-bordered nowrap">
-                                    <thead>
-                                        <tr>
-                                            <th width="5%">
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" name="select_all"
-                                                        value="1" id="contactstable-select-all">
-                                                    <label class="custom-control-label" for="contactstable-select-all">
-                                                    </label>
-                                                </div>
-                                            </th>
-                                            <th>NAME</th>
-                                            <th width="20%">ACTION</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($units as $key => $record)
-                                            <tr>
-                                                <td>{{ $key + 1 }}</td>
-                                                <td>{{ $record->unit_name }}</td>
-                                                <td>
-                                                    <a class="btn btn-primary btn-sm"
-                                                        href="{{ route('edit-unit', $record->uuid) }}"><i
-                                                            class="feather icon-edit"> </i></a>
-                                                    <a class="btn btn-danger btn-sm"
-                                                        href="{{ route('delete-unit', $record->uuid) }}" title="Delete Data"
-                                                        id="delete"><i class="feather icon-trash-2"></i></a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                    <span class="text-muted text-uppercase small">Total Units</span>
+                    <h3 class="mt-2 mb-1">{{ number_format($summary['totalUnits']) }}</h3>
+                    <span class="text-muted small">Registered destinations for control items</span>
                 </div>
             </div>
         </div>
-
-
-        <!-- liveline-section end -->
+        <div class="col-xl-4 col-md-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <span class="text-muted text-uppercase small">Units With Active Issues</span>
+                    <h3 class="mt-2 mb-1 text-warning">{{ number_format($summary['activeUnits']) }}</h3>
+                    <span class="text-muted small">Issued items awaiting return</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <span class="text-muted text-uppercase small">Items Allocated To Units</span>
+                    <h3 class="mt-2 mb-1 text-info">{{ number_format($summary['totalItemsIssued']) }}</h3>
+                    <span class="text-muted small">Total quantity currently on unit loan</span>
+                </div>
+            </div>
+        </div>
     </div>
-    <!-- [ Main Content ] end -->
-    <!-- [ Main Content ] end -->
 
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="mb-1">Unit Directory</h5>
+                <span class="text-muted small">Manage, import, and track unit-level allocations.</span>
+            </div>
+            <div class="btn-group">
+                <a href="{{ route('add-unit') }}" class="btn btn-primary"><i class="feather icon-plus"></i> Add Unit</a>
+                <button class="btn btn-outline-primary" type="button" data-toggle="modal" data-target="#importUnitsModal">
+                    <i class="feather icon-upload"></i> Import Units
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Unit Name</th>
+                            <th>Issueance Count</th>
+                            <th>Quantity Issued</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($units as $index => $unit)
+                            <tr>
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $unit->unit_name }}</td>
+                                <td>{{ number_format($unit->active_issue_count) }}</td>
+                                <td>{{ number_format($unit->active_issue_qty) }}</td>
+                                <td>
+                                    <a class="btn btn-sm btn-outline-primary" href="{{ route('edit-unit', $unit->uuid) }}">
+                                        <i class="feather icon-edit"></i> Edit
+                                    </a>
+                                    <a class="btn btn-sm btn-outline-danger" href="{{ route('delete-unit', $unit->uuid) }}" id="delete">
+                                        <i class="feather icon-trash-2"></i> Delete
+                                    </a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-4">No units available. Use the buttons above to add or import units.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="notificationModalCenter" tabindex="-1" role="dialog"
-        aria-labelledby="notificationModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-                <div class="modal-content">
+    <div class="modal fade" id="importUnitsModal" tabindex="-1" role="dialog" aria-labelledby="importUnitsModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="importUnitsModalLabel">Import Units</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ route('import-units') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
                     <div class="modal-body">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-
-                        <div class="carousel-inner text-center">
-
-
+                        <p class="text-muted">Upload a CSV or Excel file to bulk add units.</p>
+                        <div class="form-group">
+                            <label for="unitImportFile">Select File</label>
+                            <input type="file" class="form-control" id="unitImportFile" name="file" accept=".csv,.xlsx,.xls" required>
                         </div>
-
+                        @error('file')
+                            <div class="alert alert-danger mt-2">{{ $message }}</div>
+                        @enderror
                     </div>
-
-                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Import</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-
-
-
-    <!-- [ Main Content ] end -->
 @endsection
-
-<script>
-    function printData() {
-        // var divToPrint = document.getElementById("printTable");
-        // newWin = window.open("");
-        // newWin.document.write("<link rel=\"stylesheet\" href=\"#"/>" );
-        // newWin.document.write(divToPrint.outerHTML);
-        // newWin.print();
-        // newWin.close();
-        // return true;
-    }
-    $('.btn-print-invoice').on('click', function() {
-        printData();
-    })
-
-    function linkcolored(selected) {
-        selected.style = 'color: black;';
-    }
-
-    function linkuncolored(selected) {
-        selected.style = '';
-    }
-</script>

@@ -66,5 +66,8 @@ class Kernel extends HttpKernel
         'force.password.change' => \App\Http\Middleware\ForcePasswordChange::class,
         'otp.send' => \App\Http\Middleware\SendOtp::class,
         'otp.verify' => \App\Http\Middleware\VerifyOtp::class,
+        'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+        'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+        'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
     ];
 }

@@ -25,7 +25,7 @@
                         <div class="col-sm-6">
                         </div>
                         <div class="col-sm-6 text-right">
-                            <a href="{{ route('Issue-out') }}" class="btn btn-primary btn-sm btn-round has-ripple"
+                            <a href="{{ route('weapons.issues.create') }}" class="btn btn-primary btn-sm btn-round has-ripple"
                                 data-target="#modal-report"><i class="feather icon-plus"></i>Issue Item Out</a>
                         </div>
                     </div>

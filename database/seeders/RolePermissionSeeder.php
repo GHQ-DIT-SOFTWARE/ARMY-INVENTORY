@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
+use App\Support\Rbac;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
@@ -11,85 +14,68 @@ class RolePermissionSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
-        // Create Roles
-        // $roleSuperAdmin = Role::create(['name' => 'superadmin']);
-        // $roleAdmin = Role::create(['name' => 'admin']);
-        // $roleUser = Role::create(['name' => 'user']);
-        $roleSuperAdmin = Role::create([
-            'uuid' => Str::uuid(),
-            'name' => 'superadmin',
-        ]);
-        $roleAdmin = Role::create([
-            'uuid' => Str::uuid(),
-            'name' => 'admin',
-        ]);
-        $roleUser = Role::create([
-            'uuid' => Str::uuid(),
-            'name' => 'user',
-        ]);
+        $permissionGroups = Rbac::permissionGroups();
 
-        // Permission List as array
-        $permissions = [
-            [
-                'group_name' => 'superadmin',
-                'permissions' => [
-                    // superadmin Permissions
-                    'superadmin.create',
-                    'superadmin.view',
-                    'superadmin.edit',
-                    'superadmin.delete',
-                    'superadmin.approve',
-                ],
-            ],
-            [
-                'group_name' => 'admin',
-                'permissions' => [
-                    // admin Permissions
-                    'admin.create',
-                    'admin.view',
-                    'admin.edit',
-                    'admin.delete',
-                    'admin.approve',
-                ],
-            ],
-            [
-                'group_name' => 'user',
-                'permissions' => [
-                    // user Permissions
-                    'user.create',
-                    'user.view',
-                    'user.edit',
-                    'user.delete',
-                    'user.approve',
-                ],
-            ],
-        ];
-        foreach ($permissions as $permissionGroup) {
-            $groupName = $permissionGroup['group_name'];
-            foreach ($permissionGroup['permissions'] as $permissionName) {
-                $permission = Permission::create([
-                    'uuid' => Str::uuid(),
-                    'name' => $permissionName,
-                    'group_name' => $groupName,
-                ]);
-                $roleSuperAdmin->givePermissionTo($permission);
-                $permission->assignRole($roleSuperAdmin);
+        foreach ($permissionGroups as $group => $permissionNames) {
+            foreach ($permissionNames as $permissionName) {
+                $permission = Permission::firstOrCreate(
+                    ['name' => $permissionName, 'guard_name' => 'web'],
+                    ['uuid' => (string) Str::uuid(), 'group_name' => $group]
+                );
+
+                $this->touchPermission($permission, $group);
             }
         }
-        // Create and Assign Permissions
-        // for ($i = 0; $i < count($permissions); $i++) {
-        //     $permissionGroup = $permissions[$i]['group_name'];
-        //     for ($j = 0; $j < count($permissions[$i]['permissions']); $j++) {
-        //         // Create Permission
-        //         $permission = Permission::create(['name' => $permissions[$i]['permissions'][$j], 'group_name' => $permissionGroup]);
-        //         $roleSuperAdmin->givePermissionTo($permission);
-        //         $permission->assignRole($roleSuperAdmin);
-        //     }
-        // }
+
+        $allPermissionNames = Permission::pluck('name')->all();
+
+        foreach (Rbac::rolePermissions() as $roleName => $permissionNames) {
+            $role = Role::firstOrCreate(
+                ['name' => $roleName, 'guard_name' => 'web'],
+                ['uuid' => (string) Str::uuid()]
+            );
+
+            if (empty($role->uuid)) {
+                $role->uuid = (string) Str::uuid();
+                $role->save();
+            }
+
+            if ($permissionNames === ['*']) {
+                $role->syncPermissions($allPermissionNames);
+            } else {
+                $role->syncPermissions($permissionNames);
+            }
+        }
+
+        app('cache')
+            ->store(config('permission.cache.store') !== 'default' ? config('permission.cache.store') : null)
+            ->forget(config('permission.cache.key'));
+    }
+
+    private function touchPermission(Permission $permission, string $group): void
+    {
+        $dirty = false;
+
+        if (empty($permission->uuid)) {
+            $permission->uuid = (string) Str::uuid();
+            $dirty = true;
+        }
+
+        if ($permission->group_name !== $group) {
+            $permission->group_name = $group;
+            $dirty = true;
+        }
+
+        if ($permission->guard_name !== 'web') {
+            $permission->guard_name = 'web';
+            $dirty = true;
+        }
+
+        if ($dirty) {
+            $permission->save();
+        }
     }
 }

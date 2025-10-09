@@ -1,31 +1,39 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use App\Models\Category;
-use App\Models\inventoryrecord;
-use App\Models\RetElectronicItem;
-use App\Models\Role;
-use App\Models\User;
+use App\Support\DashboardLinks;
+use App\Support\DashboardMetrics;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    //
-    public function View()
+    public function index(): View
     {
-        $total_roles = count(Role::select('id')->get());
-        $total_users = count(User::select('id')->get());
+        Auth::user()->can('dashboard.view.main');
 
-        $total_category = count(Category::select('id')->get());
+        $user = Auth::guard('web')->user();
 
-        return view('homedash', compact('total_roles', 'total_users',
-            'total_category'));
-    }
+        $globalSummary = DashboardMetrics::globalSummary();
+        $weaponSummary = DashboardMetrics::weaponSummary();
+        $vehicleSummary = DashboardMetrics::vehicleSummary();
+        $quickLinks = DashboardLinks::merged($user);
 
-    public function Historytable()
-    {
-        $received_item = RetElectronicItem::get();
-        $Loaned_Item = inventoryrecord::get();
-        return view('dashboard', compact('received_item', 'Loaned_Item'));
+        return view('dashboard.index', [
+            'pageTitle' => 'Operations Dashboard',
+            'globalTitle' => 'Logistics Operations Overview',
+            'globalSubtitle' => 'Central snapshot across stock, demand, and personnel.',
+            'weaponTitle' => 'Weapons Command Center',
+            'weaponSubtitle' => 'Realtime insight into weapon readiness and workflows.',
+            'vehicleTitle' => 'Vehicle Fleet Command Center',
+            'vehicleSubtitle' => 'Operational status of armored and tactical vehicles.',
+            'globalSummary' => $globalSummary,
+            'weaponSummary' => $weaponSummary,
+            'vehicleSummary' => $vehicleSummary,
+            'quickLinks' => $quickLinks,
+        ]);
     }
 }

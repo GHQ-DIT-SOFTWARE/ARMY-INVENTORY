@@ -84,7 +84,7 @@
                 <div class="card-body hd-detail hdd-admin border-bottom">
                     <div class="grid row">
                         <div class="element-item operation sponsored" data-category="operation">
-                            <a href="{{ route('Issue-out') }}">
+                            <a href="{{ route('weapons.issues.create') }}">
                                 <div class="card mx-3 shadow p-3" style="width: 8rem;">
                                     <img src="{{ asset('assets/images/dashicons/write-off.png') }}" style="width: 3rem;"
                                         class="card-img-top mx-auto d-block mt-2 mb-2" alt="...">
@@ -95,36 +95,36 @@
                             </a>
                         </div>
                         <div class="element-item admin notrated " data-category="logistics">
-                            <a href="{{ route('item-issued-out') }}">
+                            <a href="{{ route('weapons.returns.form') }}">
                                 <div class="card mx-3 shadow p-3" style="width: 8rem;">
                                     <img src="{{ asset('assets/images/dashicons/authorise.png') }}" style="width: 3rem;"
                                         class="card-img-top mx-auto d-block mt-2 mb-2" alt="...">
                                     <div class="card-body p-2">
-                                        <p class="card-text text-center font-weight-bold">Authorized</p>
+                                        <p class="card-text text-center font-weight-bold">Returns</p>
                                     </div>
                                 </div>
                             </a>
                         </div>
 
                         <div class="element-item admin notrated " data-category="logistics">
-                            <a href="{{ route('aggregated-item') }}">
+                            <a href="{{ route('weapons.issues.track') }}">
                                 <div class="card mx-3 shadow p-3" style="width: 8rem;">
                                     <img src="{{ asset('assets/images/dashicons/pending.png') }}" style="width: 3rem;"
                                         class="card-img-top mx-auto d-block mt-2 mb-2" alt="...">
                                     <div class="card-body p-2">
-                                        <p class="card-text text-center font-weight-bold">Pending</p>
+                                        <p class="card-text text-center font-weight-bold">Track</p>
                                     </div>
                                 </div>
                             </a>
                         </div>
 
                         <div class="element-item admin sponsored " data-category="admin">
-                            <a href="{{ route('all-items-confirmed-issued') }}">
+                            <a href="{{ route('weapons.inventory.index') }}">
                                 <div class="card mx-3 shadow p-3" style="width: 8rem;">
                                     <img src="{{ asset('assets/images/dashicons/request.png') }}" style="width: 3rem;"
                                         class="card-img-top mx-auto d-block mt-2 mb-2" alt="...">
                                     <div class="card-body p-2">
-                                        <p class="card-text text-center font-weight-bold">Issued</p>
+                                        <p class="card-text text-center font-weight-bold">Inventory</p>
                                     </div>
                                 </div>
                             </a>
@@ -179,12 +179,12 @@
                             </div>
                         </div>
                         <div class="element-item admin neutral " data-category="admin">
-                            <a href="{{ route('all-items-confirmed-issued') }}">
+                            <a href="{{ route('weapons.dashboard') }}">
                                 <div class="card mx-3 shadow p-3" style="width: 8rem;">
                                     <img src="{{ asset('assets/images/dashicons/letter.png') }}" style="width: 3rem;"
                                         class="card-img-top mx-auto d-block mt-2 mb-2" alt="...">
                                     <div class="card-body p-2">
-                                        <p class="card-text text-center font-weight-bold">Write-Off</p>
+                                        <p class="card-text text-center font-weight-bold">Weapons Dashboard</p>
                                     </div>
                                 </div>
                             </a>

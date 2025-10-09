@@ -38,7 +38,7 @@
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     <div class="col-sm-6 text-right">
-                                        <a href="{{route('item.issue.general.view')}}" class="btn btn-warning btn-sm btn-round has-ripple"
+                                        <a href="{{ route('controls.general-items.records') }}" class="btn btn-warning btn-sm btn-round has-ripple"
                                             data-target="#modal-report"><i class="feather icon-plus"></i>General Items-Outgoing</a>
                                     </div>
                                 </div>

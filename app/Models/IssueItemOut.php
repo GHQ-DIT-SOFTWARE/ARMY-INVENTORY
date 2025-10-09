@@ -20,16 +20,35 @@ class IssueItemOut extends Model implements Auditable
      * @var array<int, string>
      */
     protected $fillable = [
-        'category_id', 'sub_category', 'item_id', 'sizes', 'qty', 'unit_id', 'description', 'invoice_no', 'confirm_qty', 'remarks', 'confirmed_issued',
+        'category_id',
+        'sub_category',
+        'item_id',
+        'sizes',
+        'qty',
+        'unit_id',
+        'description',
+        'invoice_no',
+        'confirm_qty',
+        'remarks',
+        'confirmed_issued',
         'created_by',
+        'status',
+        'date',
     ];
+
     public function issuedoutitem()
     {
         return $this->belongsTo(Item::class, 'item_id', 'id');
     }
+
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class);
     }
 
     /**
@@ -38,6 +57,7 @@ class IssueItemOut extends Model implements Auditable
      * @var array<string, string>
      */
     protected $casts = [
-
+        'date' => 'date',
+        'confirmed_issued' => 'datetime',
     ];
 }

@@ -30,7 +30,7 @@
                 <div class="card-body">
                     <h4 class="header-title float-left">Roles List</h4>
                     <p class="float-right mb-2">
-                        @if (Auth::guard('web')->user()->can('superadmin.create'))
+                        @if (Auth::guard('web')->user()->can('users.manage-all'))
                             <a class="btn btn-primary text-white" href="{{ route('create-roles') }}">Create New Role</a>
                         @endif
                     </p>
@@ -58,12 +58,12 @@
                                             @endforeach
                                         </td>
                                         <td>
-                                            @if (Auth::guard('web')->user()->can('superadmin.edit'))
+                                            @if (Auth::guard('web')->user()->can('users.manage-all'))
                                                 <a class="badge badge-success text-white"
                                                     href="{{ route('edit-roles', ['uuid' => $role->uuid]) }}">Edit</a>
                                             @endif
 
-                                            @if (Auth::guard('web')->user()->can('superadmin.delete'))
+                                            @if (Auth::guard('web')->user()->can('users.manage-all'))
                                                 <a class="badge badge-danger text-white" id="delete"
                                                     href="{{ route('destroy-roles', $role->uuid) }}">
                                                     Delete
@@ -95,3 +95,5 @@
         });
     </script>
 @endsection
+
+

@@ -129,6 +129,51 @@
                                 </div>
                             </div>
                         </div>
+
+                        <h4 class="mt-4">Apparel Sizes</h4>
+                        <hr>
+                        <div class="row mt-2" style="margin-left:10px">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label for="boot_size" class="col-sm-3 col-form-label">Boot Size</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-control select2" name="boot_size">
+                                                <option value="">Select Boot Size</option>
+                                                @for ($i = 6; $i <= 12; $i++)
+                                                    <option value="{{ $i }}" {{ $personel->boot_size == $i ? 'selected' : '' }}>{{ $i }}</option>
+                                                @endfor
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="shoe_size" class="col-sm-3 col-form-label">Shoe Size</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-control select2" name="shoe_size">
+                                                <option value="">Select Shoe Size</option>
+                                                @for ($i = 6; $i <= 12; $i++)
+                                                    <option value="{{ $i }}" {{ $personel->shoe_size == $i ? 'selected' : '' }}>{{ $i }}</option>
+                                                @endfor
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label for="uniform_size" class="col-sm-3 col-form-label">Uniform Size</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-control select2" name="uniform_size">
+                                                <option value="">Select Uniform Size</option>
+                                                @foreach (['S', 'M', 'L', 'XL', '2XL', '3XL'] as $size)
+                                                    <option value="{{ $size }}" {{ $personel->uniform_size == $size ? 'selected' : '' }}>{{ $size }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -145,12 +190,23 @@
                                     <label for="arm_of_service" class="col-sm-4 col-form-label col-form-label-sm">Arm of
                                         Service</label>
                                     <div class="col-sm-8">
+                                        @php
+                                            $existingServiceValue = old('arm_of_service', $personel->arm_of_service);
+                                            $existingServiceUpper = strtoupper((string) $existingServiceValue);
+                                            $relatedServiceUpper = strtoupper((string) optional($personel->service)->arm_of_service);
+                                        @endphp
                                         <select class="form-control select2" name="arm_of_service">
-                                            <option value=" ">Select Army</option>
-                                            @foreach ($service as $ser)
-                                                <option value="{{ $ser->id }}"
-                                                    {{ $ser->id == $personel->arm_of_service ? 'selected' : '' }}>
-                                                    {{ $ser->arm_of_service }}</option>
+                                            <option value="">Select Service</option>
+                                            @foreach ($serviceOptions as $option)
+                                                @php
+                                                    $aliases = $option['aliases'] ?? [];
+                                                    $isSelected = (string) $option['value'] === (string) $existingServiceValue
+                                                        || ($existingServiceUpper !== '' && (in_array($existingServiceUpper, $aliases) || $existingServiceUpper === strtoupper($option['label'])))
+                                                        || ($relatedServiceUpper !== '' && (in_array($relatedServiceUpper, $aliases) || $relatedServiceUpper === strtoupper($option['label'])));
+                                                @endphp
+                                                <option value="{{ $option['value'] }}" {{ $isSelected ? 'selected' : '' }}>
+                                                    {{ $option['label'] }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -192,12 +248,23 @@
                                 <div class="form-group row">
                                     <label for="rank" class="col-sm-3 col-form-label col-form-label-sm">Rank</label>
                                     <div class="col-sm-9">
+                                        @php
+                                            $existingRankValue = old('rank_id', $personel->rank_id);
+                                            $existingRankUpper = strtoupper((string) $existingRankValue);
+                                            $relatedRankUpper = strtoupper((string) optional($personel->rank)->rank_name);
+                                        @endphp
                                         <select class="form-control select2" name="rank_id">
-                                            <option value=" ">Select Rank</option>
-                                            @foreach ($ranks as $ran)
-                                                <option
-                                                    value="{{ $ran->id }}"{{ $ran->id == $personel->rank_id ? 'selected' : '' }}>
-                                                    {{ $ran->rank_name }}</option>
+                                            <option value="">Select Rank</option>
+                                            @foreach ($rankOptions as $option)
+                                                @php
+                                                    $aliases = $option['aliases'] ?? [];
+                                                    $isSelected = (string) $option['value'] === (string) $existingRankValue
+                                                        || ($existingRankUpper !== '' && (in_array($existingRankUpper, $aliases) || $existingRankUpper === strtoupper($option['label'])))
+                                                        || ($relatedRankUpper !== '' && (in_array($relatedRankUpper, $aliases) || $relatedRankUpper === strtoupper($option['label'])));
+                                                @endphp
+                                                <option value="{{ $option['value'] }}" {{ $isSelected ? 'selected' : '' }}>
+                                                    {{ $option['label'] }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -206,10 +273,12 @@
                                     <label for="rank" class="col-sm-3 col-form-label col-form-label-sm">Unit</label>
                                     <div class="col-sm-9">
                                         <select class="form-control select2" name="unit_id">
-                                            <option value=" ">Select Unit</option>
+                                            <option value="">Select Unit</option>
                                             @foreach ($unit as $uni)
-                                                <option
-                                                    value="{{ $uni->id }}"{{ $uni->id == $personel->unit_id ? 'selected' : '' }}>
+                                                @php
+                                                    $isSelected = $personel->unit_name && strcasecmp($uni->unit_name, $personel->unit_name) === 0;
+                                                @endphp
+                                                <option value="{{ $uni->id }}"{{ $isSelected ? ' selected' : '' }}>
                                                     {{ $uni->unit_name }}</option>
                                             @endforeach
                                         </select>

@@ -1,64 +1,52 @@
 <?php
-declare (strict_types = 1);
+
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Support\Rbac;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RolesAndPermissionController extends Controller
 {
     public $user;
+
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
             $this->user = Auth::guard('web')->user();
+
             return $next($request);
         });
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        if (is_null($this->user) || !$this->user->can('superadmin.view')) {
-            abort(403, 'Sorry !! You are Unauthorized to view any user !');
-        }
+        $this->authorizeRolesMaintenance();
+
         $roles = Role::all();
+
         return view('roles.index', compact('roles'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create_role()
     {
-        if (is_null($this->user) || !$this->user->can('superadmin.create')) {
-            abort(403, 'Sorry !! You are Unauthorized to create any user !');
-        }
+        $this->authorizeRolesMaintenance();
+
         $permissions = Permission::all();
         $permission_groups = User::getpermissionGroups();
+
         return view('roles.create', compact('permissions', 'permission_groups'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-
-        if (is_null($this->user) || !$this->user->can('superadmin.create')) {
-            abort(403, 'Sorry !! You are Unauthorized to create any user !');
-        }
+        $this->authorizeRolesMaintenance();
 
         $request->validate([
             'name' => 'required|max:100|unique:roles',
@@ -67,12 +55,13 @@ class RolesAndPermissionController extends Controller
         ]);
 
         $role = Role::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'name' => $request->name,
             'guard_name' => 'web',
         ]);
+
         $permissions = $request->input('permissions', []);
-        if (!empty($permissions)) {
+        if (! empty($permissions)) {
             $role->syncPermissions($permissions);
         }
 
@@ -80,101 +69,61 @@ class RolesAndPermissionController extends Controller
 
         return redirect()->route('index-roles');
     }
-    // public function store(Request $request)
-    // {
-    //     if (is_null($this->user) || !$this->user->can('superadmin.create')) {
-    //         abort(403, 'Sorry !! You are Unauthorized to create any user !');
-    //     }
-    //     // Validation Data
-    //     $request->validate([
-    //         'name' => 'required|max:100|unique:roles',
-    //     ], [
-    //         'name.requried' => 'Please give a role name',
-    //     ]);
-    //     $role = Role::create(['name' => $request->name, 'guard_name' => 'web']);
-    //     $permissions = $request->input('permissions');
-    //     if (!empty($permissions)) {
-    //         $role->syncPermissions($permissions);
-    //     }
-    //     session()->flash('success', 'Role has been created !!');
-    //     return back();
-    // }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($uuid)
     {
-        if (is_null($this->user) || !$this->user->can('superadmin.edit')) {
-            abort(403, 'Sorry !! You are Unauthorized to delete any user !');
-        }
-        $role = Role::where('uuid', $uuid)->first();
-        if (!$role) {
-            abort(404);
-        }
+        $this->authorizeRolesMaintenance();
+
+        $role = Role::where('uuid', $uuid)->firstOrFail();
         $permissions = Permission::all();
         $permission_groups = User::getpermissionGroups();
+
         return view('roles.edit', compact('role', 'permissions', 'permission_groups'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request)
     {
-        if (is_null($this->user) || !$this->user->can('superadmin.edit')) {
-            abort(403, 'Sorry !! You are Unauthorized to edit any role !');
+        $this->authorizeRolesMaintenance();
+
+        $request->validate([
+            'uuid' => ['required', 'exists:roles,uuid'],
+            'name' => ['required', 'max:100'],
+        ]);
+
+        $role = Role::where('uuid', $request->input('uuid'))->firstOrFail();
+        if ($role->name !== $request->name) {
+            $request->validate([
+                'name' => 'unique:roles,name',
+            ]);
         }
-        $uuid = $request->input('uuid');
-        $role = Role::where('uuid', $uuid)->first();
-        if (!$role) {
-            abort(404);
-        }
-        $permissions = $request->input('permissions');
-        if (!empty($permissions)) {
-            $role->name = $request->name;
-            $role->save();
-            $role->syncPermissions($permissions);
-        }
+
+        $role->name = $request->name;
+        $role->save();
+
+        $permissions = $request->input('permissions', []);
+        $role->syncPermissions($permissions);
+
         session()->flash('success', 'Role has been updated !!');
+
         return back();
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-
     public function destroy($uuid)
     {
-        if (is_null($this->user) || !$this->user->can('superadmin.delete')) {
-            abort(403, 'Sorry !! You are Unauthorized to delete any role !');
-        }
-        $role = Role::where('uuid', $uuid)->first();
-        if (!$role) {
-            abort(404);
-        }
+        $this->authorizeRolesMaintenance();
+
+        $role = Role::where('uuid', $uuid)->firstOrFail();
         $role->delete();
+
         session()->flash('success', 'Role has been deleted !!');
+
         return back();
+    }
+
+    private function authorizeRolesMaintenance(): void
+    {
+        if (is_null($this->user) || ! $this->user->can(Rbac::PERMISSION_USERS_MANAGE_ALL)) {
+            abort(403, 'Sorry !! You are Unauthorized to manage roles !');
+        }
     }
 }

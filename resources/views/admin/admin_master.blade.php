@@ -236,7 +236,7 @@
         @endif
     </script>
 
-
+    @stack('scripts')
 
 </body>
 

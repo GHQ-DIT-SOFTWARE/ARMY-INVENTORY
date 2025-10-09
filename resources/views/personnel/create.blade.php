@@ -144,6 +144,56 @@
                                 </div>
                             </div>
                         </div>
+
+                        <h4 class="mt-4">Apparel Sizes</h4>
+                        <hr>
+                        <div class="row mt-2" style="margin-left:10px">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label for="boot_size" class="col-sm-4 col-form-label">Boot Size</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control select2" name="boot_size">
+                                                <option value="">Select Boot Size</option>
+                                                @for ($i = 6; $i <= 12; $i++)
+                                                    <option value="{{ $i }}"
+                                                        {{ old('boot_size') == $i ? 'selected' : '' }}>{{ $i }}
+                                                    </option>
+                                                @endfor
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="shoe_size" class="col-sm-4 col-form-label">Shoe Size</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control select2" name="shoe_size">
+                                                <option value="">Select Shoe Size</option>
+                                                @for ($i = 6; $i <= 12; $i++)
+                                                    <option value="{{ $i }}"
+                                                        {{ old('shoe_size') == $i ? 'selected' : '' }}>{{ $i }}
+                                                    </option>
+                                                @endfor
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group row">
+                                        <label for="uniform_size" class="col-sm-4 col-form-label">Uniform Size</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control select2" name="uniform_size">
+                                                <option value="">Select Uniform Size</option>
+                                                @foreach (['S', 'M', 'L', 'XL', '2XL', '3XL'] as $size)
+                                                    <option value="{{ $size }}"
+                                                        {{ old('uniform_size') == $size ? 'selected' : '' }}>
+                                                        {{ $size }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -160,11 +210,22 @@
                                     <label for="rank" class="col-sm-4 col-form-label col-form-label-sm">Arm of
                                         Service</label>
                                     <div class="col-sm-8">
+                                        @php
+                                            $currentService = old('arm_of_service');
+                                            $currentServiceUpper = strtoupper((string) $currentService);
+                                        @endphp
                                         <select name="arm_of_service" id="service_id" class="form-control select2"
-                                            aria-label="Default select example" value="{{ old('arm_of_service') }}">
-                                            <option value=" ">Select service</option>
-                                            @foreach ($service as $arms)
-                                                <option value="{{ $arms->id }}">{{ $arms->arm_of_service }}</option>
+                                            aria-label="Default select example">
+                                            <option value="">Select service</option>
+                                            @foreach ($serviceOptions as $option)
+                                                @php
+                                                    $aliases = $option['aliases'] ?? [];
+                                                    $isSelected = (string) $option['value'] === (string) $currentService
+                                                        || ($currentServiceUpper !== '' && (in_array($currentServiceUpper, $aliases) || $currentServiceUpper === strtoupper($option['label'])));
+                                                @endphp
+                                                <option value="{{ $option['value'] }}" {{ $isSelected ? 'selected' : '' }}>
+                                                    {{ $option['label'] }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -199,7 +260,7 @@
                                     <div class="col-sm-8">
                                         <select class="form-control  select2" name="service_category"
                                             value="{{ old('service_category') }}">
-                                            <option value=" ">Select Category</option>
+                                            <option value="">Select Category</option>
                                             <option value="OFFICER">OFFICER</option>
                                             <option value="SOLDIER">SOLDIER</option>
                                         </select>
@@ -212,11 +273,21 @@
                                 <div class="form-group row">
                                     <label for="rank" class="col-sm-4 col-form-label col-form-label-sm">Rank</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control select2" name="rank_id" id="rank_id"
-                                            value="{{ old('rank_id') }}" required>
-                                            <option value=" ">Select Rank</option>
-                                            @foreach ($ranks as $ran)
-                                                <option value="{{ $ran->id }}">{{ $ran->rank_name }}</option>
+                                        @php
+                                            $currentRank = old('rank_id');
+                                            $currentRankUpper = strtoupper((string) $currentRank);
+                                        @endphp
+                                        <select class="form-control select2" name="rank_id" id="rank_id" required>
+                                            <option value="">Select Rank</option>
+                                            @foreach ($rankOptions as $option)
+                                                @php
+                                                    $aliases = $option['aliases'] ?? [];
+                                                    $isSelected = (string) $option['value'] === (string) $currentRank
+                                                        || ($currentRankUpper !== '' && (in_array($currentRankUpper, $aliases) || $currentRankUpper === strtoupper($option['label'])));
+                                                @endphp
+                                                <option value="{{ $option['value'] }}" {{ $isSelected ? 'selected' : '' }}>
+                                                    {{ $option['label'] }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -225,11 +296,14 @@
                                 <div class="form-group row">
                                     <label for="rank" class="col-sm-4 col-form-label col-form-label-sm">Unit</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control select2" name="unit_name" id="unit_id"
-                                            value="{{ old('unit_name') }}" required>
-                                            <option value=" ">Select Unit</option>
+                                        <select class="form-control select2" name="unit_id" id="unit_id"
+                                            value="{{ old('unit_id') }}" required>
+                                            <option value="">Select Unit</option>
                                             @foreach ($unit as $uni)
-                                                <option value="{{ $uni->id }}">{{ $uni->unit_name }}</option>
+                                                <option value="{{ $uni->id }}"
+                                                    {{ (string) $uni->id === (string) old('unit_id') ? 'selected' : '' }}>
+                                                    {{ $uni->unit_name }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>

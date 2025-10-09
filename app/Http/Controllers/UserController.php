@@ -1,162 +1,204 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Http\Request;
+
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
+use App\Support\Rbac;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
-use Illuminate\Support\Facades\Auth;
-use Session;
+
 class UserController extends Controller
 {
+    /** @var \App\Models\User|null */
     public $user;
+
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
             $this->user = Auth::guard('web')->user();
+
             return $next($request);
         });
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
-        if (is_null($this->user) || !$this->user->can('superadmin.view')) {
-            abort(403, 'Sorry !! You are Unauthorized to view any user !');
+        $this->ensureCanManageUsers();
+
+        if ($this->user->can(Rbac::PERMISSION_USERS_MANAGE_ALL)) {
+            $users = User::with('roles')->get();
+        } else {
+            $manageableRoles = $this->manageableRoleNames();
+            $users = User::with('roles')
+                ->whereHas('roles', function ($query) use ($manageableRoles) {
+                    $query->whereIn('name', $manageableRoles);
+                })
+                ->get();
         }
-        $users = User::all();
+
         return view('users.index', compact('users'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        if (is_null($this->user) || !$this->user->can('superadmin.create')) {
-            abort(403, 'Sorry !! You are Unauthorized to create any user !');
-        }
-        $roles  = Role::all();
+        $this->ensureCanManageUsers();
+
+        $roles = $this->availableRoles();
+        abort_if($roles->isEmpty(), 403, 'You do not have permission to create users for any role.');
+
         return view('users.create', compact('roles'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        if (is_null($this->user) || !$this->user->can('superadmin.create')) {
-            abort(403, 'Sorry !! You are Unauthorized to create any user !');
-        }
-        // Validation Data
-        $request->validate([
-            'name' => 'required|max:50',
-            'email' => 'required|max:100|email|unique:users',
+        $this->ensureCanManageUsers();
 
+        $request->validate([
+            'name' => ['required', 'max:50'],
+            'email' => ['required', 'max:100', 'email', 'unique:users'],
+            'phone_number' => ['nullable', 'string', 'max:20'],
+            'roles' => ['required', 'array', 'min:1'],
+            'roles.*' => ['string'],
         ]);
-        // Create New Admin
+
+        $rolesToAssign = $this->filterAssignableRoles($request->input('roles', []));
+        if (empty($rolesToAssign)) {
+            return back()->withErrors(['roles' => 'You are not allowed to assign the selected role(s).'])->withInput();
+        }
+
         $user = new User();
-        $code = rand(0000,9999);
+        $code = rand(1000, 9999);
         $user->name = $request->name;
         $user->email = $request->email;
         $user->status = '1';
         $user->password = bcrypt($code);
         $user->code = $code;
-        $user->save();
-        $user->roles()->detach();
-        if ($request->roles) {
-            $user->assignRole($request->roles);
+        if ($request->filled('phone_number')) {
+            $user->phone_number = $request->phone_number;
         }
-        session()->flash('success', 'User has been created !!');
+        $user->save();
+
+        $user->syncRoles($rolesToAssign);
+
+        session()->flash('success', 'User has been created.');
+
         return redirect()->route('users.index');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
-        if (is_null($this->user) || !$this->user->can('superadmin.edit')) {
-            abort(403, 'Sorry !! You are Unauthorized to delete any user !');
-        }
-        $user = User::find($id);
-        $roles  = Role::all();
+        $this->ensureCanManageUsers();
+
+        $user = User::findOrFail($id);
+        $this->ensureTargetWithinScope($user);
+
+        $roles = $this->availableRoles();
+        abort_if($roles->isEmpty(), 403, 'You do not have permission to manage user roles.');
+
         return view('users.edit', compact('user', 'roles'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
-        if (is_null($this->user) || !$this->user->can('superadmin.edit')) {
-            abort(403, 'Sorry !! You are Unauthorized to delete any user !');
+        $this->ensureCanManageUsers();
+
+        $user = User::findOrFail($id);
+        $this->ensureTargetWithinScope($user);
+
+        $request->validate([
+            'name' => ['required', 'max:50'],
+            'email' => ['required', 'max:100', 'email', 'unique:users,email,' . $id],
+            'phone_number' => ['nullable', 'string', 'max:20'],
+            'password' => ['nullable', 'min:6', 'confirmed'],
+            'roles' => ['required', 'array', 'min:1'],
+            'roles.*' => ['string'],
+        ]);
+
+        $rolesToAssign = $this->filterAssignableRoles($request->input('roles', []));
+        if (empty($rolesToAssign)) {
+            return back()->withErrors(['roles' => 'You are not allowed to assign the selected role(s).'])->withInput();
         }
-         // Create New User
-         $user = User::find($id);
-         // Validation Data
-         $request->validate([
-             'name' => 'required|max:50',
-             'email' => 'required|max:100|email|unique:users,email,' . $id,
-             'password' => 'nullable|min:6|confirmed',
-         ]);
-         $user->name = $request->name;
-         $user->email = $request->email;
-         if ($request->password) {
-             $user->password = Hash::make($request->password);
-         }
-         $user->save();
-         $user->roles()->detach();
-         if ($request->roles) {
-             $user->assignRole($request->roles);
-         }
-         session()->flash('success', 'User has been updated !!');
-         return back();
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        if ($request->filled('phone_number')) {
+            $user->phone_number = $request->phone_number;
+        }
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+        $user->save();
+
+        $user->syncRoles($rolesToAssign);
+
+        session()->flash('success', 'User has been updated.');
+
+        return back();
     }
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy($id)
     {
-        if (is_null($this->user) || !$this->user->can('superadmin.delete')) {
-            abort(403, 'Sorry !! You are Unauthorized to delete any user !');
-        }
-        $user = User::find($id);
-        if (!is_null($user)) {
-            $user->delete();
-        }
-        session()->flash('success', 'User has been deleted !!');
+        $this->ensureCanManageUsers();
+
+        $user = User::findOrFail($id);
+        $this->ensureTargetWithinScope($user);
+
+        $user->delete();
+
+        session()->flash('success', 'User has been deleted.');
+
         return back();
+    }
+
+    private function ensureCanManageUsers(): void
+    {
+        if (! $this->user || ! Rbac::canManageUsers($this->user)) {
+            abort(403, 'Sorry, you are not authorised to manage user accounts.');
+        }
+    }
+
+    private function manageableRoleNames(): array
+    {
+        if (! $this->user) {
+            return [];
+        }
+
+        if ($this->user->can(Rbac::PERMISSION_USERS_MANAGE_ALL)) {
+            return Rbac::allRoles();
+        }
+
+        return Rbac::manageableRoleNames($this->user);
+    }
+
+    private function availableRoles()
+    {
+        $roleNames = $this->manageableRoleNames();
+
+        return Role::whereIn('name', $roleNames)->orderBy('name')->get();
+    }
+
+    private function filterAssignableRoles(array $requested): array
+    {
+        $allowed = $this->manageableRoleNames();
+
+        $requested = array_filter(array_map('strval', $requested));
+
+        return array_values(array_intersect($requested, $allowed));
+    }
+
+    private function ensureTargetWithinScope(User $target): void
+    {
+        if ($this->user && $this->user->can(Rbac::PERMISSION_USERS_MANAGE_ALL)) {
+            return;
+        }
+
+        $allowedRoles = $this->manageableRoleNames();
+        $hasOverlap = $target->roles()->whereIn('name', $allowedRoles)->exists();
+
+        if (! $hasOverlap) {
+            abort(403, 'You are not authorised to manage this user.');
+        }
     }
 }

@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Imports\UnitsImport;
 use App\Models\Unit;
-use Auth;
+use App\Models\IssueItemOut;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
@@ -28,8 +31,32 @@ class UnitController extends Controller
 
     public function View()
     {
-        $units = Unit::latest()->get();
-        return view('unit.index', compact('units'));
+        $units = Unit::orderBy('unit_name')->get();
+
+        $issuesByUnit = collect();
+        if (Schema::hasTable('issue_item_outs')) {
+            $issuesByUnit = IssueItemOut::select('unit_id', DB::raw('COUNT(*) as active_count'), DB::raw('SUM(qty) as total_qty'))
+                ->whereNotNull('unit_id')
+                ->where('status', 0)
+                ->groupBy('unit_id')
+                ->get()
+                ->keyBy('unit_id');
+        }
+
+        $units->transform(function ($unit) use ($issuesByUnit) {
+            $stats = $issuesByUnit->get($unit->id);
+            $unit->active_issue_count = $stats->active_count ?? 0;
+            $unit->active_issue_qty = $stats->total_qty ?? 0;
+            return $unit;
+        });
+
+        $summary = [
+            'totalUnits' => $units->count(),
+            'activeUnits' => $units->where('active_issue_count', '>', 0)->count(),
+            'totalItemsIssued' => $units->sum('active_issue_qty'),
+        ];
+
+        return view('unit.index', compact('units', 'summary'));
     }
 
     public function Add()

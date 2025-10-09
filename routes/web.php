@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DefaultInventoryController;
 use App\Http\Controllers\IssueItemOutController;
+use App\Http\Controllers\ItemIssuingController;
 use App\Http\Controllers\ItemsController;
 use App\Http\Controllers\LogactivityController;
 use App\Http\Controllers\ManageUserAccountController;
@@ -20,10 +21,27 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserAccountController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\G4DashController;
+use App\Http\Controllers\ArmoryController;
+use App\Http\Controllers\WeaponCategoryController;
+use App\Http\Controllers\WeaponController;
+use App\Http\Controllers\WeaponInventoryController;
+use App\Http\Controllers\WeaponIssueController;
+use App\Http\Controllers\WeaponIssueSummaryController;
+use App\Http\Controllers\WeaponDashboardController;
+use App\Http\Controllers\MotorPoolController;
+use App\Http\Controllers\VehicleCategoryController;
+use App\Http\Controllers\VehicleController;
+use App\Http\Controllers\VehicleInventoryController;
+use App\Http\Controllers\VehicleDeploymentController;
+use App\Http\Controllers\VehicleDashboardController;
+use App\Http\Controllers\VehicleDeploymentSummaryController;
 
 Route::get('/', function () {
     return view('auth.login');
 });
+
+Route::get('/admin/g4-dash', [G4DashController::class, 'index'])->name('admin.g4.dash');
 
 Route::middleware([
     'auth:sanctum',
@@ -76,97 +94,136 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/password/update', [ProfileController::class, 'PasswordUpdate'])->name('password.update');
     });
 
-    Route::prefix('issue-item-out')->group(function () {
-        Route::get('/item-issued-out', [IssueItemOutController::class, 'index'])->name('item-issued-out');
-        Route::get('/all-items-confirmed-issued', [IssueItemOutController::class, 'issued_items'])->name('all-items-confirmed-issued');
-        Route::get('/aggregated-issue-item', [IssueItemOutController::class, 'aggreagtated_issue_item'])->name('aggregated-item');
-        Route::get('/issue-out', [IssueItemOutController::class, 'issueout'])->name('Issue-out');
-        // Route::get('/add', [UnitController::class, 'Add'])->name('add-unit');
-        Route::post('/store', [IssueItemOutController::class, 'store'])->name('store-items-issued-out');
-        Route::get('/delete/{uuid}', [IssueItemOutController::class, 'item_issued_out_delete'])->name('delete-item-issued-out');
-        Route::get('edit-item/{uuid}', [IssueItemOutController::class, 'edit'])->name('edit-item-issued-out');
-        Route::post('/update-issued-items', [IssueItemOutController::class, 'update'])->name('update-issued-items');
-        Route::get('/item-issued/{uuid}/pdf', [IssueItemOutController::class, 'generatePdf'])->name('item-issued-pdf');
+    Route::prefix('item')->group(function () {
+        Route::get('/category', [CategoryController::class, 'View'])->name('view-index');
+        Route::get('/category/create', [CategoryController::class, 'AddCate'])->name('create');
+        Route::post('/category/store', [CategoryController::class, 'Store'])->name('store-category');
+        Route::get('/category/edit/{uuid}', [CategoryController::class, 'Edit'])->name('edit-category');
+        Route::post('/category/update', [CategoryController::class, 'Update'])->name('update-category');
+        Route::get('/category/delete/{uuid}', [CategoryController::class, 'Delete'])->name('delete-category');
 
-    });
+        Route::get('/sub-category', [SubCategoryController::class, 'View'])->name('view-subcategory');
+        Route::get('/sub-category/create', [SubCategoryController::class, 'Add'])->name('add-subcategory');
+        Route::post('/sub-category/store', [SubCategoryController::class, 'Store'])->name('store-subcategory');
+        Route::get('/sub-category/edit/{uuid}', [SubCategoryController::class, 'Edit'])->name('edit-subcategory');
+        Route::post('/sub-category/update/{uuid}', [SubCategoryController::class, 'Update'])->name('update-subcategory');
+        Route::get('/sub-category/delete/{uuid}', [SubCategoryController::class, 'Delete'])->name('delete-subcategory');
 
-    Route::prefix('unit')->group(function () {
-        Route::get('/view', [UnitController::class, 'View'])->name('view-unit');
-        Route::get('/add', [UnitController::class, 'Add'])->name('add-unit');
-        Route::post('/store', [UnitController::class, 'Store'])->name('store-unit');
-        Route::get('/edit/{uuid}', [UnitController::class, 'Edit'])->name('edit-unit');
-        Route::post('/update/{uuid}', [UnitController::class, 'Update'])->name('update-unit');
-        Route::get('/delete{uuid}', [UnitController::class, 'Delete'])->name('delete-unit');
-        Route::post('/import/units', [UnitController::class, 'import'])->name('import-units');
-    });
-    Route::prefix('inventory')->group(function () {
-        Route::prefix('restock-items')->group(function () {
-            Route::get('/view', [RestockItemController::class, 'purchase_index'])->name('viewpurchase');
-            Route::get('/add', [RestockItemController::class, 'purchase_create'])->name('addpurchase');
-            Route::post('/store', [RestockItemController::class, 'purchase_store'])->name('storepurchase');
-            Route::get('/delete/{uuid}', [RestockItemController::class, 'purchase_delete'])->name('deletepurchase');
+        Route::get('/suppliers', [SupplierController::class, 'Index'])->name('viewsupp');
+        Route::get('/suppliers/create', [SupplierController::class, 'create'])->name('supadd');
+        Route::post('/suppliers/store', [SupplierController::class, 'store'])->name('supstore');
+        Route::get('/suppliers/{uuid}/edit', [SupplierController::class, 'Edit'])->name('supedit');
+        Route::post('/suppliers/{uuid}/update', [SupplierController::class, 'update'])->name('supupa');
+        Route::get('/suppliers/{uuid}/delete', [SupplierController::class, 'delete'])->name('supdel');
+
+        Route::get('/restocks', [RestockItemController::class, 'purchase_index'])->name('viewpurchase');
+        Route::get('/restocks/create', [RestockItemController::class, 'purchase_create'])->name('addpurchase');
+        Route::post('/restocks/store', [RestockItemController::class, 'purchase_store'])->name('storepurchase');
+        Route::get('/restocks/{uuid}/delete', [RestockItemController::class, 'purchase_delete'])->name('deletepurchase');
+        Route::prefix('unit')->group(function () {
+            Route::get('/view', [UnitController::class, 'View'])->name('view-unit');
+            Route::get('/add', [UnitController::class, 'Add'])->name('add-unit');
+            Route::post('/store', [UnitController::class, 'Store'])->name('store-unit');
+            Route::get('/edit/{uuid}', [UnitController::class, 'Edit'])->name('edit-unit');
+            Route::post('/update/{uuid}', [UnitController::class, 'Update'])->name('update-unit');
+            Route::get('/delete/{uuid}', [UnitController::class, 'Delete'])->name('delete-unit');
+            Route::post('/import', [UnitController::class, 'import'])->name('import-units');
         });
-        Route::prefix('category')->group(function () {
-            Route::get('/', [CategoryController::class, 'View'])->name('view-index');
-            Route::get('/add', [CategoryController::class, 'AddCate'])->name('create');
-            Route::post('/store', [CategoryController::class, 'Store'])->name('store-category');
-            Route::get('/edit/{uuid}', [CategoryController::class, 'Edit'])->name('edit-category');
-            Route::post('/update', [CategoryController::class, 'Update'])->name('update-category');
-            Route::get('/{uuid}', [CategoryController::class, 'Delete'])->name('delete-category');
-        });
+
         Route::prefix('sub-category')->group(function () {
-            Route::get('/', [SubCategoryController::class, 'View'])->name('view-subcategory');
-            Route::get('/mech', [SubCategoryController::class, 'Add'])->name('mech-subcategory');
-            Route::post('/store', [SubCategoryController::class, 'Store'])->name('store-subcategory');
-            Route::get('/edit/{uuid}', [SubCategoryController::class, 'Edit'])->name('edit-subcategory');
-            Route::post('/update{uuid}', [SubCategoryController::class, 'Update'])->name('update-subcategory');
-            Route::get('/delete{uuid}', [SubCategoryController::class, 'Delete'])->name('delete-subcategory');
-            Route::post('/view-sub-caregory', [SubCategoryController::class, 'index'])->name('view-sub-caregory');
+            Route::get('/get-subcategory/{categoryId}', [DefaultInventoryController::class, 'fetchSubCategory'])->name('get-subcategory');
+            Route::get('/fetch-category-and-subcategory/{itemId}', [DefaultInventoryController::class, 'fetchCategoryAndSubcategory'])->name('fetch-category-and-subcategory');
         });
+        Route::get('/', [ItemsController::class, 'View'])->name('view-item');
+        Route::get('/item-manager', [ItemsController::class, 'manage_item'])->name('manage_item');
+        Route::get('/add', [ItemsController::class, 'Add'])->name('add-item');
+        Route::post('/store', [ItemsController::class, 'Store'])->name('store-item');
+        Route::get('/edit/{uuid}', [ItemsController::class, 'Edit'])->name('edit-item');
+        Route::post('/update/{uuid}', [ItemsController::class, 'Update'])->name('update-item');
+        Route::get('/delete/{uuid}', [ItemsController::class, 'Delete'])->name('delete-item');
 
-        Route::prefix('Supplier')->group(function () {
-            Route::get('/view', [SupplierController::class, 'Index'])->name('viewsupp');
-            Route::get('/add', [SupplierController::class, 'create'])->name('supadd');
-            Route::post('/store', [SupplierController::class, 'store'])->name('supstore');
-            Route::get('/edit{uuid}', [SupplierController::class, 'Edit'])->name('supedit');
-            Route::post('/update', [SupplierController::class, 'update'])->name('supupa');
-            Route::get('/delete{uuid}', [SupplierController::class, 'delete'])->name('supdel');
-        });
+        Route::get('/get-issue-subcategory/{categoryId}', [ItemsController::class, 'getSubCategory'])->name('get-issue-subcategory');
+        Route::get('/get-items/{subCategoryId}', [ItemsController::class, 'getItems'])->name('get-items');
+        Route::get('/get-sizes/{itemId}', [ItemsController::class, 'getSizes'])->name('get-sizes');
+        Route::get('/get-quantity/{sizeId}', [ItemsController::class, 'getQuantity'])->name('get-quantity');
+        //Status
+        Route::get('/approving{id}', [ItemsController::class, 'Approve'])->name('item.approve');
+        Route::get('/electronicser{id}', [ItemsController::class, 'Rescheduled'])->name('item.reschudel');
+        Route::get('/serviceable-items', [ItemsController::class, 'Serviceable'])->name('serviceable-item');
+        Route::get('/un-serviceable-items', [ItemsController::class, 'Un_Serviceable'])->name('un-serviceable-item');
+        Route::get('/un-serviceable{id}', [ItemsController::class, 'Unser'])->name('item.unserv');
+        //End Status
+        Route::get('/totalviewqty', [ItemsController::class, 'eletronicallqty']);
+        Route::get('/item-total', [ItemsController::class, 'alleachqt'])->name('items-total');
+        Route::get('/totalserunserv', [ItemsController::class, 'serveandunser'])->name('total.serveandunser');
+        Route::get('/totalgeneralserunserv', [ItemsController::class, 'serveandunsernon'])->name('total.general.serveandunser');
+        // Route::get('/category/{id}/items', [ItemsController::class, 'itemsByCategory'])->name('category.items');
+        Route::get('/category/{uuid}/items', [ItemsController::class, 'itemsByCategory'])->name('category.items');
 
-        Route::prefix('item')->group(function () {
-            Route::prefix('sub-category')->group(function () {
-                Route::get('/get-subcategory/{categoryId}', [DefaultInventoryController::class, 'fetchSubCategory'])->name('get-subcategory');
-                Route::get('/fetch-category-and-subcategory/{itemId}', [DefaultInventoryController::class, 'fetchCategoryAndSubcategory'])->name('fetch-category-and-subcategory');
+        Route::prefix('controls')->name('controls.')->group(function () {
+            Route::prefix('general-items')->name('general-items.')->group(function () {
+                Route::get('/issue', [ItemIssuingController::class, 'CreateGeneralItem'])->name('issue');
+                Route::post('/issue', [ItemIssuingController::class, 'GeneralItemStore'])->name('issue.store');
+                Route::get('/issued', [ItemIssuingController::class, 'generalIssuedItems'])->name('issued');
+                Route::get('/returns', [ItemIssuingController::class, 'generalReturnQueue'])->name('returns');
+                Route::get('/returned', [ItemIssuingController::class, 'generalReturnedItems'])->name('returned');
+                Route::get('/issues/{id}', [ItemIssuingController::class, 'generalIssueDetails'])->name('show');
+                Route::get('/issues/{id}/reissue', [ItemIssuingController::class, 'generalReissueForm'])->name('reissue.form');
+                Route::post('/issues/{id}/reissue', [ItemIssuingController::class, 'generalReissue'])->name('reissue');
+                Route::get('/records', [ItemIssuingController::class, 'GeneralItemView'])->name('records');
+
+                Route::get('/mark-returned/{id}', [ItemIssuingController::class, 'GeneralonLoan'])->name('mark-returned');
+                Route::get('/mark-loaned/{id}', [ItemIssuingController::class, 'GeneralReturn'])->name('mark-loaned');
             });
-            Route::get('/', [ItemsController::class, 'View'])->name('view-item');
-            Route::get('/item-manager', [ItemsController::class, 'manage_item'])->name('manage_item');
-            Route::get('/add', [ItemsController::class, 'Add'])->name('add-item');
-            Route::post('/store', [ItemsController::class, 'Store'])->name('store-item');
-            Route::get('/edit/{uuid}', [ItemsController::class, 'Edit'])->name('edit-item');
-            Route::post('/update/{uuid}', [ItemsController::class, 'Update'])->name('update-item');
-            Route::get('/delete/{uuid}', [ItemsController::class, 'Delete'])->name('delete-item');
-
-            Route::get('/get-issue-subcategory/{categoryId}', [ItemsController::class, 'getSubCategory'])->name('get-issue-subcategory');
-            Route::get('/get-items/{subCategoryId}', [ItemsController::class, 'getItems'])->name('get-items');
-            Route::get('/get-sizes/{itemId}', [ItemsController::class, 'getSizes'])->name('get-sizes');
-            Route::get('/get-quantity/{sizeId}', [ItemsController::class, 'getQuantity'])->name('get-quantity');
-            //Status
-            Route::get('/approving{id}', [ItemsController::class, 'Approve'])->name('item.approve');
-            Route::get('/electronicser{id}', [ItemsController::class, 'Rescheduled'])->name('item.reschudel');
-            Route::get('/serviceable-items', [ItemsController::class, 'Serviceable'])->name('serviceable-item');
-            Route::get('/un-serviceable-items', [ItemsController::class, 'Un_Serviceable'])->name('un-serviceable-item');
-            Route::get('/un-serviceable{id}', [ItemsController::class, 'Unser'])->name('item.unserv');
-            //End Status
-            Route::get('/totalviewqty', [ItemsController::class, 'eletronicallqty']);
-            Route::get('/item-total', [ItemsController::class, 'alleachqt'])->name('items-total');
-            Route::get('/totalserunserv', [ItemsController::class, 'serveandunser'])->name('total.serveandunser');
-            Route::get('/totalgeneralserunserv', [ItemsController::class, 'serveandunsernon'])->name('total.general.serveandunser');
-            // Route::get('/category/{id}/items', [ItemsController::class, 'itemsByCategory'])->name('category.items');
-            Route::get('/category/{uuid}/items', [ItemsController::class, 'itemsByCategory'])->name('category.items');
-
         });
+
+        Route::prefix('weapons')->name('weapons.')->group(function () {
+            Route::get('/dashboard', WeaponDashboardController::class)->name('dashboard');
+            Route::get('issues/summary', WeaponIssueSummaryController::class)->name('issues.summary');
+
+            Route::resource('categories', WeaponCategoryController::class)->parameters([
+                'categories' => 'weaponCategory',
+            ])->except(['show']);
+            Route::resource('platforms', WeaponController::class)->parameters(['platforms' => 'weapon'])->except(['show']);
+            Route::resource('inventory', WeaponInventoryController::class)->except(['show']);
+            Route::resource('armories', ArmoryController::class)->except(['show']);
+
+            Route::get('issues/create', [WeaponIssueController::class, 'create'])->name('issues.create');
+            Route::post('issues', [WeaponIssueController::class, 'store'])->name('issues.store');
+            Route::get('issues/search', [WeaponIssueController::class, 'search'])->name('issues.search');
+            Route::get('issues/track', [WeaponIssueController::class, 'track'])->name('issues.track');
+
+            Route::get('returns', [WeaponIssueController::class, 'returnForm'])->name('returns.form');
+            Route::post('returns', [WeaponIssueController::class, 'processReturn'])->name('returns.process');
+        });
+        Route::prefix('vehicles')->name('vehicles.')->group(function () {
+            Route::get('/dashboard', VehicleDashboardController::class)->name('dashboard');
+            Route::get('deployments/summary', VehicleDeploymentSummaryController::class)->name('deployments.summary');
+
+            Route::resource('categories', VehicleCategoryController::class)->parameters([
+                'categories' => 'vehicleCategory',
+            ])->except(['show']);
+            Route::resource('motor-pools', MotorPoolController::class)->parameters([
+                'motor-pools' => 'motorPool',
+            ])->except(['show']);
+            Route::resource('platforms', VehicleController::class)->parameters([
+                'platforms' => 'vehicle',
+            ])->except(['show']);
+            Route::resource('inventory', VehicleInventoryController::class)->parameters([
+                'inventory' => 'vehicleInventory',
+            ])->except(['show']);
+
+            Route::get('deployments/create', [VehicleDeploymentController::class, 'create'])->name('deployments.create');
+            Route::post('deployments', [VehicleDeploymentController::class, 'store'])->name('deployments.store');
+            Route::get('deployments/track', [VehicleDeploymentController::class, 'track'])->name('deployments.track');
+
+            Route::get('returns', [VehicleDeploymentController::class, 'returnForm'])->name('returns.form');
+            Route::post('returns', [VehicleDeploymentController::class, 'processReturn'])->name('returns.process');
+        });
+
     });
 });
+
 Route::prefix('ranks')->group(function () {
     Route::get('/view', [rankcontroller::class, 'View'])->name('viewrank');
     Route::get('/add', [rankcontroller::class, 'RankAdd'])->name('rankadd');
@@ -175,6 +232,7 @@ Route::prefix('ranks')->group(function () {
     Route::post('/update{id}', [rankcontroller::class, 'Update'])->name('rankupdate');
     Route::get('/delete{id}', [rankcontroller::class, 'Delete'])->name('rankdelete');
 });
+
 Route::prefix('personnel')->group(function () {
     Route::get('/', [personnelController::class, 'index'])->name('personal-view');
     Route::get('/mech', [personnelController::class, 'create'])->name('personal-mech');
@@ -184,4 +242,7 @@ Route::prefix('personnel')->group(function () {
     Route::get('/delete{uuid}', [personnelController::class, 'delete'])->name('personal-delete');
     Route::post('/import', [personnelController::class, 'import'])->name('import-personnel');
     Route::get('/download-sample-excel', [personnelController::class, 'downloadSampleExcel']);
+    Route::get('/size-report', [personnelController::class, 'showSizeReport'])->name('personnel.size-report');
+    Route::get('/size-report/data', [personnelController::class, 'getSizeReportData'])->name('personnel.size.report.data');
 });
+Route::get('/profile/{uuid}', [personnelController::class, 'showProfile'])->name('personnel.profile');
