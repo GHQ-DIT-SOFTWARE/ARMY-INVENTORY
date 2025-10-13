@@ -31,7 +31,7 @@
         <div class="col-xl-3 col-md-6 mb-3">
             <div class="card">
                 <div class="card-body">
-                    <span class="text-muted text-uppercase small">Active Loans</span>
+                    <span class="text-muted text-uppercase small">Yet To Return</span>
                     <h3 class="mt-2 mb-1 text-warning">{{ number_format($summary['activeLoans']) }}</h3>
                     <span class="text-muted small">Awaiting return</span>
                 </div>
@@ -60,7 +60,7 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <div>
-                <h5 class="mb-1">Recent Issues</h5>
+                <h5 class="mb-1">Recent Issuance Activities</h5>
                 <span class="text-muted small">Latest transactions from the stock items catalogue.</span>
             </div>
             <div class="btn-group">
@@ -104,7 +104,7 @@
                                     @if ((int) $issue->status === 1)
                                         <span class="badge badge-success">Returned</span>
                                     @else
-                                        <span class="badge badge-warning">On Loan</span>
+                                        <span class="badge badge-warning">Issued</span>
                                     @endif
                                 </td>
                                 <td>
@@ -114,7 +114,7 @@
                                         </a>
                                     @else
                                         <a href="{{ route('controls.general-items.mark-loaned', $issue->id) }}" class="btn btn-sm btn-outline-primary">
-                                            <i class="feather icon-refresh-ccw"></i> Reopen
+                                            <i class="feather icon-refresh-ccw"></i> Re-Issue
                                         </a>
                                     @endif
                                 </td>

@@ -24,7 +24,7 @@ class DashboardLinks
             ['route' => 'weapons.dashboard', 'label' => 'Weapons Overview', 'icon' => 'feather icon-target', 'variant' => 'primary', 'can' => 'weapons.view'],
             ['route' => 'weapons.categories.index', 'label' => 'Manage Categories', 'icon' => 'feather icon-layers', 'variant' => 'outline-primary', 'can' => 'weapons.manage'],
             ['route' => 'weapons.armories.index', 'label' => 'Armory Register', 'icon' => 'feather icon-home', 'variant' => 'outline-primary', 'can' => 'armories.manage'],
-            ['route' => 'weapons.platforms.index', 'label' => 'Weapon Library', 'icon' => 'feather icon-book', 'variant' => 'outline-secondary', 'can' => 'weapons.manage'],
+            ['route' => 'weapons.platforms.index', 'label' => 'Weapon Items', 'icon' => 'feather icon-book', 'variant' => 'outline-secondary', 'can' => 'weapons.manage'],
             ['route' => 'weapons.inventory.index', 'label' => 'Tracked Inventory', 'icon' => 'feather icon-database', 'variant' => 'outline-secondary', 'can' => 'weapons.manage'],
             ['route' => 'weapons.issues.create', 'label' => 'Issue Weapons', 'icon' => 'feather icon-send', 'variant' => 'outline-primary', 'can' => 'weapons.issue'],
             ['route' => 'weapons.returns.form', 'label' => 'Return Weapons', 'icon' => 'feather icon-log-in', 'variant' => 'outline-secondary', 'can' => 'weapons.return'],

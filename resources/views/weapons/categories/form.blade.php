@@ -21,7 +21,7 @@
 
     <div class="card shadow-sm">
         <div class="card-header">
-            <h5 class="mb-0">Category Details</h5>
+            <h5 class="mb-0">Create Category</h5>
         </div>
         <div class="card-body">
             <form method="POST" action="{{ isset($weaponCategory) ? route('weapons.categories.update', $weaponCategory) : route('weapons.categories.store') }}">
@@ -32,10 +32,6 @@
 
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label">Category Name<span class="text-danger">*</span></label>
-                        <input type="text" name="name" class="form-control" value="{{ old('name', $weaponCategory->name ?? '') }}" required>
-                    </div>
-                    <div class="col-md-6">
                         <label class="form-label">Base Category</label>
                         <select name="category_id" class="form-control">
                             <option value="">Select if applicable</option>
@@ -43,6 +39,10 @@
                                 <option value="{{ $id }}" @selected(old('category_id', $weaponCategory->category_id ?? '') == $id)>{{ $label }}</option>
                             @endforeach
                         </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Category Name<span class="text-danger">*</span></label>
+                        <input type="text" name="name" class="form-control" value="{{ old('name', $weaponCategory->name ?? '') }}" required>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Description</label>

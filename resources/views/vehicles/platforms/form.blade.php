@@ -6,12 +6,12 @@
             <div class="row align-items-center">
                 <div class="col-md-12">
                     <div class="page-header-title">
-                        <h5 class="m-b-10">{{ isset($vehicle) ? 'Update Vehicle' : 'Add New Vehicle' }}</h5>
-                        <p class="text-muted mb-0">Capture comprehensive specifications for each vehicle type.</p>
+                        <h5 class="m-b-10">{{ isset($vehicle) ? 'Update Vehicle' : 'Add New Vehicle Sub-Category' }}</h5>
+                        <p class="text-muted mb-0">Capture comprehensive specifications for each vehicle Sub-Category type.</p>
                     </div>
                     <ul class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ route('vehicles.dashboard') }}"><i class="feather icon-home"></i></a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('vehicles.platforms.index') }}">Vehicle Library</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('vehicles.platforms.index') }}">Vehicle Sub-Category</a></li>
                         <li class="breadcrumb-item active">{{ isset($vehicle) ? 'Edit' : 'Create' }}</li>
                     </ul>
                 </div>

@@ -25,7 +25,7 @@
                 <input type="text" name="search" class="form-control" placeholder="Search weapon number" value="{{ request('search') }}">
                 <button type="submit" class="btn btn-outline-secondary ms-2">Search</button>
             </form>
-            <a href="{{ route('weapons.inventory.create') }}" class="btn btn-sm btn-primary">Add Weapon Serial</a>
+            <a href="{{ route('weapons.inventory.create') }}" class="btn btn-sm btn-primary">Add Weapon Items</a>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -55,7 +55,7 @@
                                     </span>
                                 </td>
                                 <td>{{ optional($inventory->armory)->name ?? 'Central Stores' }}</td>
-                                <td>{{ optional($inventory->acquired_on)->format('d M Y') ?: '—' }}</td>
+                                <td>{{ optional($inventory->acquired_on)->format('d M Y') ?: 'ï¿½' }}</td>
                                 <td class="text-end">
                                     <a href="{{ route('weapons.inventory.edit', $inventory) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
                                     <form action="{{ route('weapons.inventory.destroy', $inventory) }}" method="POST" class="d-inline">

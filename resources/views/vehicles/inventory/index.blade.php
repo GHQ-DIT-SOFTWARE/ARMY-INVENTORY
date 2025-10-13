@@ -6,8 +6,8 @@
             <div class="row align-items-center">
                 <div class="col-md-12">
                     <div class="page-header-title">
-                        <h5 class="m-b-10">Vehicle Asset Register</h5>
-                        <p class="text-muted mb-0">Unique asset numbers and current disposition.</p>
+                        <h5 class="m-b-10">Vehicle Items Register</h5>
+                        <p class="text-muted mb-0">Unique vehicle numbers and current disposition.</p>
                     </div>
                     <ul class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ route('vehicles.dashboard') }}"><i class="feather icon-home"></i></a></li>
@@ -25,7 +25,7 @@
                 <input type="text" name="search" class="form-control" placeholder="Search asset number" value="{{ request('search') }}">
                 <button type="submit" class="btn btn-outline-success ms-2">Search</button>
             </form>
-            <a href="{{ route('vehicles.inventory.create') }}" class="btn btn-sm btn-success">Add Vehicle Asset</a>
+            <a href="{{ route('vehicles.inventory.create') }}" class="btn btn-sm btn-success">Add Vehicle Item</a>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -33,9 +33,9 @@
                     <thead>
                         <tr>
                             <th>Vehicle</th>
-                            <th>Asset Number</th>
+                            <th>VIN</th>
                             <th>Status</th>
-                            <th>Motor Pool</th>
+                            <th>Supply Point Depo</th>
                             <th>Acquired</th>
                             <th class="text-end">Actions</th>
                         </tr>
@@ -55,7 +55,7 @@
                                     </span>
                                 </td>
                                 <td>{{ optional($inventory->motorPool)->name ?? 'Central Garage' }}</td>
-                                <td>{{ optional($inventory->acquired_on)->format('d M Y') ?: '—' }}</td>
+                                <td>{{ optional($inventory->acquired_on)->format('d M Y') ?: 'ï¿½' }}</td>
                                 <td class="text-end">
                                     <a href="{{ route('vehicles.inventory.edit', $inventory) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
                                     <form action="{{ route('vehicles.inventory.destroy', $inventory) }}" method="POST" class="d-inline">

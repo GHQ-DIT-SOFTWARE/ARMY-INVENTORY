@@ -1,4 +1,4 @@
-@extends('admin.admin_master')
+﻿@extends('admin.admin_master')
 @section('admin')
     <div class="page-header">
         <div class="page-block">
@@ -40,7 +40,7 @@
 
                     <div class="row">
                         <div class="col-sm-3">
-                            <div class="card  text-white widget-visitor-card" style="background-color:#05761c">
+                            <div class="card  text-white widget-visitor-card" style="background-color:rgb(44, 53, 57)">
                                 <div class="card-body text-center">
                                     <h2 class="text-white" id="totalItems">{{ $totalItems }}</h2>
                                     <h6 class="text-white">TOTAL ITEMS</h6>
@@ -49,7 +49,7 @@
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="card  text-white widget-visitor-card" style="background-color:#05761c">
+                            <div class="card  text-white widget-visitor-card" style="background-color:rgb(44, 53, 57)">
                                 <div class="card-body text-center">
                                     <h2 class="text-white">{{ $totalQty }}</h2>
                                     <h6 class="text-white">STOCK QUANTITY</h6>
@@ -58,7 +58,7 @@
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="card  text-white widget-visitor-card" style="background-color:#05761c">
+                            <div class="card  text-white widget-visitor-card" style="background-color:rgb(44, 53, 57)">
                                 <div class="card-body text-center">
                                     <h2 class="text-white">{{ $totalrestock }}</h2>
                                     <h6 class="text-white">RESTOCK QUANTITY TOTAL</h6>
@@ -67,7 +67,7 @@
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="card  text-white widget-visitor-card" style="background-color:#05761c">
+                            <div class="card  text-white widget-visitor-card" style="background-color:rgb(44, 53, 57)">
                                 <div class="card-body text-center">
                                     <h2 class="text-white">{{ $totalSubCategory }}</h2>
                                     <h6 class="text-white">CATEGORIES</h6>
@@ -217,3 +217,4 @@
         </div>
     </div>
 @endsection
+

@@ -6,7 +6,7 @@
             <div class="row align-items-center">
                 <div class="col-md-12">
                     <div class="page-header-title">
-                        <h5 class="m-b-10">Weapon Library</h5>
+                        <h5 class="m-b-10">Weapon Items</h5>
                         <p class="text-muted mb-0">Detailed platform data for Ghana Armed Forces small arms.</p>
                     </div>
                     <ul class="breadcrumb">
@@ -21,7 +21,7 @@
 
     <div class="card shadow-sm">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Registered Weapon Systems</h5>
+            <h5 class="mb-0">Registered Weapons</h5>
             <a href="{{ route('weapons.platforms.create') }}" class="btn btn-sm btn-primary">Add Weapon</a>
         </div>
         <div class="card-body p-0">

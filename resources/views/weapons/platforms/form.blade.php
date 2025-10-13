@@ -139,13 +139,13 @@
                 @endphp
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label">Configuration</label>
-                        <select name="configuration_items[]" class="form-control" multiple size="6">
+                        <label class="form-label" for="configuration_items">Configuration</label>
+                        <select name="configuration_items[]" id="configuration_items" class="form-control select2 configuration-select" multiple data-placeholder="Select configuration items">
                             @foreach ($configurationOptions as $option)
                                 <option value="{{ $option }}" @selected(in_array($option, $preselectedConfiguration, true))>{{ $option }}</option>
                             @endforeach
                         </select>
-                        <small class="text-muted">Hold Ctrl (Windows) or Cmd (Mac) to select multiple accessories.</small>
+                        <small class="text-muted">Search or scroll to add multiple configuration items.</small>
                         @error('configuration_items')
                             <span class="text-danger d-block">{{ $message }}</span>
                         @enderror
@@ -166,7 +166,7 @@
                         <label class="form-label">Additional Notes</label>
                         <textarea name="notes" class="form-control" rows="3">{{ old('notes', $weapon->notes ?? '') }}</textarea>
                     </div>
-                </div> 
+                </div>
             </div>
         </div>
 
@@ -176,3 +176,18 @@
         </div>
     </form>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const $configurationSelect = $('#configuration_items');
+
+            if ($configurationSelect.length) {
+                $configurationSelect.select2({
+                    placeholder: $configurationSelect.data('placeholder') || 'Select configuration items',
+                    width: '100%'
+                });
+            }
+        });
+    </script>
+@endpush

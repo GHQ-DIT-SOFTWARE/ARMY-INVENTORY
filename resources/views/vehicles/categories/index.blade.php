@@ -21,7 +21,7 @@
 
     <div class="card shadow-sm">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Configured Categories</h5>
+            <h5 class="mb-0">Vehicle Base Categories</h5>
             <a href="{{ route('vehicles.categories.create') }}" class="btn btn-sm btn-success">Add Category</a>
         </div>
         <div class="card-body p-0">

@@ -6,8 +6,8 @@
             <div class="row align-items-center">
                 <div class="col-md-12">
                     <div class="page-header-title">
-                        <h5 class="m-b-10">Vehicle Library</h5>
-                        <p class="text-white mb-0">Structured technical data for every fleet platform.</p>
+                        <h5 class="m-b-10">Vehicle Categories</h5>
+                        <p class="text-white mb-0">Structured technical data for every fleet Category.</p>
                     </div>
                     <ul class="breadcrumb text-white">
                         <li class="breadcrumb-item text-white"><a href="{{ route('vehicles.dashboard') }}" class="text-white"><i class="feather icon-home"></i></a></li>
@@ -21,9 +21,9 @@
 
     <div class="card shadow-sm">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Registered Vehicle Systems</h5>
+            <h5 class="mb-0">Registered Vehicle Categories</h5>
             @can('vehicles.manage')
-                <a href="{{ route('vehicles.platforms.create') }}" class="btn btn-sm btn-success">Add Vehicle</a>
+                <a href="{{ route('vehicles.platforms.create') }}" class="btn btn-sm btn-success">Add Category</a>
             @endcan
         </div>
         <div class="card-body p-0">
@@ -31,7 +31,7 @@
                 <table class="table table-striped mb-0 align-middle">
                     <thead>
                         <tr>
-                            <th>Vehicle</th>
+                            <th>Vehicle Make</th>
                             <th>Variant</th>
                             <th>Category</th>
                             <th>Engine</th>

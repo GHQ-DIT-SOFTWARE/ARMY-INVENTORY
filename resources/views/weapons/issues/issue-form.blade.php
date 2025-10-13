@@ -23,8 +23,8 @@
         @csrf
         <div class="card shadow-sm">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Issue Details</h5>
-                <a href="{{ route('weapons.inventory.index') }}" class="btn btn-sm btn-outline-secondary">View Inventory</a>
+                <h5 class="mb-0">Issuance Details</h5>
+                <a href="{{ route('weapons.inventory.index') }}" class="btn btn-sm btn-outline-secondary">View Items</a>
             </div>
             <div class="card-body">
                 <div class="row g-3">
@@ -42,15 +42,15 @@
                         <input type="date" name="expected_return_at" class="form-control" value="{{ old('expected_return_at') }}">
                     </div>
                     <div class="col-12">
-                        <label class="form-label">Select Weapons<span class="text-danger">*</span></label>
-                        <select name="weapon_inventory_ids[]" class="form-control" multiple size="10" required>
+                        <label class="form-label" for="weapon_inventory_ids">Select Weapons<span class="text-danger">*</span></label>
+                        <select name="weapon_inventory_ids[]" id="weapon_inventory_ids" class="form-control select2" multiple data-placeholder="Search and select weapons" required>
                             @foreach ($availableWeapons as $inventory)
                                 <option value="{{ $inventory->id }}">
                                     {{ $inventory->weapon_number }} - {{ optional($inventory->weapon)->name }} {{ optional($inventory->weapon)->variant ? '(' . $inventory->weapon->variant . ')' : '' }}
                                 </option>
                             @endforeach
                         </select>
-                        <small class="text-muted">Hold Ctrl / Cmd to select multiple serials.</small>
+                        <small class="text-muted">Type to filter the list and select multiple serials.</small>
                     </div>
                     <div class="col-12">
                         <label class="form-label">Issue Notes</label>
@@ -65,3 +65,18 @@
         </div>
     </form>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const $weaponSelect = $('#weapon_inventory_ids');
+
+            if ($weaponSelect.length) {
+                $weaponSelect.select2({
+                    placeholder: $weaponSelect.data('placeholder') || 'Search and select weapons',
+                    width: '100%'
+                });
+            }
+        });
+    </script>
+@endpush

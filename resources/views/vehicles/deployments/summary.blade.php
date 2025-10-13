@@ -61,7 +61,7 @@
         <div class="col-lg-4 mb-3">
             <div class="card h-100">
                 <div class="card-header">
-                    <h5 class="mb-0">Active Deployments by Motor Pool</h5>
+                    <h5 class="mb-0">Active Deployments by Supply Pool</h5>
                 </div>
                 <div class="card-body">
                     @if ($motorPoolBreakdown->isEmpty())
@@ -91,8 +91,8 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Vehicle</th>
-                                    <th>Asset No.</th>
-                                    <th>Motor Pool</th>
+                                    <th> VIN</th>
+                                    <th>Supply Point Depo</th>
                                     <th>Operator</th>
                                     <th>Deployed At</th>
                                     <th>Expected Return</th>

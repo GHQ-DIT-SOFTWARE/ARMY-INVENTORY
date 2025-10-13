@@ -2,8 +2,8 @@
     $metrics = [
         ['label' => 'Categories', 'value' => $totals['categories'] ?? 0, 'hint' => 'Weapon groupings'],
         ['label' => 'Sub Category', 'value' => $totals['weapon_platforms'] ?? 0, 'hint' => 'Distinct weapon type'],
-        ['label' => 'Inventory', 'value' => $totals['inventory'] ?? 0, 'hint' => 'Unique serialised weapons'],
-        ['label' => 'Available', 'value' => $totals['available'] ?? 0, 'hint' => 'Ready for tasking', 'badge' => 'success'],
+        ['label' => 'Weapon Items', 'value' => $totals['inventory'] ?? 0, 'hint' => 'Unique serialised weapons'],
+        ['label' => 'Available Weapons', 'value' => $totals['available'] ?? 0, 'hint' => 'Ready for issuance', 'badge' => 'success'],
         ['label' => 'Issued Out', 'value' => $totals['issued'] ?? 0, 'hint' => 'Forward deployed', 'badge' => 'warning'],
         ['label' => 'Armories', 'value' => $totals['armories'] ?? 0, 'hint' => 'Receiving locations'],
     ];
@@ -35,8 +35,8 @@
         <div class="card shadow-sm h-100">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
-                    <h5 class="mb-0">Recent Issues</h5>
-                    <small class="text-muted">Last six transactions</small>
+                    <h5 class="mb-0">Recently Issued</h5>
+                    <small class="text-muted">Last six Issuance</small>
                 </div>
                 @can('weapons.issue')
                     <a href="{{ route('weapons.issues.create') }}" class="btn btn-sm btn-primary">Issue Weapons</a>
@@ -92,8 +92,8 @@
     <div class="col-xl-4">
         <div class="card shadow-sm h-100">
             <div class="card-header">
-                <h5 class="mb-0">Armory Readiness</h5>
-                <small class="text-muted">Issued holdings by location</small>
+                <h5 class="mb-0">Armory Weapon State</h5>
+                <small class="text-muted">Weapon holdings by armories</small>
             </div>
             <div class="card-body">
                 @forelse ($armoryEntries as $entry)
@@ -111,7 +111,7 @@
                         <small class="text-muted">{{ $entry->location ?? 'Unknown location' }}</small>
                     </div>
                 @empty
-                    <div class="text-center text-muted">No armories configured.</div>
+                    <div class="text-center text-muted">No armories added.</div>
                 @endforelse
             </div>
         </div>
@@ -119,8 +119,8 @@
     <div class="col-xl-4">
         <div class="card shadow-sm h-100">
             <div class="card-header">
-                <h5 class="mb-0">Category Concentration</h5>
-                <small class="text-muted">Top five by platform count</small>
+                <h5 class="mb-0">Category Strenght</h5>
+                <small class="text-muted">Top five Categories by Numbers</small>
             </div>
             <div class="card-body">
                 @forelse ($categoryEntries as $category)
@@ -140,8 +140,8 @@
     <div class="col-xl-4">
         <div class="card shadow-sm h-100">
             <div class="card-header">
-                <h5 class="mb-0">Issue Activity (14 days)</h5>
-                <small class="text-muted">Volume trend by day</small>
+                <h5 class="mb-0">Issuance Activity (14 days)</h5>
+                <small class="text-muted">Issuance trend by day</small>
             </div>
             <div class="card-body">
                 @forelse ($timelineEntries as $row)

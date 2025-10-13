@@ -22,7 +22,7 @@
         <div class="col-xl-3 col-md-6 mb-3">
             <div class="card">
                 <div class="card-body">
-                    <span class="text-muted text-uppercase small">Available Items</span>
+                    <span class="text-muted text-uppercase small">Available Categogies</span>
                     <h3 class="mt-2 mb-1">{{ number_format($summary['availableItems']) }}</h3>
                     <span class="text-muted small">Distinct stock catalogue entries</span>
                 </div>

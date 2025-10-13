@@ -1,7 +1,7 @@
 @php
     $metrics = [
         ['label' => 'Catalog Items', 'value' => $totals['items'] ?? 0, 'hint' => 'Active inventory records'],
-        ['label' => 'Available Stock', 'value' => $totals['stock_quantity'] ?? 0, 'hint' => 'Total units in store'],
+        ['label' => 'General Control Strength', 'value' => $totals['stock_quantity'] ?? 0, 'hint' => 'Total units in store'],
         ['label' => 'Pending Requests', 'value' => $totals['pending_requests'] ?? 0, 'hint' => 'Awaiting authorization'],
         ['label' => 'Issued Today', 'value' => $totals['issued_today'] ?? 0, 'hint' => 'Confirmed disbursements'],
         ['label' => 'Restocked (30 days)', 'value' => $totals['restocks_30_days'] ?? 0, 'hint' => 'Units replenished recently'],

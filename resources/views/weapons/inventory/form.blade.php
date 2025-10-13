@@ -1,12 +1,12 @@
 @extends('admin.admin_master')
-@section('title', isset($weaponInventory) ? 'Edit Weapon Serial' : 'Add Weapon Serial')
+@section('title', isset($weaponInventory) ? 'Edit Weapon Serial' : 'Add Weapons Items')
 @section('admin')
     <div class="page-header">
         <div class="page-block">
             <div class="row align-items-center">
                 <div class="col-md-12">
                     <div class="page-header-title">
-                        <h5 class="m-b-10">{{ isset($weaponInventory) ? 'Update Weapon Serial' : 'Add Weapon Serial' }}</h5>
+                        <h5 class="m-b-10">{{ isset($weaponInventory) ? 'Update Weapon Serial' : 'Add Weapon Items' }}</h5>
                         <p class="text-muted mb-0">Every individual weapon remains traceable across its lifecycle.</p>
                     </div>
                     <ul class="breadcrumb">
@@ -21,7 +21,7 @@
 
     <div class="card shadow-sm">
         <div class="card-header">
-            <h5 class="mb-0">Inventory Details</h5>
+            <h5 class="mb-0">Weapon Item Addition</h5>
         </div>
         <div class="card-body">
             <form method="POST" action="{{ isset($weaponInventory) ? route('weapons.inventory.update', $weaponInventory) : route('weapons.inventory.store') }}">
@@ -32,9 +32,9 @@
 
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label">Weapon<span class="text-danger">*</span></label>
+                        <label class="form-label">Weapon Sub-Category<span class="text-danger">*</span></label>
                         <select name="weapon_id" class="form-control" required>
-                            <option value="">— Select Weapon —</option>
+                            <option value="">- Select One -</option>
                             @foreach ($weapons as $id => $label)
                                 <option value="{{ $id }}" @selected(old('weapon_id', $weaponInventory->weapon_id ?? '') == $id)>{{ $label }}</option>
                             @endforeach
