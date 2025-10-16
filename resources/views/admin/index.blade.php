@@ -2,14 +2,32 @@
 @section('admin')
     @php
         $availableStockTotals = (int) \App\Models\Item::sum('qty');
+        $user = Auth::user();
     @endphp
+
     <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #8b5cf6;
+            --secondary: #f59e0b;
+            --accent: #10b981;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --card-hover: rgba(255, 255, 255, 1);
+            --text-primary: #334155;
+            --text-secondary: #64748b;
+            --border-light: rgba(226, 232, 240, 0.8);
+        }
+
         .dashboard-shell {
             position: relative;
             overflow: hidden;
             border-radius: 1.25rem;
-            background: rgba(222, 223, 227, 0.78);
-            box-shadow: 0 24px 48px rgba(255, 255, 255, 0.4);
+            background: linear-gradient(135deg, #f0f4ff 0%, #f8fafc 100%);
+            box-shadow:
+                0 10px 25px rgba(0, 0, 0, 0.04),
+                0 5px 10px rgba(0, 0, 0, 0.02);
         }
 
         .dashboard-shell::before {
@@ -17,43 +35,36 @@
             position: absolute;
             inset: -220px;
             background:
-                radial-gradient(circle at 18% 22%, rgba(249, 249, 249, 0.35), transparent 58%),
-                radial-gradient(circle at 78% 32%, rgba(250, 250, 251, 0.38), transparent 48%),
-                radial-gradient(circle at 42% 82%, rgba(250, 250, 250, 0.4), transparent 54%);
+                radial-gradient(circle at 18% 22%, rgba(99, 102, 241, 0.08), transparent 58%),
+                radial-gradient(circle at 78% 32%, rgba(139, 92, 246, 0.06), transparent 48%),
+                radial-gradient(circle at 42% 82%, rgba(16, 185, 129, 0.05), transparent 54%);
             animation: auroraShift 18s ease-in-out infinite alternate;
             filter: blur(65px);
-        }
-
-        .dashboard-shell::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(249, 249, 249, 0.94), rgba(255, 255, 255, 0.66));
         }
 
         .dashboard-content {
             position: relative;
             z-index: 2;
-            color: #f8fafc;
+            color: var(--text-primary);
         }
 
         .floating-orb {
             position: absolute;
             border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.38), rgba(59, 130, 246, 0.2));
-            box-shadow: 0 18px 40px rgba(59, 130, 246, 0.32);
+            background: radial-gradient(circle at 30% 30%, rgba(99, 102, 241, 0.15), rgba(99, 102, 241, 0.05));
+            box-shadow: 0 18px 40px rgba(99, 102, 241, 0.1);
             animation: floatUp 24s linear infinite;
-            opacity: 0.5;
+            opacity: 0.6;
         }
 
         .floating-orb.is-secondary {
-            background: radial-gradient(circle at 70% 30%, rgba(139, 92, 246, 0.42), rgba(59, 130, 246, 0.22));
-            box-shadow: 0 18px 42px rgba(139, 92, 246, 0.38);
+            background: radial-gradient(circle at 70% 30%, rgba(139, 92, 246, 0.12), rgba(139, 92, 246, 0.04));
+            box-shadow: 0 18px 42px rgba(139, 92, 246, 0.08);
             animation-duration: 29s;
         }
 
         .floating-orb.is-tertiary {
-            background: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.45), rgba(59, 130, 246, 0.19));
+            background: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.03));
             animation-duration: 33s;
         }
 
@@ -67,18 +78,23 @@
         .dashboard-hero h1 {
             font-weight: 700;
             margin-bottom: 0.75rem;
+            color: var(--dark);
+            font-size: 2.5rem;
         }
 
         .status-chip {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.45rem 1rem;
+            padding: 0.5rem 1.25rem;
             border-radius: 999px;
             font-size: 0.875rem;
-            background: rgba(255, 255, 255, 0.08);
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(12px);
-            color: #03609e;
+            color: var(--accent);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-light);
         }
 
         .pulse-dot {
@@ -86,63 +102,152 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: #02587e;
-            box-shadow: 0 0 0 rgba(1, 125, 179, 0.9);
+            background: var(--accent);
+            box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
             animation: pulse 3s ease-out infinite;
         }
 
         .quick-actions {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
         }
 
         .quick-actions .card {
-            border: none;
+            border: 1px solid var(--border-light);
             border-radius: 1rem;
-            background: rgba(15, 23, 42, 0.45);
-            color: #f8fafc;
-            transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
             backdrop-filter: blur(14px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .quick-actions .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
         }
 
         .quick-actions .card:hover {
             transform: translateY(-6px);
-            background: rgba(106, 138, 207, 0.6);
-            box-shadow: 0 20px 30px rgba(82, 107, 159, 0.35);
+            background: var(--card-hover);
+            box-shadow: 0 20px 30px rgba(99, 102, 241, 0.15);
+            border-color: rgba(99, 102, 241, 0.2);
+        }
+
+        .quick-actions .card:hover::before {
+            transform: scaleX(1);
         }
 
         .quick-actions .icon-wrap {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            background: rgba(160, 188, 233, 0.28);
-            color: #bfdbfe;
-            margin-bottom: 0.9rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
+        .quick-actions .card:hover .icon-wrap {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
+        }
+
+        .quick-actions .card h5 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .quick-actions .card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1.25rem;
+        }
+
+        .quick-actions .card a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .quick-actions .card a:hover {
+            color: var(--primary-light);
+            transform: translateX(4px);
         }
 
         .summary-metrics {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1.25rem;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
         }
 
         .summary-metrics .metric-card {
-            border: none;
+            border: 1px solid var(--border-light);
             border-radius: 1.15rem;
-            padding: 1.65rem;
-            background: rgba(84, 99, 132, 0.52);
-            backdrop-filter: blur(16px);
-            color: #ffffff;
-            transition: transform 0.35s ease, box-shadow 0.35s ease;
+            padding: 1.75rem;
+            background: var(--card-bg);
+            color: var(--dark);
+            transition: all 0.35s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .summary-metrics .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
         }
 
         .summary-metrics .metric-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 22px 34px rgba(15, 23, 42, 0.45);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.08);
+            border-color: rgba(99, 102, 241, 0.2);
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .metric-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            margin-right: 1rem;
         }
 
         .metric-value {
@@ -150,13 +255,69 @@
             font-weight: 700;
             line-height: 1.1;
             margin-bottom: 0.35rem;
+            color: var(--dark);
         }
 
         .metric-label {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            font-weight: 600;
             letter-spacing: 0.02em;
             text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.78);
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-card small {
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-top: auto;
+        }
+
+        .trend-indicator {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .trend-up {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent);
+        }
+
+        .trend-down {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .page-header-title h5 {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .breadcrumb-item.active {
+            color: var(--text-secondary);
+        }
+
+        .welcome-text {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 600px;
         }
 
         @keyframes auroraShift {
@@ -176,17 +337,17 @@
         @keyframes pulse {
             0% {
                 transform: scale(0.9);
-                box-shadow: 0 0 0 0 rgba(120, 203, 239, 0.65);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
             }
 
             70% {
                 transform: scale(1);
-                box-shadow: 0 0 0 14px rgba(124, 142, 150, 0);
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
             }
 
             100% {
                 transform: scale(0.9);
-                box-shadow: 0 0 0 0 rgba(98, 140, 158, 0);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
             }
         }
 
@@ -207,15 +368,14 @@
         @media (max-width: 991.98px) {
             .dashboard-hero {
                 padding: 2.5rem 1.75rem;
-                text-align: center;
             }
 
             .quick-actions {
-                grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             }
 
             .summary-metrics {
-                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             }
         }
 
@@ -227,28 +387,31 @@
             .dashboard-hero {
                 padding: 2.15rem 1.35rem;
             }
+
+            .dashboard-hero h1 {
+                font-size: 2rem;
+            }
         }
     </style>
-    @php
-        $user = Auth::user();
-    @endphp
+
     <div class="page-header">
         <div class="page-block">
             <div class="row align-items-center">
                 <div class="col-md-12">
                     <div class="page-header-title">
-                        <h5 class="m-b-10" style="color:#d4af37;">Command Dashboard</h5>
+                        <h5 class="m-b-10">Business Dashboard</h5>
                     </div>
                     <ul class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ route('weapons.dashboard') }}"><i class="feather icon-home"></i></a>
                         </li>
-                        <li class="breadcrumb-item"><a href="#!">Welcome</a></li>
+                        <li class="breadcrumb-item"><a href="#!">Dashboard</a></li>
                         <li class="breadcrumb-item"><a href="#!">Overview</a></li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
+
     <div class="dashboard-shell mb-4">
         <span class="floating-orb" style="width: 240px; height: 240px; top: 6%; right: 13%;"></span>
         <span class="floating-orb is-secondary" style="width: 175px; height: 175px; bottom: 16%; left: 9%;"></span>
@@ -260,86 +423,108 @@
                     <div class="mb-4 mb-lg-0">
                         <div class="status-chip">
                             <span class="pulse-dot"></span>
-                            Operational Readiness - Live
+                            System Status: Active
                         </div>
                         <h1 class="display-6">
-                            Welcome back, {{ $user?->name ?? 'Logistics Team' }}.
+                            Welcome back, {{ $user?->name ?? 'Team Member' }}!
                         </h1>
-                        <p class="text-light mb-0">
-                            Maintain situational awareness across weapons, vehicles, and personnel. The command center
-                            continuously synchronizes mission-critical assets to keep units deployment-ready.
+                        <p class="welcome-text mb-0">
+                            Here's an overview of your business operations. Monitor key metrics, manage inventory, and track performance across all departments.
                         </p>
                     </div>
-                    {{-- <div class="mt-3 mt-lg-0 text-lg-right">
-                        <small class="text-light opacity-75 d-block">GAF Logistics Command</small>
-                        <h2 class="h4 text-white mb-0">Unified Operations Center</h2>
-                        <p class="mb-0 text-light opacity-75">Continuously monitoring readiness levels and mission support queues.</p>
-                    </div> --}}
                 </div>
 
                 <div class="quick-actions">
                     <div class="card p-4 shadow-sm">
                         <div class="icon-wrap">
-                            <i class="feather icon-target"></i>
+                            <i class="feather icon-package"></i>
                         </div>
-                        <h5 class="mb-1 text-white">Weapon Stock</h5>
-                        <p class="mb-3 text-light">Update technical details, configurations, and deployment kits.</p>
-                        <a href="{{ route('weapons.platforms.index') }}" class="text-white-50">
-                            Manage weapons <i class="feather icon-arrow-right ml-2"></i>
+                        <h5 class="mb-1">Inventory Management</h5>
+                        <p class="mb-3">Manage stock levels, track items, and update product information.</p>
+                        <a href="{{ route('weapons.platforms.index') }}">
+                            View inventory <i class="feather icon-arrow-right ml-2"></i>
                         </a>
                     </div>
                     <div class="card p-4 shadow-sm">
                         <div class="icon-wrap">
-                            <i class="feather icon-truck"></i>
+                            <i class="fas fa-truck"></i>
                         </div>
-                        <h5 class="mb-1 text-white">Vehicle Depo Pool</h5>
-                        <p class="mb-3 text-light">Track fleet readiness, deployment orders, and service windows.</p>
-                        <a href="{{ route('vehicles.platforms.index') }}" class="text-white-50">
-                            Open vehicle items <i class="feather icon-arrow-right ml-2"></i>
+                        <h5 class="mb-1">Fleet Management</h5>
+                        <p class="mb-3">Track vehicles, maintenance schedules, and deployment status.</p>
+                        <a href="{{ route('vehicles.platforms.index') }}">
+                            Manage fleet <i class="feather icon-arrow-right ml-2"></i>
                         </a>
                     </div>
                     <div class="card p-4 shadow-sm">
                         <div class="icon-wrap">
                             <i class="feather icon-users"></i>
                         </div>
-                        <h5 class="mb-1 text-white">Personnel</h5>
-                        <p class="mb-3 text-light">Maintain profiles, readiness status, and issuance assignments.</p>
-                        <a href="{{ route('personal-view') }}" class="text-white-50">
-                            Review roster <i class="feather icon-arrow-right ml-2"></i>
+                        <h5 class="mb-1">Team Management</h5>
+                        <p class="mb-3">View team members, assign tasks, and track performance.</p>
+                        <a href="{{ route('personal-view') }}">
+                            View team <i class="feather icon-arrow-right ml-2"></i>
                         </a>
                     </div>
                     <div class="card p-4 shadow-sm">
                         <div class="icon-wrap">
-                            <i class="feather icon-clipboard"></i>
+                            <i class="feather icon-bar-chart-2"></i>
                         </div>
-                        <h5 class="mb-1 text-white">Records Hub</h5>
-                        <p class="mb-3 text-light">Audit stock movements, returns, and historical accountability.</p>
-                        <a href="{{ route('controls.general-items.records') }}" class="text-white-50">
-                            View records <i class="feather icon-arrow-right ml-2"></i>
+                        <h5 class="mb-1">Reports & Analytics</h5>
+                        <p class="mb-3">Access performance reports and business intelligence data.</p>
+                        <a href="{{ route('controls.general-items.records') }}">
+                            View reports <i class="feather icon-arrow-right ml-2"></i>
                         </a>
                     </div>
                 </div>
 
                 <div class="summary-metrics mt-4">
                     <div class="metric-card">
-                        <div class="metric-label">G-Control Logistics</div>
-                        <div class="metric-value">{{ number_format($availableStockTotals) }}</div>
-                        <small class="text-primary">+3 movements logged in the last 48 hours</small>
+                        <div class="metric-header">
+                            <div class="metric-icon">
+                                <i class="feather icon-package"></i>
+                            </div>
+                            <div>
+                                <div class="metric-label">Total Inventory</div>
+                                <div class="metric-value">{{ number_format($availableStockTotals) }}</div>
+                            </div>
+                        </div>
+                        <small>+3 new items added this week <span class="trend-indicator trend-up">+2.4%</span></small>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-label">Weapon Readiness</div>
-                        <div class="metric-value">428</div>
-                        <small class="text-primary">Next compliance audit scheduled for tomorrow</small>
+                        <div class="metric-header">
+                            <div class="metric-icon">
+                                <i class="feather icon-check-circle"></i>
+                            </div>
+                            <div>
+                                <div class="metric-label">Operational Rate</div>
+                                <div class="metric-value">96%</div>
+                            </div>
+                        </div>
+                        <small>All systems running optimally <span class="trend-indicator trend-up">+1.2%</span></small>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-label">Fleet Readiness</div>
-                        <div class="metric-value">94%</div>
-                        <small class="text-primary">5 vehicles awaiting maintenance clearance</small>
+                        <div class="metric-header">
+                            <div class="metric-icon">
+                                <i class="feather icon-truck"></i>
+                            </div>
+                            <div>
+                                <div class="metric-label">Fleet Availability</div>
+                                <div class="metric-value">94%</div>
+                            </div>
+                        </div>
+                        <small>5 vehicles scheduled for maintenance <span class="trend-indicator trend-down">-0.8%</span></small>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-label">Personnel Records</div>
-                        <div class="metric-value">1,248</div>
-                        <small class="text-primary">15 new profiles activated this week</small>
+                        <div class="metric-header">
+                            <div class="metric-icon">
+                                <i class="feather icon-users"></i>
+                            </div>
+                            <div>
+                                <div class="metric-label">Team Members</div>
+                                <div class="metric-value">48</div>
+                            </div>
+                        </div>
+                        <small>2 new members joined this month <span class="trend-indicator trend-up">+4.3%</span></small>
                     </div>
                 </div>
             </div>

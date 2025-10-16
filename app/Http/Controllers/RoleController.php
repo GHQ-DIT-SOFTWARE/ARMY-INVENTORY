@@ -29,9 +29,17 @@ class RoleController extends Controller
     {
         $this->authorizeRolesMaintenance();
 
-        $roles = Role::all();
+        $roles = Role::with('permissions')
+            ->orderBy('name')
+            ->paginate(12)
+            ->withQueryString();
 
-        return view('roles.index', compact('roles'));
+        $permissionsCount = Permission::count();
+
+        return view('roles.index', [
+            'roles' => $roles,
+            'permissionsCount' => $permissionsCount,
+        ]);
     }
 
     public function create()

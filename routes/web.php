@@ -172,8 +172,8 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/issues/{id}/reissue', [ItemIssuingController::class, 'generalReissue'])->name('reissue');
                 Route::get('/records', [ItemIssuingController::class, 'GeneralItemView'])->name('records');
 
-                Route::get('/mark-returned/{id}', [ItemIssuingController::class, 'GeneralonLoan'])->name('mark-returned');
-                Route::get('/mark-loaned/{id}', [ItemIssuingController::class, 'GeneralReturn'])->name('mark-loaned');
+                Route::get('/mark-returned/{id}', [ItemIssuingController::class, 'GeneralReturn'])->name('mark-returned');
+                Route::get('/mark-loaned/{id}', [ItemIssuingController::class, 'GeneralonLoan'])->name('mark-loaned');
             });
         });
 

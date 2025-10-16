@@ -31,7 +31,8 @@ class UnitController extends Controller
 
     public function View()
     {
-        $units = Unit::orderBy('unit_name')->get();
+        $unitQuery = Unit::orderBy('unit_name');
+        $units = $unitQuery->paginate(15)->withQueryString();
 
         $issuesByUnit = collect();
         if (Schema::hasTable('issue_item_outs')) {
@@ -43,7 +44,7 @@ class UnitController extends Controller
                 ->keyBy('unit_id');
         }
 
-        $units->transform(function ($unit) use ($issuesByUnit) {
+        $units->getCollection()->transform(function ($unit) use ($issuesByUnit) {
             $stats = $issuesByUnit->get($unit->id);
             $unit->active_issue_count = $stats->active_count ?? 0;
             $unit->active_issue_qty = $stats->total_qty ?? 0;
@@ -51,9 +52,11 @@ class UnitController extends Controller
         });
 
         $summary = [
-            'totalUnits' => $units->count(),
-            'activeUnits' => $units->where('active_issue_count', '>', 0)->count(),
-            'totalItemsIssued' => $units->sum('active_issue_qty'),
+            'totalUnits' => Unit::count(),
+            'activeUnits' => Schema::hasTable('issue_item_outs')
+                ? Unit::whereIn('id', $issuesByUnit->keys())->count()
+                : 0,
+            'totalItemsIssued' => $issuesByUnit->sum('total_qty'),
         ];
 
         return view('unit.index', compact('units', 'summary'));
